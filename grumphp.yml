@@ -1,0 +1,28 @@
+parameters:
+  process_timeout: 120
+  tasks:
+    composer: ~
+    git_commit_message:
+      enforce_capitalized_subject: false
+      type_scope_conventions:
+        - types:
+            - build
+            - ci
+            - chore
+            - docs
+            - feat
+            - fix
+            - perf
+            - refactor
+            - revert
+            - style
+            - test
+    phpcpd:
+      directory: ['./src']
+      names_exclude:
+        - 'GDImageEditor.php'
+        - 'ImagickImageEditor.php'
+    phpcsfixer2:
+      allow_risky: true
+      config: '.php_cs'
+    phplint: ~
