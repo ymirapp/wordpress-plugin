@@ -83,6 +83,7 @@ class Plugin
             Configuration\CloudStorageConfiguration::class,
             Configuration\ConsoleConfiguration::class,
             Configuration\EventManagementConfiguration::class,
+            Configuration\PhpConfiguration::class,
             Configuration\RestApiConfiguration::class,
             Configuration\UploadsConfiguration::class,
             Configuration\WordPressConfiguration::class,

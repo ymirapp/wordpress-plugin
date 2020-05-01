@@ -21,13 +21,41 @@ use Ymir\Plugin\EventManagement\SubscriberInterface;
 class WordPressSubscriber implements SubscriberInterface
 {
     /**
+     * The server identification string received by PHP.
+     *
+     * @var string
+     */
+    private $serverSoftware;
+
+    /**
+     * Constructor.
+     */
+    public function __construct(string $serverSoftware)
+    {
+        $this->serverSoftware = strtolower($serverSoftware);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {
         return [
+            'got_url_rewrite' => 'enableUrlRewrite',
             'sanitize_file_name_chars' => 'sanitizeFileNameCharacters',
         ];
+    }
+
+    /**
+     * Overwrite URL rewrite setting if we're on the Ymir runtime.
+     */
+    public function enableUrlRewrite(bool $urlRewriteEnabled): bool
+    {
+        if ('ymir' === $this->serverSoftware) {
+            $urlRewriteEnabled = true;
+        }
+
+        return $urlRewriteEnabled;
     }
 
     /**
