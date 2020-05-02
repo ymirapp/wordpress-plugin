@@ -43,6 +43,7 @@ class WordPressSubscriber implements SubscriberInterface
         return [
             'got_url_rewrite' => 'enableUrlRewrite',
             'sanitize_file_name_chars' => 'sanitizeFileNameCharacters',
+            'user_can_richedit' => 'enableVisualEditor',
         ];
     }
 
@@ -56,6 +57,18 @@ class WordPressSubscriber implements SubscriberInterface
         }
 
         return $urlRewriteEnabled;
+    }
+
+    /**
+     * Overwrite URL rewrite setting if we're on the Ymir runtime.
+     */
+    public function enableVisualEditor(bool $visualEditorEnabled): bool
+    {
+        if ('ymir' === $this->serverSoftware) {
+            $visualEditorEnabled = true;
+        }
+
+        return $visualEditorEnabled;
     }
 
     /**
