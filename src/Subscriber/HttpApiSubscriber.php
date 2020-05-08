@@ -36,6 +36,7 @@ class HttpApiSubscriber implements SubscriberInterface
     public function addPostfieldsForEmptyPutRequest($handle, array $request)
     {
         if (!is_resource($handle)
+            || !isset($request['method'])
             || 'put' !== strtolower($request['method'])
             || !isset($request['body'])
             || '' !== trim($request['body'])

@@ -91,14 +91,15 @@ class CloudStorageStreamWrapper
     {
         return $this->call(function () use ($path, $mode) {
             $client = $this->getClient();
-            $path = rtrim($this->parsePath($path), '/').'/';
+            $key = rtrim($this->parsePath($path), '/').'/';
+
             $this->removeCacheValue($path);
 
-            if ($client->objectExists($path)) {
+            if ($client->objectExists($key)) {
                 throw new \RuntimeException(sprintf('Directory "%s" already exists', $path));
             }
 
-            $client->putObject($path, '');
+            $client->putObject($key, '');
         });
     }
 
@@ -141,7 +142,7 @@ class CloudStorageStreamWrapper
 
             // The directory itself counts as an object.
             if (1 < count($client->getObjects($key, 2))) {
-                throw new \RuntimeException('Directory is not empty');
+                throw new \RuntimeException(sprintf('Directory "%s" isn\'t empty', $path));
             }
 
             $client->deleteObject($key);
@@ -227,8 +228,9 @@ class CloudStorageStreamWrapper
                 $object = $client->getObject($this->key);
             }
 
-            if ('r' !== $this->mode && null !== $client->putObject($this->key, $object)) {
-                throw new \RuntimeException('No write access on cloud storage platform');
+            if ('r' !== $this->mode) {
+                // Test that we can save the file that we're opening
+                $client->putObject($this->key, $object);
             }
 
             $this->objectResource = fopen('php://temp', 'r+');
@@ -255,9 +257,9 @@ class CloudStorageStreamWrapper
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-seek.php
      */
-    public function stream_seek(int $offset, int $whence = SEEK_SET): int
+    public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
-        return fseek($this->objectResource, $offset, $whence);
+        return 0 === fseek($this->objectResource, $offset, $whence);
     }
 
     /**
@@ -539,7 +541,7 @@ class CloudStorageStreamWrapper
             return false;
         }
 
-        return $this->call(function () use ($client, $key) {
+        return $this->call(function () use ($client, $key, $stat) {
             $details = $client->getObjectDetails($key);
 
             // Regular file with 0777 access

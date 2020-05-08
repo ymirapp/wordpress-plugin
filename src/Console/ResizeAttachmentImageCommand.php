@@ -36,9 +36,8 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
 
         $filePath = $this->getFilePath($attachment);
         $image = $this->getImageEditor($filePath);
-        $result = $image->resize($width, $height);
 
-        if ($result instanceof \WP_Error) {
+        if ($image->resize($width, $height) instanceof \WP_Error) {
             $this->error(sprintf('Error trying to resize attachment "%s"', $attachment->ID));
         }
 

@@ -83,7 +83,7 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
     {
         $suffix = time().rand(100, 999);
 
-        while (file_exists($this->generateSuffixedFilePath($file, $suffix))) {
+        while (file_exists($this->generateSuffixedFilePath($file, (string) $suffix))) {
             ++$suffix;
         }
 

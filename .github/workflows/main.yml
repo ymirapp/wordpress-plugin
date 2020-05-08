@@ -57,5 +57,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-cache-${{ env.cache-name }}-
             ${{ runner.os }}-composer-cache-
+      - name: Install WordPress
+        run: .github/workflows/install-wp.sh
       - name: Run unit tests
         run: vendor/bin/phpunit

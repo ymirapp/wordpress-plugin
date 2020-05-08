@@ -68,6 +68,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
             $options['image_width'] = $imageWidth;
         }
 
+        $matches = [];
         $message = $this->runWpCliCommand(sprintf('%s %s %s', 'site-icon' !== $context ? Console\CreateCroppedImageCommand::getName() : Console\CreateSiteIconCommand::getName(), $this->getAttachmentId($attachment), $this->buildOptions($options)));
         preg_match('/with ID ([0-9]+)/', $message, $matches);
 

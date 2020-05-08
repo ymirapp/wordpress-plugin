@@ -34,6 +34,8 @@ parameters:
         - 'src/EventManagement/EventManager.php'
         - 'src/Stream/CloudStorageStreamWrapper.php'
         - 'tests'
+    phpunit:
+      always_execute: true
   testsuites:
     code_quality:
       tasks:

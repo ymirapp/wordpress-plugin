@@ -16,10 +16,13 @@
         "ext-json": "*"
     },
     "require-dev": {
+        "dg/bypass-finals": "^1.2",
         "friendsofphp/php-cs-fixer": "^2.16",
+        "php-mock/php-mock-phpunit": "^2.6",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpmd/phpmd": "^2.8",
         "phpro/grumphp": "^0.16.2",
+        "phpunit/phpunit": "^7.0",
         "sebastian/phpcpd": "^4.1"
     },
     "config": {
@@ -31,6 +34,11 @@
     "autoload": {
         "psr-4": {
             "Ymir\\Plugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ymir\\Plugin\\Tests\\": "tests/"
         }
     }
 }

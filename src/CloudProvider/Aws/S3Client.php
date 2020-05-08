@@ -107,7 +107,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
             $details['size'] = $response['headers']['content-length'];
         }
         if (isset($response['headers']['last-modified'])) {
-            $details['size'] = $response['headers']['content-length'];
+            $details['last-modified'] = $response['headers']['last-modified'];
         }
 
         return $details;

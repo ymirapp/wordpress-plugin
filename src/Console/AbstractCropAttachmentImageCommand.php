@@ -49,7 +49,7 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
 
         if ($croppedImage instanceof \WP_Error) {
             $this->error($croppedImage->get_error_message());
-        } elseif (empty($croppedImage)) {
+        } elseif (empty($croppedImage) || !is_string($croppedImage)) {
             $this->error('Unable to crop attachment image');
         }
 
