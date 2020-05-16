@@ -33,7 +33,7 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
             return [
                 new Console\CreateAttachmentMetadataCommand($container['file_manager']),
                 new Console\CreateCroppedImageCommand($container['file_manager'], $container['event_manager']),
-                new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager']),
+                new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon']),
                 new Console\EditAttachmentImageCommand($container['file_manager']),
                 new Console\ResizeAttachmentImageCommand($container['file_manager']),
             ];

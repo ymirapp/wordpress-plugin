@@ -55,6 +55,13 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             'deleted' => __('moved to the trash.'),
             'error_uploading' => __('&#8220;%s&#8221; has failed to upload.'),
         ];
+        $container['site_icon'] = $container->service(function () {
+            if (!class_exists(\WP_Site_Icon::class)) {
+                require_once ABSPATH.'wp-admin/includes/class-wp-site-icon.php';
+            }
+
+            return new \WP_Site_Icon();
+        });
         $container['site_url'] = defined('WP_SITEURL') ? WP_SITEURL : '';
         $container['uploads_basedir'] = $container->service(function () {
             return wp_upload_dir()['basedir'] ?? '';
