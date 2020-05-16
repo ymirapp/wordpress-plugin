@@ -1,0 +1,61 @@
+name: Continuous Integration
+on: push
+
+jobs:
+  code-quality:
+    name: Run code quality checks on PHP 7.1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.1'
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache Composer cache directory
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-${{ env.cache-name }}-
+            ${{ runner.os }}-composer-cache-
+      - name: Install dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
+      - name: Run code quality checks
+        run: vendor/bin/grumphp run --testsuite=code_quality
+  unit-test:
+    name: Run unit tests on ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+    needs: code-quality
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.1', '7.2', '7.3', '7.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Install dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
+      - name: Cache Composer cache directory
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-${{ env.cache-name }}-
+            ${{ runner.os }}-composer-cache-
+      - name: Run unit tests
+        run: vendor/bin/phpunit
