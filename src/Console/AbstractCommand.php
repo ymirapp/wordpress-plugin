@@ -27,38 +27,14 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * Check if all the required arguments are the given arguments array.
-     */
-    protected function checkRequiredArguments(array $arguments, array $requiredArguments = [])
-    {
-        $missingArguments = array_diff_key($requiredArguments, $arguments);
-
-        if (empty($missingArguments)) {
-            return;
-        }
-
-        $this->missingError(reset($missingArguments), 'argument');
-    }
-
-    /**
-     * Check if all the required options are the given options array.
-     */
-    protected function checkRequiredOptions(array $options, array $requiredOptions = [])
-    {
-        $missingOptions = array_diff($requiredOptions, array_keys($options));
-
-        if (empty($missingOptions)) {
-            return;
-        }
-
-        $this->missingError(reset($missingOptions), 'option');
-    }
-
-    /**
      * Write error message.
      */
     protected function error(string $message)
     {
+        if (!class_exists(\WP_CLI::class)) {
+            return;
+        }
+
         \WP_CLI::error($message);
     }
 
@@ -67,14 +43,10 @@ abstract class AbstractCommand implements CommandInterface
      */
     protected function success(string $message)
     {
-        \WP_CLI::success($message);
-    }
+        if (!class_exists(\WP_CLI::class)) {
+            return;
+        }
 
-    /**
-     * Generate a missing error.
-     */
-    private function missingError(string $name, string $type)
-    {
-        $this->error(sprintf('"%s" %s is missing', $name, $type));
+        \WP_CLI::success($message);
     }
 }

@@ -23,10 +23,6 @@ class CreateAttachmentMetadataCommand extends AbstractAttachmentCommand
      */
     public function __invoke(array $arguments, array $options)
     {
-        if (!isset($arguments[0])) {
-            $this->error('"attachmentId" argument is missing');
-        }
-
         $attachment = $this->getAttachment($arguments[0]);
 
         wp_update_attachment_metadata($attachment->ID, wp_generate_attachment_metadata($attachment->ID, $this->getFilePath($attachment)));

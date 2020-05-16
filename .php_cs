@@ -50,17 +50,19 @@ return PhpCsFixer\Config::create()
                 'construct',
                 'destruct',
                 'magic',
+                'phpunit',
                 'method_public_static',
-                'method_public',
                 'method_protected_static',
-                'method_protected',
                 'method_private_static',
+                'method_public',
+                'method_protected',
                 'method_private',
             ],
             'sortAlgorithm' => 'alpha'
         ],
         'ordered_imports' => true,
         'php_unit_construct' => true,
+        'php_unit_method_casing' => ['case' => 'camel_case'],
         'php_unit_test_class_requires_covers' => true,
         'php_unit_dedicate_assert' => true,
         'phpdoc_order' => true,
@@ -74,6 +76,7 @@ return PhpCsFixer\Config::create()
         PhpCsFixer\Finder::create()
             ->in([
                 __DIR__ . '/src',
+//                __DIR__ . '/tests',
             ])
     )
 ;

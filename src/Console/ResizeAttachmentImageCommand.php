@@ -23,14 +23,6 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
      */
     public function __invoke(array $arguments, array $options)
     {
-        if (!isset($arguments[0])) {
-            $this->error('"attachmentId" argument is missing');
-        } elseif (!isset($options['height'])) {
-            $this->error('"height" option is missing');
-        } elseif (!isset($options['width'])) {
-            $this->error('"width" option is missing');
-        }
-
         $attachment = $this->getAttachment($arguments[0]);
         $imageMetadata = $this->getAttachmentMetadata($attachment);
         $height = (int) $options['height'];

@@ -23,14 +23,6 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
      */
     public function __invoke(array $arguments, array $options)
     {
-        if (!isset($arguments[0])) {
-            $this->error('"attachmentId" argument is missing');
-        } elseif (!isset($arguments[1])) {
-            $this->error('"changes" argument is missing');
-        } elseif (!isset($options['apply'])) {
-            $this->error('"apply" option is missing');
-        }
-
         $changes = json_decode($arguments[1]);
 
         if (!is_array($changes)) {
@@ -53,8 +45,8 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
             $this->error(sprintf('Unable to save image "%s"', $filePath));
         }
 
-        if ($this->isImageCleanupActive() && !empty($imageMetadata['sizes']) && is_array($imageMetadata['sizes'])) {
-            $this->deletePreviousImageVersions($imageMetadata['sizes']);
+        if ($this->isImageCleanupActive() && !empty($imageMetadata['sizes'])) {
+            $this->deletePreviousImageVersions((array) $imageMetadata['sizes']);
         }
 
         if (!empty($suffix)) {

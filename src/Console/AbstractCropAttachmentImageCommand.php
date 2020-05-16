@@ -43,9 +43,6 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
      */
     public function __invoke(array $arguments, array $options)
     {
-        $this->checkRequiredArguments($arguments, [0 => 'attachmentId']);
-        $this->checkRequiredOptions($options, ['height', 'width', 'x', 'y']);
-
         $attachment = $this->getAttachment($arguments[0]);
         $context = $options['context'] ?? 'site-icon';
         $croppedImage = wp_crop_image($attachment->ID, $options['x'], $options['y'], $options['width'], $options['height'], $options['image_width'] ?? null, $options['image_height'] ?? null);

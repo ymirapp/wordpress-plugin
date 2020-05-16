@@ -112,41 +112,15 @@ class ImageEditorSubscriber extends AbstractEventManagerAwareSubscriber
         }
 
         $attachmentId = (int) $_POST['postid'];
+        $operation = $_POST['do'];
 
         if (!$this->isAttachmentIdValid($attachmentId)) {
             wp_die(-1);
         }
 
-        $message = new \stdClass();
+        $message = wp_json_encode($this->runImageEditorOperationCommand($attachmentId, $operation));
 
-        try {
-            $target = !empty($_REQUEST['target']) ? preg_replace('/[^a-z0-9_-]+/i', '', $_REQUEST['target']) : '';
-
-            if ('scale' === $_POST['do'] && isset($_REQUEST['fwidth'], $_REQUEST['fheight'])) {
-                $this->consoleClient->resizeAttachmentImage($attachmentId, (int) $_REQUEST['fwidth'], (int) $_REQUEST['fheight']);
-            } elseif ('save' === $_POST['do'] && isset($_REQUEST['history'], $_REQUEST['target'])) {
-                $this->consoleClient->editAttachmentImage($attachmentId, wp_unslash($_REQUEST['history']), $target);
-            }
-
-            $metadata = wp_get_attachment_metadata($attachmentId);
-
-            if ('thumbnail' !== $target && isset($metadata['width'], $metadata['height'])) {
-                $message->fw = $metadata['width'];
-                $message->fh = $metadata['height'];
-            }
-
-            if ('nothumb' !== $target) {
-                $message->thumbnail = $this->getAttachmentThumbnail($attachmentId);
-            }
-
-            $message->msg = esc_js(__('Image saved'));
-        } catch (\Exception $exception) {
-            $message->error = $exception->getMessage();
-        }
-
-        $message = wp_json_encode($message);
-
-        if ('save' !== $_POST['do']) {
+        if ('save' !== $operation) {
             wp_image_editor($attachmentId, json_decode($message));
             $message = '';
         }
@@ -212,5 +186,40 @@ class ImageEditorSubscriber extends AbstractEventManagerAwareSubscriber
         check_ajax_referer("image_editor-{$attachmentId}", $nonceQueryArg);
 
         return current_user_can('edit_post', $attachmentId);
+    }
+
+    /**
+     * Run the serverless console command to perform the given image editor operation on the given attachment.
+     */
+    private function runImageEditorOperationCommand(int $attachmentId, string $operation): \stdClass
+    {
+        $message = new \stdClass();
+
+        try {
+            $target = !empty($_REQUEST['target']) ? preg_replace('/[^a-z0-9_-]+/i', '', $_REQUEST['target']) : '';
+
+            if ('scale' === $operation && isset($_REQUEST['fwidth'], $_REQUEST['fheight'])) {
+                $this->consoleClient->resizeAttachmentImage($attachmentId, (int) $_REQUEST['fwidth'], (int) $_REQUEST['fheight']);
+            } elseif ('save' === $operation && isset($_REQUEST['history'], $_REQUEST['target'])) {
+                $this->consoleClient->editAttachmentImage($attachmentId, wp_unslash($_REQUEST['history']), $target);
+            }
+
+            $metadata = wp_get_attachment_metadata($attachmentId);
+
+            if ('thumbnail' !== $target && isset($metadata['width'], $metadata['height'])) {
+                $message->fw = $metadata['width'];
+                $message->fh = $metadata['height'];
+            }
+
+            if ('nothumb' !== $target) {
+                $message->thumbnail = $this->getAttachmentThumbnail($attachmentId);
+            }
+
+            $message->msg = esc_js(__('Image saved'));
+        } catch (\Exception $exception) {
+            $message->error = $exception->getMessage();
+        }
+
+        return $message;
     }
 }

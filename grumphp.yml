@@ -18,7 +18,7 @@ parameters:
             - style
             - test
     phpcpd:
-      directory: ['./src']
+      directory: './src'
       names_exclude:
         - 'GDImageEditor.php'
         - 'ImagickImageEditor.php'
@@ -26,3 +26,11 @@ parameters:
       allow_risky: true
       config: '.php_cs'
     phplint: ~
+    phpmd:
+      ruleset: ['phpmd.xml']
+      exclude:
+        - 'src/Autoloader.php'
+        - 'src/Configuration'
+        - 'src/EventManagement/EventManager.php'
+        - 'src/Stream/CloudStorageStreamWrapper.php'
+        - 'tests'
