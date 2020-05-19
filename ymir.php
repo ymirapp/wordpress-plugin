@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Ymir WordPress plugin.
  *
@@ -23,7 +25,7 @@ if (version_compare(PHP_VERSION, '7.1', '<')) {
 }
 
 // Setup class autoloader
-require_once dirname(__FILE__) . '/src/Autoloader.php';
+require_once dirname(__FILE__).'/src/Autoloader.php';
 \Ymir\Plugin\Autoloader::register();
 
 // Load plugin
