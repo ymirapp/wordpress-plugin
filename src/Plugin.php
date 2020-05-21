@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin;
 
+use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\Console\CommandInterface;
 use Ymir\Plugin\DependencyInjection\Container;
-use Ymir\Plugin\Stream\CloudStorageStreamWrapper;
 
 /**
  * Ymir Cloud Storage Plugin.

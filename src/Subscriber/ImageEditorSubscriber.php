@@ -16,7 +16,7 @@ namespace Ymir\Plugin\Subscriber;
 use Ymir\Plugin\Attachment\AttachmentFileManager;
 use Ymir\Plugin\Attachment\GDImageEditor;
 use Ymir\Plugin\Attachment\ImagickImageEditor;
-use Ymir\Plugin\CloudProvider\ConsoleClientInterface;
+use Ymir\Plugin\Console\ConsoleClientInterface;
 use Ymir\Plugin\EventManagement\AbstractEventManagerAwareSubscriber;
 
 /**

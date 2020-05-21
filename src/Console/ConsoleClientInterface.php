@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ymir\Plugin\CloudProvider;
+namespace Ymir\Plugin\Console;
 
 /**
  * A client for running specific console commands on a serverless platform.

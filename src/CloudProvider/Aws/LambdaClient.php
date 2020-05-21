@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\CloudProvider\Aws;
 
-use Ymir\Plugin\CloudProvider\ConsoleClientInterface;
 use Ymir\Plugin\Console;
+use Ymir\Plugin\Console\ConsoleClientInterface;
 
 /**
  * The client for AWS Lambda API.

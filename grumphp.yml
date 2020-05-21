@@ -31,8 +31,8 @@ parameters:
       exclude:
         - 'src/Autoloader.php'
         - 'src/Configuration'
+        - 'src/CloudStorage/CloudStorageStreamWrapper.php'
         - 'src/EventManagement/EventManager.php'
-        - 'src/Stream/CloudStorageStreamWrapper.php'
         - 'tests'
     phpunit:
       always_execute: true

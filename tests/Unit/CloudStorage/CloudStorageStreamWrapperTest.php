@@ -11,16 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ymir\Plugin\Tests\Unit\DependencyInjection;
+namespace Ymir\Plugin\Tests\Unit\CloudStorage;
 
 use PHPUnit\Framework\Error\Warning;
 use PHPUnit\Framework\TestCase;
-use Ymir\Plugin\Stream\CloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 
 /**
- * @covers \Ymir\Plugin\Stream\CloudStorageStreamWrapper
+ * @covers \Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper
  */
 class CloudStorageStreamWrapperTest extends TestCase
 {

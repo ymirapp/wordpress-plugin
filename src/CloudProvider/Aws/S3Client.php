@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\CloudProvider\Aws;
 
-use Ymir\Plugin\CloudProvider\CloudStorageClientInterface;
+use Ymir\Plugin\CloudStorage\CloudStorageClientInterface;
 
 /**
  * The client for AWS S3 API.

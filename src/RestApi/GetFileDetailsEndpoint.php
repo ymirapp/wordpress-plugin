@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\RestApi;
 
-use Ymir\Plugin\CloudProvider\CloudStorageClientInterface;
+use Ymir\Plugin\CloudStorage\CloudStorageClientInterface;
 
 /**
  * REST API endpoint to get information for a given filename.

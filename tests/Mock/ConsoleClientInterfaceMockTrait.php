@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Mock;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use Ymir\Plugin\CloudProvider\ConsoleClientInterface;
+use Ymir\Plugin\Console\ConsoleClientInterface;
 
 trait ConsoleClientInterfaceMockTrait
 {

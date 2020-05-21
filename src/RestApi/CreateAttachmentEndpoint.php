@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\RestApi;
 
-use Ymir\Plugin\CloudProvider\CloudStorageClientInterface;
-use Ymir\Plugin\CloudProvider\ConsoleClientInterface;
+use Ymir\Plugin\CloudStorage\CloudStorageClientInterface;
+use Ymir\Plugin\Console\ConsoleClientInterface;
 
 /**
  * REST API endpoint to create a WordPress attachment for the given file path.

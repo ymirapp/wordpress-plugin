@@ -11,9 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ymir\Plugin\Stream;
-
-use Ymir\Plugin\CloudProvider\CloudStorageClientInterface;
+namespace Ymir\Plugin\CloudStorage;
 
 /**
  * A stream wrapper used to interact with cloud storage using a cloud storage API client.

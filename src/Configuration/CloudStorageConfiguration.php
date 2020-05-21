@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Configuration;
 
 use Ymir\Plugin\CloudProvider\Aws\S3Client;
+use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
-use Ymir\Plugin\Stream\CloudStorageStreamWrapper;
 
 /**
  * Configures the dependency injection container with the cloud storage parameters and services.
