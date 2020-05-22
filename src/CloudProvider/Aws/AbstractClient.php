@@ -102,11 +102,11 @@ abstract class AbstractClient
     }
 
     /**
-     * Get the hostname for the AWS request.
+     * Get the name of the API endpoint for the client.
      */
-    protected function getHostname(): string
+    protected function getEndpointName(): string
     {
-        return "{$this->getService()}.{$this->region}.amazonaws.com";
+        return $this->getService();
     }
 
     /**
@@ -245,6 +245,14 @@ abstract class AbstractClient
     private function getDate(): string
     {
         return gmdate('Ymd');
+    }
+
+    /**
+     * Get the hostname for the AWS request.
+     */
+    private function getHostname(): string
+    {
+        return "{$this->getEndpointName()}.{$this->region}.amazonaws.com";
     }
 
     /**

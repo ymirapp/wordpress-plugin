@@ -210,9 +210,9 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    protected function getHostname(): string
+    protected function getEndpointName(): string
     {
-        return $this->bucket.'.'.parent::getHostname();
+        return $this->bucket.'.'.$this->getService();
     }
 
     /**

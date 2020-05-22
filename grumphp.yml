@@ -29,9 +29,11 @@ parameters:
     phpmd:
       ruleset: ['phpmd.xml']
       exclude:
+        - 'pluggable.php'
         - 'src/Autoloader.php'
         - 'src/Configuration'
         - 'src/CloudStorage/CloudStorageStreamWrapper.php'
+        - 'src/Email/Email.php'
         - 'src/EventManagement/EventManager.php'
         - 'tests'
     phpunit:

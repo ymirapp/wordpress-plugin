@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of Ymir WordPress plugin.
+ *
+ * (c) Carl Alexander <support@ymirapp.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Ymir\Plugin\Tests\Mock;
+
+use PHPUnit\Framework\MockObject\MockObject;
+
+trait PHPMailerMockTrait
+{
+    /**
+     * Creates a mock of a PHPMailer object.
+     */
+    private function getPHPMailerMock(): MockObject
+    {
+        return $this->getMockBuilder(\PHPMailer::class)
+                    ->disableOriginalConstructor()
+                    ->getMock();
+    }
+}

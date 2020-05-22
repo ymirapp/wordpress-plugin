@@ -82,6 +82,7 @@ class Plugin
             Configuration\CloudProviderConfiguration::class,
             Configuration\CloudStorageConfiguration::class,
             Configuration\ConsoleConfiguration::class,
+            Configuration\EmailConfiguration::class,
             Configuration\EventManagementConfiguration::class,
             Configuration\PhpConfiguration::class,
             Configuration\RestApiConfiguration::class,

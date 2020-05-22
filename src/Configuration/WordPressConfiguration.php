@@ -26,10 +26,27 @@ class WordPressConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
+        $container['blog_charset'] = get_bloginfo('charset');
         $container['content_directory'] = WP_CONTENT_DIR;
         $container['content_url'] = WP_CONTENT_URL;
         $container['current_user'] = wp_get_current_user();
+        $container['default_email_from'] = $container->service(function () {
+            $sitename = strtolower(wp_parse_url(network_home_url(), PHP_URL_HOST));
+
+            if ('www.' === substr($sitename, 0, 4)) {
+                $sitename = substr($sitename, 4);
+            }
+
+            return 'wordpress@'.$sitename;
+        });
         $container['http_transport'] = _wp_http_get_object();
+        $container['phpmailer'] = function () {
+            if (!class_exists(\PHPMailer::class)) {
+                require_once ABSPATH.WPINC.'/class-phpmailer.php';
+            }
+
+            return new \PHPMailer(true);
+        };
         $container['plupload_error_messages'] = [
             'queue_limit_exceeded' => __('You have attempted to queue too many files.'),
             'file_exceeds_size_limit' => __('%s exceeds the maximum upload size for this site.'),

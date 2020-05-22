@@ -32,3 +32,6 @@ require_once dirname(__FILE__).'/src/Autoloader.php';
 global $ymir;
 $ymir = new \Ymir\Plugin\Plugin(__FILE__);
 add_action('after_setup_theme', array($ymir, 'load'));
+
+// Load Ymir pluggable functions
+require_once dirname(__FILE__).'/pluggable.php';
