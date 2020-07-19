@@ -79,7 +79,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return new \WP_Site_Icon();
         });
-        $container['site_url'] = defined('WP_SITEURL') ? WP_SITEURL : '';
+        $container['site_url'] = defined('WP_HOME') ? WP_HOME : '';
         $container['uploads_basedir'] = $container->service(function () {
             return wp_upload_dir()['basedir'] ?? '';
         });

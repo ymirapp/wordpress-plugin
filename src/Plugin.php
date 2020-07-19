@@ -41,11 +41,22 @@ class Plugin
      */
     public function __construct(string $file)
     {
+        if (!defined('ABSPATH')) {
+            throw new \RuntimeException('"ABSPATH" constant isn\'t defined');
+        }
+
+        $rootDirectory = ABSPATH;
+
+        if ('/wp/' === substr($rootDirectory, -4)) {
+            $rootDirectory = substr($rootDirectory, 0, -3);
+        }
+
         $this->container = new Container([
+            'root_directory' => $rootDirectory,
             'plugin_name' => basename($file, '.php'),
             'plugin_basename' => plugin_basename($file),
             'plugin_path' => plugin_dir_path($file),
-            'plugin_relative_path' => '/'.trim(str_replace(ABSPATH, '', plugin_dir_path($file)), '/'),
+            'plugin_relative_path' => '/'.trim(str_replace($rootDirectory, '', plugin_dir_path($file)), '/'),
             'plugin_url' => plugin_dir_url($file),
         ]);
         $this->loaded = false;
