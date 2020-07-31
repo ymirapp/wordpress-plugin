@@ -20,7 +20,7 @@ use Ymir\Plugin\Plugin;
  */
 global $pagenow;
 
-if (function_exists('wp_mail') && !in_array($pagenow, array('plugins.php', 'update-core.php'), true)) {
+if (function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
     exit('"wp_mail" function already overridden by another plugin');
 } elseif (!function_exists('wp_mail')) {
     /**

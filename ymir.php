@@ -33,5 +33,10 @@ global $ymir;
 $ymir = new \Ymir\Plugin\Plugin(__FILE__);
 add_action('after_setup_theme', array($ymir, 'load'));
 
-// Load Ymir pluggable functions
-require_once dirname(__FILE__).'/pluggable.php';
+// Load Ymir pluggable functions if the plugin is active
+if (!function_exists('is_plugin_active')) {
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+if (is_plugin_active($ymir->getContainer()['plugin_basename'])) {
+    require_once dirname(__FILE__).'/pluggable.php';
+}
