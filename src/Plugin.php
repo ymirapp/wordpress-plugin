@@ -99,6 +99,7 @@ class Plugin
             Configuration\RestApiConfiguration::class,
             Configuration\UploadsConfiguration::class,
             Configuration\WordPressConfiguration::class,
+            Configuration\YmirConfiguration::class,
         ]);
 
         CloudStorageStreamWrapper::register($this->container['cloud_storage_client']);

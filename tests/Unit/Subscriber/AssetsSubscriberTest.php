@@ -37,6 +37,20 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
+    public function testReplaceLoaderSourceAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
+    {
+        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock');
+
+        $this->assertSame('https://assets.com/wp/asset.css', $subscriber->replaceLoaderSource('https://foo.com/asset.css'));
+    }
+
+    public function testReplaceLoaderSourceDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
+    {
+        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock');
+
+        $this->assertSame('https://assets.com/wp/asset.css', $subscriber->replaceLoaderSource('https://foo.com/wp/asset.css'));
+    }
+
     public function testReplaceLoaderSourceWithEmptyAssetsUrl()
     {
         $subscriber = new AssetsSubscriber('https://foo.com');
