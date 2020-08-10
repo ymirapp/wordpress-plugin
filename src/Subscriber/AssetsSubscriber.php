@@ -35,7 +35,7 @@ class AssetsSubscriber implements SubscriberInterface
     private $projectType;
 
     /**
-     * URL to the plugin's assets folder.
+     * WordPress site URL.
      *
      * @var string
      */
