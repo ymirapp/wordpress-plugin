@@ -37,6 +37,23 @@ class SecurityHeadersSubscriberTest extends TestCase
         ]));
     }
 
+    public function testGetSubscribedEvents()
+    {
+        $callbacks = SecurityHeadersSubscriber::getSubscribedEvents();
+
+        foreach ($callbacks as $callback) {
+            $this->assertTrue(method_exists(SecurityHeadersSubscriber::class, is_array($callback) ? $callback[0] : $callback));
+        }
+
+        $subscribedEvents = [
+            'admin_init' => 'sendSecurityHeaders',
+            'login_init' => 'sendSecurityHeaders',
+            'wp_headers' => 'addSecurityHeaders',
+        ];
+
+        $this->assertSame($subscribedEvents, $callbacks);
+    }
+
     public function testSendSecurityHeaders()
     {
         $header = $this->getFunctionMock($this->getNamespace(SecurityHeadersSubscriber::class), 'header');
