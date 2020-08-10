@@ -68,7 +68,7 @@ class BedrockSubscriber implements SubscriberInterface
             return $networkSiteUrl;
         }
 
-        $baseUrl = rtrim(substr($networkSiteUrl, 0, strlen($networkSiteUrl) - strlen($path)), '/');
+        $baseUrl = rtrim(substr($networkSiteUrl, 0, -strlen($path)), '/');
 
         if ('/wp' !== substr($baseUrl, -3)) {
             $baseUrl .= '/wp';
