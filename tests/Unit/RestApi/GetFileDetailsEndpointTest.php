@@ -51,7 +51,7 @@ class GetFileDetailsEndpointTest extends TestCase
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
                            ->method('createPutObjectRequest')
-                           ->with($this->identicalTo('uploads/uploads_subdir/uploads_path/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
+                           ->with($this->identicalTo('uploads/2020/08/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
                            ->willReturn('cloudstorage_put_request_url');
 
         $request = $this->getWPRESTRequestMock();
@@ -72,14 +72,50 @@ class GetFileDetailsEndpointTest extends TestCase
 
         $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
         $wp_unique_filename->expects($this->once())
-                           ->with($this->identicalTo('uploads_path'), $this->identicalTo('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
-                           ->willReturn('uploads_path/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf');
+                           ->with($this->identicalTo('cloudstorage:///uploads/2020/08'), $this->identicalTo('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
+                           ->willReturn('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf');
 
         $this->assertSame([
-            'filename' => 'uploads_path/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
-            'path' => 'uploads_subdir/uploads_path/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
+            'filename' => 'Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
+            'path' => '2020/08/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
             'upload_url' => 'cloudstorage_put_request_url',
-        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'uploads_path', 'uploads_subdir'))->respond($request));
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'cloudstorage:///uploads/2020/08', '/2020/08'))->respond($request));
+    }
+
+    public function testRespondWithMultisiteUploadsPath()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                           ->method('createPutObjectRequest')
+                           ->with($this->identicalTo('uploads/sites/2/2020/08/test.txt'))
+                           ->willReturn('cloudstorage_put_request_url');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('filename'))
+                ->willReturn('test.txt');
+
+        $sanitize_file_name = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'sanitize_file_name');
+        $sanitize_file_name->expects($this->once())
+                           ->with($this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $wp_basename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_basename');
+        $wp_basename->expects($this->once())
+                    ->with($this->identicalTo('test.txt'))
+                    ->willReturn('test.txt');
+
+        $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
+        $wp_unique_filename->expects($this->once())
+                           ->with($this->identicalTo('cloudstorage:///uploads/sites/2/2020/08'), $this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $this->assertSame([
+            'filename' => 'test.txt',
+            'path' => '2020/08/test.txt',
+            'upload_url' => 'cloudstorage_put_request_url',
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'cloudstorage:///uploads/sites/2/2020/08', '/2020/08'))->respond($request));
     }
 
     public function testValidateRequest()

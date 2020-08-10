@@ -89,11 +89,19 @@ class GetFileDetailsEndpoint extends AbstractEndpoint
     {
         $filename = wp_unique_filename($this->uploadsPath, urlencode(wp_basename(sanitize_file_name(htmlspecialchars_decode($request->get_param('filename'), ENT_QUOTES)))));
         $path = $this->uploadsSubdirectory.$filename;
+        $matches = [];
+
+        // Need to extract the "sites/{blog_id}" for multisite
+        preg_match('/(uploads.*)/', substr($this->uploadsPath, 0, -strlen($this->uploadsSubdirectory)), $matches);
+
+        if (empty($matches[1])) {
+            throw new \RuntimeException('Unable to parse uploads path');
+        }
 
         return [
             'filename' => $filename,
             'path' => $path,
-            'upload_url' => $this->client->createPutObjectRequest('uploads/'.$path),
+            'upload_url' => $this->client->createPutObjectRequest(trim($matches[1], '/').'/'.$path),
         ];
     }
 
