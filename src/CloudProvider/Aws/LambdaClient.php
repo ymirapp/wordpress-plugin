@@ -31,9 +31,9 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(\WP_Http $transport, string $functionName, string $key, string $secret, string $region = 'us-east-1')
+    public function __construct(\WP_Http $transport, string $functionName, string $key, string $region, string $secret)
     {
-        parent::__construct($transport, $key, $secret, $region);
+        parent::__construct($transport, $key, $region, $secret);
 
         $this->functionName = $functionName;
     }

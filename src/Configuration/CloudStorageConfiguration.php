@@ -29,7 +29,7 @@ class CloudStorageConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['cloud_storage_client'] = $container->service(function (Container $container) {
-            return new S3Client($container['http_transport'], $container['cloud_provider_store'], $container['cloud_provider_key'], $container['cloud_provider_secret']);
+            return new S3Client($container['http_transport'], $container['cloud_provider_store'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret']);
         });
         $container['cloud_storage_protocol'] = CloudStorageStreamWrapper::PROTOCOL.'://';
     }

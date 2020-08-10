@@ -61,7 +61,7 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->copyObject('source-key', 'target-key');
+        (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->copyObject('source-key', 'target-key');
     }
 
     public function testCreatePutObjectRequest()
@@ -77,7 +77,7 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515', '20200515T181004Z', '20200515T181004Z', '20200515', '20200515');
 
-        $this->assertSame('https://test-bucket.s3.us-east-1.amazonaws.com/object-key?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-key%2F20200515%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200515T181004Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=196d3b99d39a506d8edbd65eb976b3916ec08bc2b8be1859c676c7cf98df1578', (new S3Client($this->getWPHttpMock(), 'test-bucket', 'aws-key', 'aws-secret'))->createPutObjectRequest('object-key'));
+        $this->assertSame('https://test-bucket.s3.us-east-1.amazonaws.com/object-key?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-key%2F20200515%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200515T181004Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=196d3b99d39a506d8edbd65eb976b3916ec08bc2b8be1859c676c7cf98df1578', (new S3Client($this->getWPHttpMock(), 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->createPutObjectRequest('object-key'));
     }
 
     public function testDeleteObject()
@@ -114,7 +114,7 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->deleteObject('object-key');
+        (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->deleteObject('object-key');
     }
 
     public function testGetObject()
@@ -152,7 +152,7 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        $this->assertSame('object', (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->getObject('object-key'));
+        $this->assertSame('object', (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObject('object-key'));
     }
 
     public function testGetObjectDetails()
@@ -198,7 +198,7 @@ class S3ClientTest extends TestCase
             'type' => 'text/plain',
             'size' => 42,
             'last-modified' => '10 September 2000',
-        ], (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->getObjectDetails('object-key'));
+        ], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjectDetails('object-key'));
     }
 
     public function testGetObjects()
@@ -247,7 +247,7 @@ class S3ClientTest extends TestCase
             'ETag' => 'string',
             'Key' => 'string',
             'Size' => 'integer',
-        ]], (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->getObjects('prefix_'));
+        ]], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjects('prefix_'));
     }
 
     public function testObjectExists()
@@ -289,7 +289,7 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        $this->assertTrue((new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->objectExists('object-key'));
+        $this->assertTrue((new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->objectExists('object-key'));
     }
 
     public function testPutObject()
@@ -329,6 +329,6 @@ class S3ClientTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        (new S3Client($http, 'test-bucket', 'aws-key', 'aws-secret'))->putObject('object-key', 'object', 'text/plain');
+        (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->putObject('object-key', 'object', 'text/plain');
     }
 }

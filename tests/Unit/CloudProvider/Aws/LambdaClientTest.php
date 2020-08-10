@@ -67,7 +67,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'aws-secret'))->createAttachmentMetadata($post);
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createAttachmentMetadata($post);
     }
 
     public function testCreateCroppedAttachmentImage()
@@ -109,7 +109,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21));
+        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21));
     }
 
     public function testCreateCroppedAttachmentImageWithSiteIconContext()
@@ -151,7 +151,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21, 'site-icon'));
+        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21, 'site-icon'));
     }
 
     public function testEditAttachmentImage()
@@ -193,7 +193,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'aws-secret'))->editAttachmentImage($post, '[{"r":90}]');
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->editAttachmentImage($post, '[{"r":90}]');
     }
 
     public function testResizeAttachmentImage()
@@ -235,6 +235,6 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'aws-secret'))->resizeAttachmentImage($post, 42, 24);
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->resizeAttachmentImage($post, 42, 24);
     }
 }

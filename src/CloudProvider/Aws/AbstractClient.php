@@ -56,7 +56,7 @@ abstract class AbstractClient
     /**
      * Constructor.
      */
-    public function __construct(\WP_Http $transport, string $key, string $secret, string $region = 'us-east-1')
+    public function __construct(\WP_Http $transport, string $key, string $region, string $secret)
     {
         $this->transport = $transport;
         $this->key = $key;

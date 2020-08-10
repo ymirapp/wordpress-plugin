@@ -30,9 +30,9 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * Constructor.
      */
-    public function __construct(\WP_Http $transport, string $bucket, string $key, string $secret, string $region = 'us-east-1')
+    public function __construct(\WP_Http $transport, string $bucket, string $key, string $region, string $secret)
     {
-        parent::__construct($transport, $key, $secret, $region);
+        parent::__construct($transport, $key, $region, $secret);
 
         $this->bucket = $bucket;
     }

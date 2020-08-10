@@ -67,6 +67,6 @@ class SesClientTest extends TestCase
                 )
                 ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        (new SesClient($http, 'aws-key', 'aws-secret'))->sendEmail($email);
+        (new SesClient($http, 'aws-key', 'us-east-1', 'aws-secret'))->sendEmail($email);
     }
 }
