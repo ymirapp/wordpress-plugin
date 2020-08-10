@@ -116,7 +116,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
         $optionsString = '';
 
         foreach ($options as $option => $value) {
-            $optionsString .= sprintf(' --%s=%s', $option, $value);
+            $optionsString .= sprintf(' --%s=\'%s\'', $option, $value);
         }
 
         return trim($optionsString);

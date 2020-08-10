@@ -81,14 +81,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '67b5cfe7c74c70a373a4bb4173b6d1620e3f1ca6b5ea34566f7f938d97e23e3d',
+                         'x-amz-content-sha256' => 'feef80f78bb5a777af338f15f23eb277357af137e7c3033eabf7867f3d446544',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=5f9a4d27e320873f8e0fb96c960d6d837a074e7310e72515e89a589ecf5f3b3b',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=e9568bbd1f3645609439951bcbe20452a59fe840d181839acf4e1575ee20b866',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir create-cropped-image 4 --width=42 --height=24 --x=14 --y=21"}',
+                     'body' => '{"php":"bin\/wp ymir create-cropped-image 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\'"}',
                  ])
              )
              ->willReturn([
@@ -123,14 +123,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => 'dd47a12ebb767cc130d679a3f6f5bcce3deaa899bbdd0d5e748f21995bae8a6f',
+                         'x-amz-content-sha256' => '9e6a7b355eb763f8746ebad2232fef4155f06eafe9685529c21ce3c65ee4ddf7',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=1057490aeab7b68454af5b895bd59f9b1ffdd291f2211c2ccbb8d42bc3c6dc74',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=4830f405ce3615abb3a6932a171662e9fd3fef2ee8b079901f39866cf8480297',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir create-site-icon 4 --width=42 --height=24 --x=14 --y=21"}',
+                     'body' => '{"php":"bin\/wp ymir create-site-icon 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\'"}',
                  ])
              )
              ->willReturn([
@@ -165,14 +165,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => 'ab4a43796745a71470451dddd3cf9893442cd63e1df5eeecca27df9138bd7b71',
+                         'x-amz-content-sha256' => '695dabae3cd2d3eace3894a38c7854cce841845d685ddb2ad81a38b833423cda',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=25de89e7b982fcd795211cc63af8f86210061ca12fe8a3f4a940823edb916c33',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=bba8c1a6508cd5b6a05e5a5fbeb738848e57ddb09b12d1bf831fe5579f212063',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir edit-attachment-image 4 \'[{\"r\":90}]\' --apply=all"}',
+                     'body' => '{"php":"bin\/wp ymir edit-attachment-image 4 \'[{\"r\":90}]\' --apply=\'all\'"}',
                  ])
              )
              ->willReturn([
@@ -207,14 +207,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '9699521da60d5b2869619e735a7cde5dfe7abcb2f3f7803a9242355d8edbbd30',
+                         'x-amz-content-sha256' => '12d8ffe0d0db46ce8b7d54803c0fd2692d891a0db5867ed61f822c485929c609',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=a66efcd83eb78017c1e2797652574a4be33a5f1c65fc70b958d37c5d06ba7a88',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=81e0405bb61b1e8b40bca8674a70d73e9f823739279b3f7a965914e8551e01e7',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir resize-attachment-image 4 --width=42 --height=24"}',
+                     'body' => '{"php":"bin\/wp ymir resize-attachment-image 4 --width=\'42\' --height=\'24\'"}',
                  ])
              )
              ->willReturn([
