@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Unit\CloudStorage;
 
 use PHPUnit\Framework\Error\Warning;
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper

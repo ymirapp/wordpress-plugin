@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\RestApi;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\RestApi\AbstractEndpoint;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\RestApi\AbstractEndpoint

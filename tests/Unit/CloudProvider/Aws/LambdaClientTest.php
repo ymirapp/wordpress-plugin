@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\CloudProvider\Aws;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\CloudProvider\Aws\LambdaClient;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPHttpMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\CloudProvider\Aws\LambdaClient

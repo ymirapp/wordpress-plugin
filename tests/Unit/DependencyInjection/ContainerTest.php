@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\Tests\Mock\ContainerConfigurationInterfaceMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\DependencyInjection\Container

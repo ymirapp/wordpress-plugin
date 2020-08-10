@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\RestApi;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\RestApi\CreateAttachmentEndpoint;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPErrorMockTrait;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\RestApi\CreateAttachmentEndpoint

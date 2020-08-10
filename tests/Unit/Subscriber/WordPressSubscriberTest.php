@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\Subscriber;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\Subscriber\WordPressSubscriber;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\Subscriber\WordPressSubscriber

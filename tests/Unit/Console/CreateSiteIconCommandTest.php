@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\Console;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\Console\CreateSiteIconCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteIconMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\Console\CreateSiteIconCommand

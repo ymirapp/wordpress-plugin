@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\EventManagement;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\EventManagement\EventManager;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\EventManagement\EventManager

@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\Subscriber;
 
-use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\Attachment\GDImageEditor;
 use Ymir\Plugin\Attachment\ImagickImageEditor;
 use Ymir\Plugin\Subscriber\ImageEditorSubscriber;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
  * @covers \Ymir\Plugin\Subscriber\ImageEditorSubscriber
