@@ -29,13 +29,21 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     private $functionName;
 
     /**
+     * WordPress site URL.
+     *
+     * @var string
+     */
+    private $siteUrl;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(\WP_Http $transport, string $functionName, string $key, string $region, string $secret)
+    public function __construct(\WP_Http $transport, string $functionName, string $key, string $region, string $secret, string $siteUrl)
     {
         parent::__construct($transport, $key, $region, $secret);
 
         $this->functionName = $functionName;
+        $this->siteUrl = $siteUrl;
     }
 
     /**
@@ -153,7 +161,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     private function runWpCliCommand(string $command, bool $async = false): string
     {
         $response = $this->invoke([
-            'php' => "bin/wp $command",
+            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $this->siteUrl),
         ], $async);
 
         if (!isset($response['body'])) {

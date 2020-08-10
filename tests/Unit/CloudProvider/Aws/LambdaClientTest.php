@@ -39,14 +39,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '535345b72986631a024ca46820e9603c45f007b7fa6511ec685323e7ccacae00',
+                         'x-amz-content-sha256' => '89ad346262253983d50de33f1c15c62e3ee594effee173409e334f12ff812fdb',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=f4a505b1667d703cc9288ba7ce8fff19b2fbe84c708b979cec03fcfc675a22f0',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=67fb8c95e6617ce371a940ece52e3cd54f0d4a31326b9ac373acf41de70f743e',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir create-attachment-metadata 4"}',
+                     'body' => '{"php":"bin\/wp ymir create-attachment-metadata 4 --url=\'https:\/\/foo.bar\'"}',
                  ])
              )
              ->willReturn([
@@ -67,7 +67,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createAttachmentMetadata($post);
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createAttachmentMetadata($post);
     }
 
     public function testCreateCroppedAttachmentImage()
@@ -81,14 +81,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => 'feef80f78bb5a777af338f15f23eb277357af137e7c3033eabf7867f3d446544',
+                         'x-amz-content-sha256' => 'b9e41e71602e5c9424fd1d186f127dc547fd2b78fafa7370e4c164a1d9e0a44e',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=e9568bbd1f3645609439951bcbe20452a59fe840d181839acf4e1575ee20b866',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=4800f426f76cdea0b25c56c3640904e1b3ee6d1a60131c7f37967956ba1e8bb9',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir create-cropped-image 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\'"}',
+                     'body' => '{"php":"bin\/wp ymir create-cropped-image 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\' --url=\'https:\/\/foo.bar\'"}',
                  ])
              )
              ->willReturn([
@@ -109,7 +109,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21));
+        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createCroppedAttachmentImage($post, 42, 24, 14, 21));
     }
 
     public function testCreateCroppedAttachmentImageWithSiteIconContext()
@@ -123,14 +123,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '9e6a7b355eb763f8746ebad2232fef4155f06eafe9685529c21ce3c65ee4ddf7',
+                         'x-amz-content-sha256' => 'f2a2acd92a51068aa1507b2880633baf622605844b6603e31579a913eba295a2',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=4830f405ce3615abb3a6932a171662e9fd3fef2ee8b079901f39866cf8480297',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=5520e5edcd609fb60bb2b141d21382e3bc710f8ff3db3fc596aff2a7bb275930',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir create-site-icon 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\'"}',
+                     'body' => '{"php":"bin\/wp ymir create-site-icon 4 --width=\'42\' --height=\'24\' --x=\'14\' --y=\'21\' --url=\'https:\/\/foo.bar\'"}',
                  ])
              )
              ->willReturn([
@@ -151,7 +151,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->createCroppedAttachmentImage($post, 42, 24, 14, 21, 'site-icon'));
+        $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createCroppedAttachmentImage($post, 42, 24, 14, 21, 'site-icon'));
     }
 
     public function testEditAttachmentImage()
@@ -165,14 +165,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '695dabae3cd2d3eace3894a38c7854cce841845d685ddb2ad81a38b833423cda',
+                         'x-amz-content-sha256' => '9c8e3203152a03a5cfe05b2134e9b72b1af1790294eeeef1400ab2f903319fcc',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=bba8c1a6508cd5b6a05e5a5fbeb738848e57ddb09b12d1bf831fe5579f212063',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=eaee834514ad51afe46f2e2936951ffa383706fcb7f4cff5f3e511a4e43c947c',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir edit-attachment-image 4 \'[{\"r\":90}]\' --apply=\'all\'"}',
+                     'body' => '{"php":"bin\/wp ymir edit-attachment-image 4 \'[{\"r\":90}]\' --apply=\'all\' --url=\'https:\/\/foo.bar\'"}',
                  ])
              )
              ->willReturn([
@@ -193,7 +193,7 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->editAttachmentImage($post, '[{"r":90}]');
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->editAttachmentImage($post, '[{"r":90}]');
     }
 
     public function testResizeAttachmentImage()
@@ -207,14 +207,14 @@ class LambdaClientTest extends TestCase
                      'headers' => [
                          'content-type' => 'application/json',
                          'host' => 'lambda.us-east-1.amazonaws.com',
-                         'x-amz-content-sha256' => '12d8ffe0d0db46ce8b7d54803c0fd2692d891a0db5867ed61f822c485929c609',
+                         'x-amz-content-sha256' => '9ab19c39949c96a4a6c2f8a4563b48c7ec23fa4b067fee2b615912b11df3ab71',
                          'x-amz-date' => '20200515T181004Z',
                          'x-amz-invocation-type' => 'RequestResponse',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=81e0405bb61b1e8b40bca8674a70d73e9f823739279b3f7a965914e8551e01e7',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=bf3efbb104ae2375b88a3385a88d2b0e13c5796c6c38431c9ad897679c9647b4',
                      ],
                      'method' => 'POST',
                      'timeout' => 300,
-                     'body' => '{"php":"bin\/wp ymir resize-attachment-image 4 --width=\'42\' --height=\'24\'"}',
+                     'body' => '{"php":"bin\/wp ymir resize-attachment-image 4 --width=\'42\' --height=\'24\' --url=\'https:\/\/foo.bar\'"}',
                  ])
              )
              ->willReturn([
@@ -235,6 +235,6 @@ class LambdaClientTest extends TestCase
         $post = $this->getWPPostMock();
         $post->ID = 4;
 
-        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret'))->resizeAttachmentImage($post, 42, 24);
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->resizeAttachmentImage($post, 42, 24);
     }
 }
