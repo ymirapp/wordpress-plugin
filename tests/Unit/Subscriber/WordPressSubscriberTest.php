@@ -23,29 +23,36 @@ class WordPressSubscriberTest extends TestCase
 {
     public function testEnableUrlRewriteWithOtherServerSoftware()
     {
-        $this->assertFalse((new WordPressSubscriber('PHP'))->enableUrlRewrite(false));
+        $this->assertFalse((new WordPressSubscriber('PHP', $this->faker->url))->enableUrlRewrite(false));
     }
 
     public function testEnableUrlRewriteWithYmirServerSoftware()
     {
-        $this->assertTrue((new WordPressSubscriber('YMIR'))->enableUrlRewrite(false));
+        $this->assertTrue((new WordPressSubscriber('YMIR', $this->faker->url))->enableUrlRewrite(false));
     }
 
     public function testEnableVisualEditorWithOtherServerSoftware()
     {
-        $this->assertFalse((new WordPressSubscriber('PHP'))->enableVisualEditor(false));
+        $this->assertFalse((new WordPressSubscriber('PHP', $this->faker->url))->enableVisualEditor(false));
     }
 
     public function testEnableVisualEditorWithYmirServerSoftware()
     {
-        $this->assertTrue((new WordPressSubscriber('YMIR'))->enableVisualEditor(false));
+        $this->assertTrue((new WordPressSubscriber('YMIR', $this->faker->url))->enableVisualEditor(false));
+    }
+
+    public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
+    {
+        $siteUrl = $this->faker->url;
+
+        $this->assertSame($siteUrl.'/directory/plugins/test.php', (new WordPressSubscriber('PHP', $siteUrl))->rewritePluginUrl($this->faker->url.'/foo/directory/plugins/test.php'));
     }
 
     public function testSanitizeFileNameCharacters()
     {
         $this->assertSame(
             ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '+', chr(0)],
-            (new WordPressSubscriber('ymir'))->sanitizeFileNameCharacters()
+            (new WordPressSubscriber('YMIR', $this->faker->url))->sanitizeFileNameCharacters()
         );
     }
 }
