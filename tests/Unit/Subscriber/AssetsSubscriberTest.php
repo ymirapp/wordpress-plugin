@@ -39,43 +39,31 @@ class AssetsSubscriberTest extends TestCase
 
     public function testReplaceLoaderSourceAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock');
-
-        $this->assertSame('https://assets.com/wp/asset.css', $subscriber->replaceLoaderSource('https://foo.com/asset.css'));
+        $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceLoaderSource('https://foo.com/asset.css'));
     }
 
     public function testReplaceLoaderSourceDoesntAddWpWithBedrockProjectWithAppUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock');
-
-        $this->assertSame('https://assets.com/app/asset.css', $subscriber->replaceLoaderSource('https://foo.com/app/asset.css'));
+        $this->assertSame('https://assets.com/app/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceLoaderSource('https://foo.com/app/asset.css'));
     }
 
     public function testReplaceLoaderSourceDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock');
-
-        $this->assertSame('https://assets.com/wp/asset.css', $subscriber->replaceLoaderSource('https://foo.com/wp/asset.css'));
+        $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceLoaderSource('https://foo.com/wp/asset.css'));
     }
 
     public function testReplaceLoaderSourceWithEmptyAssetsUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com');
-
-        $this->assertSame('https://foo.com/asset.css', $subscriber->replaceLoaderSource('https://foo.com/asset.css'));
+        $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('https://foo.com'))->replaceLoaderSource('https://foo.com/asset.css'));
     }
 
     public function testReplaceLoaderSourceWithSourceDifferentFromSiteUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com');
-
-        $this->assertSame('https://bar.com/asset.css', $subscriber->replaceLoaderSource('https://bar.com/asset.css'));
+        $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceLoaderSource('https://bar.com/asset.css'));
     }
 
     public function testReplaceLoaderSourceWithSourceSameAsSiteUrl()
     {
-        $subscriber = new AssetsSubscriber('https://foo.com', 'https://assets.com');
-
-        $this->assertSame('https://assets.com/asset.css', $subscriber->replaceLoaderSource('https://foo.com/asset.css'));
+        $this->assertSame('https://assets.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceLoaderSource('https://foo.com/asset.css'));
     }
 }
