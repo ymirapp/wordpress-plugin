@@ -74,7 +74,7 @@ class BedrockSubscriber implements SubscriberInterface
             $baseUrl .= '/wp';
         }
 
-        return $baseUrl.$path;
+        return $baseUrl.'/'.ltrim($path, '/');
     }
 
     /**

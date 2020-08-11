@@ -53,6 +53,14 @@ class BedrockSubscriberTest extends TestCase
         $this->assertSame($baseUrl.'/wp'.$path, (new BedrockSubscriber('bedrock'))->ensureNetworkSiteUrlContainsWp($baseUrl.$path, $path));
     }
 
+    public function testEnsureNetworkSiteUrlContainsWpAddsWpForBedrockProjectAndAddsSlash()
+    {
+        $baseUrl = 'https://'.$this->faker->domainName;
+        $path = 'path';
+
+        $this->assertSame($baseUrl.'/wp/'.$path, (new BedrockSubscriber('bedrock'))->ensureNetworkSiteUrlContainsWp($baseUrl.$path, $path));
+    }
+
     public function testEnsureNetworkSiteUrlContainsWpDoesNothingForNonBedrockProject()
     {
         $networkSiteUrl = 'https://'.$this->faker->domainName;
