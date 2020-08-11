@@ -59,7 +59,21 @@ class AssetsSubscriber implements SubscriberInterface
         return [
             'script_loader_src' => 'replaceLoaderSource',
             'style_loader_src' => 'replaceLoaderSource',
+            'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
+    }
+
+    /**
+     * Add the assets URL to the "dns-prefetch" resource hints if the assets URL is on a different domain
+     * as the site URL.
+     */
+    public function addAssetsUrlToDnsPrefetch(array $urls, string $type): array
+    {
+        if ('dns-prefetch' === $type && !empty($this->assetsUrl) && 0 !== stripos($this->assetsUrl, $this->siteUrl)) {
+            $urls[] = $this->assetsUrl;
+        }
+
+        return $urls;
     }
 
     /**

@@ -21,6 +21,26 @@ use Ymir\Plugin\Tests\Unit\TestCase;
  */
 class AssetsSubscriberTest extends TestCase
 {
+    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
+    {
+        $this->assertSame(['https://assets.com'], (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
+    }
+
+    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsWhenSameDomainAsSiteUrl()
+    {
+        $this->assertSame([], (new AssetsSubscriber('https://foo.com', 'https://foo.com'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
+    }
+
+    public function testAddAssetsUrlToDnsPrefetchWhenNoAssetsUrl()
+    {
+        $this->assertSame([], (new AssetsSubscriber('https://foo.com'))->addAssetsUrlToDnsPrefetch([], 'foo'));
+    }
+
+    public function testAddAssetsUrlToDnsPrefetchWhenWrongTypeAndDifferentAssetsDomain()
+    {
+        $this->assertSame([], (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->addAssetsUrlToDnsPrefetch([], 'foo'));
+    }
+
     public function testGetSubscribedEvents()
     {
         $callbacks = AssetsSubscriber::getSubscribedEvents();
@@ -32,6 +52,7 @@ class AssetsSubscriberTest extends TestCase
         $subscribedEvents = [
             'script_loader_src' => 'replaceLoaderSource',
             'style_loader_src' => 'replaceLoaderSource',
+            'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
