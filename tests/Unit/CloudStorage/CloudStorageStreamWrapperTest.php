@@ -234,10 +234,10 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
 
-        $modeReflection = $wrapperReflection->getProperty('mode');
+        $modeReflection = $wrapperReflection->getProperty('openedStreamMode');
         $modeReflection->setAccessible(true);
 
         $keyReflection->setValue($wrapper, '/foo.txt');
@@ -266,7 +266,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $modeReflection = $wrapperReflection->getProperty('mode');
+        $modeReflection = $wrapperReflection->getProperty('openedStreamMode');
         $modeReflection->setAccessible(true);
 
         $modeReflection->setValue($wrapper, 'r');
@@ -444,7 +444,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
         $keyReflection->setValue($wrapper, '/foo.txt');
 
@@ -470,7 +470,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
         $keyReflection->setValue($wrapper, '/directory/');
 
@@ -510,7 +510,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
         $keyReflection->setValue($wrapper, '/foo.txt');
 
@@ -550,7 +550,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
         $keyReflection->setValue($wrapper, '/foo.txt');
 
@@ -590,7 +590,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
-        $keyReflection = $wrapperReflection->getProperty('key');
+        $keyReflection = $wrapperReflection->getProperty('openedStreamObjectKey');
         $keyReflection->setAccessible(true);
         $keyReflection->setValue($wrapper, '/foo.txt');
 

@@ -42,25 +42,25 @@ class CloudStorageStreamWrapper
     private $cache = [];
 
     /**
-     * The key for the cloud storage object being accessed.
-     *
-     * @var string
-     */
-    private $key;
-
-    /**
      * Mode used when the stream was opened.
      *
      * @var string
      */
-    private $mode;
+    private $openedStreamMode;
 
     /**
-     * The resource containing the cloud storage object being accessed.
+     * The key for the cloud storage object opened by "stream_open".
+     *
+     * @var string
+     */
+    private $openedStreamObjectKey;
+
+    /**
+     * The resource containing the cloud storage object opened by "stream_open".
      *
      * @var resource|null
      */
-    private $objectResource;
+    private $openedStreamObjectResource;
 
     /**
      * Register the cloud storage stream wrapper.
@@ -165,7 +165,7 @@ class CloudStorageStreamWrapper
     public function stream_close()
     {
         $this->cache = [];
-        fclose($this->objectResource);
+        fclose($this->openedStreamObjectResource);
     }
 
     /**
@@ -175,7 +175,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_eof(): bool
     {
-        return feof($this->objectResource);
+        return feof($this->openedStreamObjectResource);
     }
 
     /**
@@ -187,16 +187,16 @@ class CloudStorageStreamWrapper
      */
     public function stream_flush()
     {
-        if ('r' === $this->mode) {
+        if ('r' === $this->openedStreamMode) {
             return false;
         }
 
         return $this->call(function () {
-            rewind($this->objectResource);
+            rewind($this->openedStreamObjectResource);
 
-            $this->getClient()->putObject($this->key, stream_get_contents($this->objectResource), $this->getMimetype());
+            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
 
-            $this->removeCacheValue($this->key);
+            $this->removeCacheValue($this->openedStreamObjectKey);
         });
     }
 
@@ -218,31 +218,31 @@ class CloudStorageStreamWrapper
     public function stream_open(string $path, string $mode): bool
     {
         return $this->call(function () use ($path, $mode) {
-            $this->key = $this->parsePath($path);
-            $this->mode = $this->parseMode($this->key, $mode);
+            $this->openedStreamObjectKey = $this->parsePath($path);
+            $this->openedStreamMode = $this->parseMode($this->openedStreamObjectKey, $mode);
 
             $client = $this->getClient();
             $object = '';
 
-            if ('a' === $this->mode) {
+            if ('a' === $this->openedStreamMode) {
                 try {
-                    $object = $client->getObject($this->key);
+                    $object = $client->getObject($this->openedStreamObjectKey);
                 } catch (\Exception $exception) {
                 }
-            } elseif ('r' === $this->mode) {
-                $object = $client->getObject($this->key);
+            } elseif ('r' === $this->openedStreamMode) {
+                $object = $client->getObject($this->openedStreamObjectKey);
             }
 
-            if ('r' !== $this->mode) {
+            if ('r' !== $this->openedStreamMode) {
                 // Test that we can save the file that we're opening
-                $client->putObject($this->key, $object);
+                $client->putObject($this->openedStreamObjectKey, $object);
             }
 
-            $this->objectResource = fopen('php://temp', 'r+');
-            fwrite($this->objectResource, $object);
+            $this->openedStreamObjectResource = fopen('php://temp', 'r+');
+            fwrite($this->openedStreamObjectResource, $object);
 
-            if ('r' === $this->mode) {
-                rewind($this->objectResource);
+            if ('r' === $this->openedStreamMode) {
+                rewind($this->openedStreamObjectResource);
             }
         });
     }
@@ -254,7 +254,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_read(int $count)
     {
-        return fread($this->objectResource, $count);
+        return fread($this->openedStreamObjectResource, $count);
     }
 
     /**
@@ -264,7 +264,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
-        return 0 === fseek($this->objectResource, $offset, $whence);
+        return 0 === fseek($this->openedStreamObjectResource, $offset, $whence);
     }
 
     /**
@@ -274,7 +274,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_stat()
     {
-        return $this->getStat($this->key);
+        return $this->getStat($this->openedStreamObjectKey);
     }
 
     /**
@@ -284,7 +284,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_tell()
     {
-        return ftell($this->objectResource);
+        return ftell($this->openedStreamObjectResource);
     }
 
     /**
@@ -294,7 +294,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_write($data)
     {
-        return fwrite($this->objectResource, $data);
+        return fwrite($this->openedStreamObjectResource, $data);
     }
 
     /**
@@ -484,7 +484,7 @@ class CloudStorageStreamWrapper
             'zip' => 'application/zip',
         ];
 
-        $extension = strtolower(pathinfo($this->key, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($this->openedStreamObjectKey, PATHINFO_EXTENSION));
 
         return $mimetypes[$extension] ?? '';
     }
