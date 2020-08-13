@@ -60,4 +60,6 @@ jobs:
       - name: Install WordPress
         run: .github/workflows/install-wp.sh
       - name: Run unit tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --testsuite unit
+      - name: Run integration tests
+        run: vendor/bin/phpunit --testsuite integration

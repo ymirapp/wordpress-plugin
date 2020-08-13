@@ -10,8 +10,13 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Ymir WordPress Plugin Test Suite">
-            <directory>tests</directory>
+        <!-- Unit tests need to run first -->
+        <testsuite name="unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="integration">
+            <directory suffix="Test.php">./tests/Integration</directory>
         </testsuite>
     </testsuites>
 </phpunit>

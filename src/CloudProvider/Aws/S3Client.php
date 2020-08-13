@@ -47,7 +47,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         ]);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Could not copy object');
+            throw new \RuntimeException(sprintf('Could not copy object "%s"', $sourceKey));
         }
     }
 

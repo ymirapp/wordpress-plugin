@@ -109,10 +109,6 @@ class CloudStorageStreamWrapper
     public function rename(string $pathFrom, string $pathTo): bool
     {
         return $this->call(function () use ($pathFrom, $pathTo) {
-            if ($this->isDirectory($pathFrom) || $this->isDirectory($pathTo)) {
-                throw new \InvalidArgumentException('Cloud storage stream cannot copy directories');
-            }
-
             $client = $this->getClient();
             $sourceKey = $this->parsePath($pathFrom);
             $targetKey = $this->parsePath($pathTo);
@@ -135,6 +131,10 @@ class CloudStorageStreamWrapper
         return $this->call(function () use ($path) {
             $client = $this->getClient();
             $key = rtrim($this->parsePath($path), '/').'/';
+
+            if ('/' === $key) {
+                throw new \RuntimeException('Cannot delete root directory');
+            }
 
             $this->removeCacheValue($path);
 
@@ -195,6 +195,8 @@ class CloudStorageStreamWrapper
             rewind($this->objectResource);
 
             $this->getClient()->putObject($this->key, stream_get_contents($this->objectResource), $this->getMimetype());
+
+            $this->removeCacheValue($this->key);
         });
     }
 
@@ -222,7 +224,12 @@ class CloudStorageStreamWrapper
             $client = $this->getClient();
             $object = '';
 
-            if (in_array($this->mode, ['a', 'r'])) {
+            if ('a' === $this->mode) {
+                try {
+                    $object = $client->getObject($this->key);
+                } catch (\Exception $exception) {
+                }
+            } elseif ('r' === $this->mode) {
                 $object = $client->getObject($this->key);
             }
 
@@ -513,36 +520,41 @@ class CloudStorageStreamWrapper
      */
     private function getStat(string $key)
     {
-        $client = $this->getClient();
+        // Default stat is directory with 0777 access
         $stat = [
-            0 => 0,  'dev' => 0,
-            1 => 0,  'ino' => 0,
-            2 => 0,  'mode' => 0,
-            3 => 0,  'nlink' => 0,
-            4 => 0,  'uid' => 0,
-            5 => 0,  'gid' => 0,
-            6 => -1, 'rdev' => -1,
-            7 => 0,  'size' => 0,
-            8 => 0,  'atime' => 0,
-            9 => 0,  'mtime' => 0,
-            10 => 0,  'ctime' => 0,
-            11 => -1, 'blksize' => -1,
-            12 => -1, 'blocks' => -1,
+            0 => 0,       'dev' => 0,
+            1 => 0,       'ino' => 0,
+            2 => 0040777, 'mode' => 0040777,
+            3 => 0,       'nlink' => 0,
+            4 => 0,       'uid' => 0,
+            5 => 0,       'gid' => 0,
+            6 => -1,      'rdev' => -1,
+            7 => 0,       'size' => 0,
+            8 => 0,       'atime' => 0,
+            9 => 0,       'mtime' => 0,
+            10 => 0,      'ctime' => 0,
+            11 => -1,     'blksize' => -1,
+            12 => -1,     'blocks' => -1,
         ];
 
-        // Return directories as always existing
-        if ($this->isDirectory($key)) {
-            $stat[2] = $stat['mode'] = 16895;
-
+        if (empty($key)) {
             return $stat;
-        } elseif (!$client->objectExists($key)) {
-            return false;
         }
 
-        return $this->call(function () use ($client, $key, $stat) {
+        return $this->call(function () use ($key, $stat) {
+            $client = $this->getClient();
+
+            if (!$client->objectExists($key)) {
+                return false;
+            }
+
             $details = $client->getObjectDetails($key);
 
-            // Regular file with 0777 access
+            if ('/' === substr($key, -1) && isset($details['size']) && 0 === $details['size']) {
+                return $stat;
+            }
+
+            // If we get, we're dealing with a file so switch mode to a regular file with 0777 access
             $stat[2] = $stat['mode'] = 0100777;
 
             if (isset($details['size'])) {
@@ -555,14 +567,6 @@ class CloudStorageStreamWrapper
 
             return $stat;
         });
-    }
-
-    /**
-     * Checks if the given key is for a directory.
-     */
-    private function isDirectory(string $key): bool
-    {
-        return !pathinfo($key, PATHINFO_EXTENSION);
     }
 
     /**

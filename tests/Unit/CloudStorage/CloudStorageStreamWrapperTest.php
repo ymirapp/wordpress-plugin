@@ -27,69 +27,6 @@ class CloudStorageStreamWrapperTest extends TestCase
     use CloudStorageClientInterfaceMockTrait;
     use FunctionMockTrait;
 
-    /**
-     * Needs to run first or broken.
-     *
-     * TODO: Fix
-     */
-    public function testFirstRegisterWithExistingWrapper()
-    {
-        $client = $this->getCloudStorageClientInterfaceMock();
-
-        $stream_context_get_options = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_get_options');
-        $stream_context_get_options->expects($this->once())
-            ->willReturn([]);
-
-        $stream_context_set_default = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_set_default');
-        $stream_context_set_default->expects($this->once())
-                                   ->with($this->identicalTo(['cloudstorage' => ['client' => $client]]));
-
-        $stream_get_wrappers = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_get_wrappers');
-        $stream_get_wrappers->expects($this->once())
-                            ->willReturn(['cloudstorage']);
-
-        $stream_wrapper_register = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_register');
-        $stream_wrapper_register->expects($this->once())
-                                ->with($this->identicalTo('cloudstorage'), $this->identicalTo(CloudStorageStreamWrapper::class), STREAM_IS_URL);
-
-        $stream_wrapper_unregister = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_unregister');
-        $stream_wrapper_unregister->expects($this->once())
-                                  ->with($this->identicalTo('cloudstorage'));
-
-        CloudStorageStreamWrapper::register($client);
-    }
-
-    /**
-     * Needs to run first or broken.
-     *
-     * TODO: Fix
-     */
-    public function testFirstRegisterWithoutExistingWrapper()
-    {
-        $client = $this->getCloudStorageClientInterfaceMock();
-
-        $stream_context_get_options = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_get_options');
-        $stream_context_get_options->expects($this->once())
-                                   ->willReturn([]);
-
-        $stream_context_set_default = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_set_default');
-        $stream_context_set_default->expects($this->once())
-                                   ->with($this->identicalTo(['cloudstorage' => ['client' => $client]]));
-
-        $stream_get_wrappers = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_get_wrappers');
-        $stream_get_wrappers->expects($this->once())
-                            ->willReturn([]);
-
-        $stream_wrapper_register = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_register');
-        $stream_wrapper_register->expects($this->once())
-                                ->with($this->identicalTo('cloudstorage'), $this->identicalTo(CloudStorageStreamWrapper::class), STREAM_IS_URL);
-
-        $stream_wrapper_unregister = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_unregister');
-        $stream_wrapper_unregister->expects($this->never());
-
-        CloudStorageStreamWrapper::register($client);
-    }
-
     public function testMkdirWhenDirectoryDoesntExist()
     {
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -129,6 +66,65 @@ class CloudStorageStreamWrapperTest extends TestCase
         (new CloudStorageStreamWrapper())->mkdir('cloudstorage:///foo', 0777);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRegisterWithExistingWrapper()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $stream_context_get_options = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_get_options');
+        $stream_context_get_options->expects($this->once())
+                                   ->willReturn([]);
+
+        $stream_context_set_default = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_set_default');
+        $stream_context_set_default->expects($this->once())
+                                   ->with($this->identicalTo(['cloudstorage' => ['client' => $client]]));
+
+        $stream_get_wrappers = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_get_wrappers');
+        $stream_get_wrappers->expects($this->once())
+                            ->willReturn(['cloudstorage']);
+
+        $stream_wrapper_register = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_register');
+        $stream_wrapper_register->expects($this->once())
+                                ->with($this->identicalTo('cloudstorage'), $this->identicalTo(CloudStorageStreamWrapper::class), STREAM_IS_URL);
+
+        $stream_wrapper_unregister = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_unregister');
+        $stream_wrapper_unregister->expects($this->once())
+                                  ->with($this->identicalTo('cloudstorage'));
+
+        CloudStorageStreamWrapper::register($client);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRegisterWithoutExistingWrapper()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $stream_context_get_options = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_get_options');
+        $stream_context_get_options->expects($this->once())
+                                   ->willReturn([]);
+
+        $stream_context_set_default = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_context_set_default');
+        $stream_context_set_default->expects($this->once())
+                                   ->with($this->identicalTo(['cloudstorage' => ['client' => $client]]));
+
+        $stream_get_wrappers = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_get_wrappers');
+        $stream_get_wrappers->expects($this->once())
+                            ->willReturn([]);
+
+        $stream_wrapper_register = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_register');
+        $stream_wrapper_register->expects($this->once())
+                                ->with($this->identicalTo('cloudstorage'), $this->identicalTo(CloudStorageStreamWrapper::class), STREAM_IS_URL);
+
+        $stream_wrapper_unregister = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'stream_wrapper_unregister');
+        $stream_wrapper_unregister->expects($this->never());
+
+        CloudStorageStreamWrapper::register($client);
+    }
+
     public function testRenameSuccessful()
     {
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -148,54 +144,9 @@ class CloudStorageStreamWrapperTest extends TestCase
                            [$this->identicalTo(true), $this->identicalTo('cloudstorage:///bar.txt')]
                        );
 
-        $pathinfo = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'pathinfo');
-        $pathinfo->expects($this->exactly(2))
-                 ->withConsecutive(
-                     [$this->identicalTo('cloudstorage:///foo.txt'), $this->identicalTo(PATHINFO_EXTENSION)],
-                     [$this->identicalTo('cloudstorage:///bar.txt'), $this->identicalTo(PATHINFO_EXTENSION)]
-                 )
-                ->willReturn(true);
-
         CloudStorageStreamWrapper::register($client);
 
         (new CloudStorageStreamWrapper())->rename('cloudstorage:///foo.txt', 'cloudstorage:///bar.txt');
-    }
-
-    public function testRenameWhenPathFromIsntAFile()
-    {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('Cloud storage stream cannot copy directories');
-
-        $client = $this->getCloudStorageClientInterfaceMock();
-
-        $pathinfo = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'pathinfo');
-        $pathinfo->expects($this->once())
-                 ->with($this->identicalTo('cloudstorage:///foo'), $this->identicalTo(PATHINFO_EXTENSION))
-                 ->willReturn(false);
-
-        CloudStorageStreamWrapper::register($client);
-
-        (new CloudStorageStreamWrapper())->rename('cloudstorage:///foo', 'cloudstorage:///bar.txt');
-    }
-
-    public function testRenameWhenPathToIsntAFile()
-    {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('Cloud storage stream cannot copy directories');
-
-        $client = $this->getCloudStorageClientInterfaceMock();
-
-        $pathinfo = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'pathinfo');
-        $pathinfo->expects($this->exactly(2))
-                 ->withConsecutive(
-                     [$this->identicalTo('cloudstorage:///foo.txt'), $this->identicalTo(PATHINFO_EXTENSION)],
-                     [$this->identicalTo('cloudstorage:///bar'), $this->identicalTo(PATHINFO_EXTENSION)]
-                 )
-                 ->willReturnOnConsecutiveCalls(true, false);
-
-        CloudStorageStreamWrapper::register($client);
-
-        (new CloudStorageStreamWrapper())->rename('cloudstorage:///foo.txt', 'cloudstorage:///bar');
     }
 
     public function testRmdirWithEmptydirectory()
@@ -504,18 +455,31 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testStreamStatWithDirectory()
     {
+        $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = new CloudStorageStreamWrapper();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/directory/'))
+            ->willReturn(true);
+
+        $client->expects($this->once())
+               ->method('getObjectDetails')
+               ->with($this->identicalTo('/directory/'))
+               ->willReturn(['size' => 0]);
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
         $keyReflection = $wrapperReflection->getProperty('key');
         $keyReflection->setAccessible(true);
-        $keyReflection->setValue($wrapper, '/foo');
+        $keyReflection->setValue($wrapper, '/directory/');
+
+        CloudStorageStreamWrapper::register($client);
 
         $this->assertSame([
             0 => 0,  'dev' => 0,
             1 => 0,  'ino' => 0,
-            2 => 16895,  'mode' => 16895,
+            2 => 0040777,  'mode' => 0040777,
             3 => 0,  'nlink' => 0,
             4 => 0,  'uid' => 0,
             5 => 0,  'gid' => 0,
@@ -725,7 +689,18 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testUrlStatWithDirectory()
     {
+        $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = new CloudStorageStreamWrapper();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/directory/'))
+               ->willReturn(true);
+
+        $client->expects($this->once())
+               ->method('getObjectDetails')
+               ->with($this->identicalTo('/directory/'))
+               ->willReturn(['size' => 0]);
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
@@ -735,7 +710,7 @@ class CloudStorageStreamWrapperTest extends TestCase
         $expectedStat = [
             0 => 0,  'dev' => 0,
             1 => 0,  'ino' => 0,
-            2 => 16895,  'mode' => 16895,
+            2 => 0040777,  'mode' => 0040777,
             3 => 0,  'nlink' => 0,
             4 => 0,  'uid' => 0,
             5 => 0,  'gid' => 0,
@@ -748,8 +723,10 @@ class CloudStorageStreamWrapperTest extends TestCase
             12 => -1, 'blocks' => -1,
         ];
 
-        $this->assertSame($expectedStat, $wrapper->url_stat('cloudstorage:///foo', 1));
-        $this->assertSame(['cloudstorage:///foo' => $expectedStat], $cacheReflection->getValue($wrapper));
+        CloudStorageStreamWrapper::register($client);
+
+        $this->assertSame($expectedStat, $wrapper->url_stat('cloudstorage:///directory/', 1));
+        $this->assertSame(['cloudstorage:///directory/' => $expectedStat], $cacheReflection->getValue($wrapper));
     }
 
     public function testUrlStatWithFileSize()
