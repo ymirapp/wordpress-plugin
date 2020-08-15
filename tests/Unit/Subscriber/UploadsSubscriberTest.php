@@ -70,12 +70,57 @@ class UploadsSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
+            'pre_wp_unique_filename_file_list' => ['getUniqueFilenameList', 10, 3],
             'upload_dir' => 'replaceUploadDirectories',
             'upload_size_limit' => 'overrideUploadSizeLimit',
             '_wp_relative_upload_path' => ['useFileManagerForRelativePath', 10, 2],
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
+    }
+
+    public function testGetUniqueFilenameListWithCloudStorageDirectoryNoMatchingDirectory()
+    {
+        $this->assertNull((new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'directory', 'filename'));
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testGetUniqueFilenameListWithPathinfoReturnsFalse()
+    {
+        $pathinfo = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'pathinfo');
+        $pathinfo->expects($this->once())
+                 ->with($this->identicalTo('filename'), $this->identicalTo(PATHINFO_FILENAME))
+                 ->willReturn(false);
+
+        $this->assertNull((new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'cloudstorage_dir/directory', 'filename'));
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testGetUniqueFilenameListWithScandirReturnsFalse()
+    {
+        $scandir = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'scandir');
+        $scandir->expects($this->once())
+                ->with($this->identicalTo('cloudstorage_dir/directory/filename*'))
+                ->willReturn(false);
+
+        $this->assertNull((new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'cloudstorage_dir/directory', 'filename'));
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testGetUniqueFilenameListWithScandirReturnsFileList()
+    {
+        $scandir = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'scandir');
+        $scandir->expects($this->once())
+                ->with($this->identicalTo('cloudstorage_dir/directory/filename*'))
+                ->willReturn(['filename']);
+
+        $this->assertSame(['filename'], (new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'cloudstorage_dir/directory', 'filename'));
     }
 
     public function testOverrideUploadSizeLimitWithLimit()

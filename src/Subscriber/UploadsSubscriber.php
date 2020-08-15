@@ -88,10 +88,25 @@ class UploadsSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            'pre_wp_unique_filename_file_list' => ['getUniqueFilenameList', 10, 3],
             'upload_dir' => 'replaceUploadDirectories',
             'upload_size_limit' => 'overrideUploadSizeLimit',
             '_wp_relative_upload_path' => ['useFileManagerForRelativePath', 10, 2],
         ];
+    }
+
+    /**
+     * Get the files used for wp_unique_filename() to prevent performance issues with scandir in large directories.
+     */
+    public function getUniqueFilenameList(?array $files, string $directory, string $filename): ?array
+    {
+        $filename = pathinfo($filename, PATHINFO_FILENAME);
+
+        if (0 !== stripos($directory, $this->cloudStorageDirectory) || empty($filename) || !is_string($filename)) {
+            return $files;
+        }
+
+        return scandir(rtrim($directory, '/').'/'.$filename.'*') ?: null;
     }
 
     /**

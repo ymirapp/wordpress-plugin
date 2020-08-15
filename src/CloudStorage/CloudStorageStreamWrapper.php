@@ -131,8 +131,15 @@ class CloudStorageStreamWrapper
     {
         return $this->call(function () use ($path) {
             $this->openedDirectoryPath = $path;
-            $this->openedDirectoryPrefix = trim($this->parsePath($path), '/').'/';
-            $this->openedDirectoryObjects = new \ArrayIterator($this->getClient()->getObjects($this->openedDirectoryPrefix));
+
+            if ('*' === substr($path, -1)) {
+                $path = ltrim($this->parsePath($path), '/');
+                $this->openedDirectoryPrefix = substr($path, 0, (strrpos($path, '/') ?: 0) + 1);
+                $this->openedDirectoryObjects = new \ArrayIterator($this->getClient()->getObjects(rtrim($path, '*')));
+            } else {
+                $this->openedDirectoryPrefix = trim($this->parsePath($path), '/').'/';
+                $this->openedDirectoryObjects = new \ArrayIterator($this->getClient()->getObjects($this->openedDirectoryPrefix));
+            }
         });
     }
 

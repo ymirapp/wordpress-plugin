@@ -54,7 +54,7 @@ class CloudStorageStreamWrapperTest extends TestCase
         $this->assertNull($openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
-    public function testDirOpendir()
+    public function testDirOpendirWithRegularDirectory()
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $objects = [
@@ -88,6 +88,42 @@ class CloudStorageStreamWrapperTest extends TestCase
         $this->assertSame($objects, $openedDirectoryObjects->getArrayCopy());
         $this->assertSame('cloudstorage:///directory', $openedDirectoryPathReflection->getValue($wrapper));
         $this->assertSame('directory/', $openedDirectoryPrefixReflection->getValue($wrapper));
+    }
+
+    public function testDirOpendirWithWildcard()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+        $objects = [
+            ['Key' => 'directory/subdirectory/foo'],
+            ['Key' => 'directory/subdirectory/foo-1'],
+        ];
+        $wrapper = new CloudStorageStreamWrapper();
+        $wrapperReflection = new \ReflectionObject($wrapper);
+
+        $client->expects($this->once())
+               ->method('getObjects')
+               ->with($this->identicalTo('directory/subdirectory/file'))
+               ->willReturn($objects);
+
+        $openedDirectoryObjectsReflection = $wrapperReflection->getProperty('openedDirectoryObjects');
+        $openedDirectoryObjectsReflection->setAccessible(true);
+
+        $openedDirectoryPathReflection = $wrapperReflection->getProperty('openedDirectoryPath');
+        $openedDirectoryPathReflection->setAccessible(true);
+
+        $openedDirectoryPrefixReflection = $wrapperReflection->getProperty('openedDirectoryPrefix');
+        $openedDirectoryPrefixReflection->setAccessible(true);
+
+        CloudStorageStreamWrapper::register($client, new \ArrayObject());
+
+        $this->assertTrue($wrapper->dir_opendir('cloudstorage:///directory/subdirectory/file*', 0));
+
+        $openedDirectoryObjects = $openedDirectoryObjectsReflection->getValue($wrapper);
+
+        $this->assertInstanceOf(\ArrayIterator::class, $openedDirectoryObjects);
+        $this->assertSame($objects, $openedDirectoryObjects->getArrayCopy());
+        $this->assertSame('cloudstorage:///directory/subdirectory/file*', $openedDirectoryPathReflection->getValue($wrapper));
+        $this->assertSame('directory/subdirectory/', $openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
     public function testDirReaddirWhenOpenedDirectoryObjectIsInvalid()

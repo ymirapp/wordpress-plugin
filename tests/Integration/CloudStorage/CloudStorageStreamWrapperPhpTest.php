@@ -435,6 +435,19 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->assertSame(['bar', 'foo'], scandir('cloudstorage:///directory'));
     }
 
+    public function testScandirWithWildcard()
+    {
+        $this->client->expects($this->once())
+                     ->method('getObjects')
+                     ->with($this->identicalTo('directory/subdirectory/file'))
+                     ->willReturn([
+                         ['Key' => 'directory/subdirectory/foo'],
+                         ['Key' => 'directory/subdirectory/foo-1'],
+                     ]);
+
+        $this->assertSame(['foo', 'foo-1'], scandir('cloudstorage:///directory/subdirectory/file*'));
+    }
+
     public function testStatWithProtocol()
     {
         clearstatcache(false, 'cloudstorage://');
