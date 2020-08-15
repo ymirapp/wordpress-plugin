@@ -37,9 +37,30 @@ class CloudStorageStreamWrapper
     /**
      * Cache of object and directory lookups.
      *
-     * @var array
+     * @var \ArrayObject
      */
-    private $cache = [];
+    private $cache;
+
+    /**
+     * The cloud storage objects retrieved with "dir_opendir".
+     *
+     * @var \ArrayIterator
+     */
+    private $openedDirectoryObjects;
+
+    /**
+     * The path when "dir_opendir" was called.
+     *
+     * @var string
+     */
+    private $openedDirectoryPath;
+
+    /**
+     * The prefix used to get the cloud storage objects with "dir_opendir".
+     *
+     * @var string
+     */
+    private $openedDirectoryPrefix;
 
     /**
      * Mode used when the stream was opened.
@@ -65,7 +86,7 @@ class CloudStorageStreamWrapper
     /**
      * Register the cloud storage stream wrapper.
      */
-    public static function register(CloudStorageClientInterface $client)
+    public static function register(CloudStorageClientInterface $client, \ArrayObject $cache = null)
     {
         if (in_array(self::PROTOCOL, stream_get_wrappers())) {
             stream_wrapper_unregister(self::PROTOCOL);
@@ -77,7 +98,95 @@ class CloudStorageStreamWrapper
 
         $defaultOptions[self::PROTOCOL]['client'] = $client;
 
+        if ($cache instanceof \ArrayObject) {
+            $defaultOptions[self::PROTOCOL]['cache'] = $cache;
+        } elseif (!isset($defaultOptions[self::PROTOCOL]['cache'])) {
+            $defaultOptions[self::PROTOCOL]['cache'] = new \ArrayObject();
+        }
+
         stream_context_set_default($defaultOptions);
+    }
+
+    /**
+     * Close directory handle.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.dir-closedir.php
+     */
+    public function dir_closedir(): bool
+    {
+        $this->openedDirectoryObjects = null;
+        $this->openedDirectoryPath = null;
+        $this->openedDirectoryPrefix = null;
+        gc_collect_cycles();
+
+        return true;
+    }
+
+    /**
+     * Open directory handle.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.dir-opendir.php
+     */
+    public function dir_opendir(string $path, int $options): bool
+    {
+        return $this->call(function () use ($path) {
+            $this->openedDirectoryPath = $path;
+            $this->openedDirectoryPrefix = trim($this->parsePath($path), '/').'/';
+            $this->openedDirectoryObjects = new \ArrayIterator($this->getClient()->getObjects($this->openedDirectoryPrefix));
+        });
+    }
+
+    /**
+     * Read entry from directory handle.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.dir-readdir.php
+     */
+    public function dir_readdir()
+    {
+        if (!$this->openedDirectoryObjects instanceof \ArrayIterator || !$this->openedDirectoryObjects->valid()) {
+            return false;
+        }
+
+        $current = $this->openedDirectoryObjects->current();
+
+        if (empty($current['Key'])) {
+            return false;
+        }
+
+        $details = [];
+
+        if (isset($current['Size'])) {
+            $details['size'] = $current['Size'];
+        }
+        if (isset($current['LastModified'])) {
+            $details['last-modified'] = $current['LastModified'];
+        }
+
+        $filename = substr($current['Key'], strlen($this->openedDirectoryPrefix));
+
+        $this->setCacheValue($this->openedDirectoryPath.$filename, $this->getStat($current['Key'], $details));
+
+        $this->openedDirectoryObjects->next();
+
+        return $filename;
+    }
+
+    /**
+     * Rewind directory handle.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.dir-rewinddir.php
+     */
+    public function dir_rewinddir(): bool
+    {
+        return $this->call(function () {
+            if (!is_string($this->openedDirectoryPath)) {
+                return false;
+            }
+
+            $this->dir_opendir($this->openedDirectoryPath, 0);
+
+            return true;
+        });
     }
 
     /**
@@ -164,7 +273,7 @@ class CloudStorageStreamWrapper
      */
     public function stream_close()
     {
-        $this->cache = [];
+        $this->cache = null;
         fclose($this->openedStreamObjectResource);
     }
 
@@ -196,7 +305,7 @@ class CloudStorageStreamWrapper
 
             $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
 
-            $this->removeCacheValue($this->openedStreamObjectKey);
+            $this->removeCacheValue(self::PROTOCOL.'://'.$this->openedStreamObjectKey);
         });
     }
 
@@ -354,11 +463,30 @@ class CloudStorageStreamWrapper
     }
 
     /**
+     * Get the cache used for storing stat values.
+     */
+    private function getCache(): \ArrayObject
+    {
+        if (!$this->cache instanceof \ArrayObject) {
+            $this->cache = $this->getOption('cache') ?: new \ArrayObject();
+        }
+
+        return $this->cache;
+    }
+
+    /**
      * Get the cache value for the given key.
      */
     private function getCacheValue(string $key)
     {
-        return $this->cache[$key] ?? null;
+        $cache = $this->getCache();
+        $value = null;
+
+        if ($cache->offsetExists($key)) {
+            $value = $cache->offsetGet($key);
+        }
+
+        return $value;
     }
 
     /**
@@ -516,9 +644,9 @@ class CloudStorageStreamWrapper
     }
 
     /**
-     * Get the stat function return value with the given stat values merged in.
+     * Get the stat function return value with the given stat values merged in for the given object key.
      */
-    private function getStat(string $key)
+    private function getStat(string $key, array $details = [])
     {
         // Default stat is directory with 0777 access
         $stat = [
@@ -541,14 +669,16 @@ class CloudStorageStreamWrapper
             return $stat;
         }
 
-        return $this->call(function () use ($key, $stat) {
+        return $this->call(function () use ($details, $key, $stat) {
             $client = $this->getClient();
 
-            if (!$client->objectExists($key)) {
-                return false;
+            if (empty($details)) {
+                try {
+                    $details = $client->getObjectDetails($key);
+                } catch (\Exception $exception) {
+                    return false;
+                }
             }
-
-            $details = $client->getObjectDetails($key);
 
             if ('/' === substr($key, -1) && isset($details['size']) && 0 === $details['size']) {
                 return $stat;
@@ -607,8 +737,13 @@ class CloudStorageStreamWrapper
      */
     private function removeCacheValue(string $key)
     {
+        $cache = $this->getCache();
+
         clearstatcache(true, $key);
-        unset($this->cache[$key]);
+
+        if ($cache->offsetExists($key)) {
+            $cache->offsetUnset($key);
+        }
     }
 
     /**
@@ -616,6 +751,6 @@ class CloudStorageStreamWrapper
      */
     private function setCacheValue(string $key, $value)
     {
-        $this->cache[$key] = $value;
+        $this->getCache()->offsetSet($key, $value);
     }
 }

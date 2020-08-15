@@ -35,7 +35,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client = $this->getCloudStorageClientInterfaceMock();
 
-        CloudStorageStreamWrapper::register($this->client);
+        CloudStorageStreamWrapper::register($this->client, new \ArrayObject());
     }
 
     public function testAppendsToExistingFile()
@@ -79,9 +79,9 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testDoesNotErrorOnFileExists()
     {
         $this->client->expects($this->once())
-                     ->method('objectExists')
+                     ->method('getObjectDetails')
                      ->with($this->identicalTo('/file'))
-                     ->willReturn(false);
+                     ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
         $this->assertFileNotExists('cloudstorage:///file');
     }
@@ -89,23 +89,15 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testDoesNotErrorOnIsLink()
     {
         $this->client->expects($this->once())
-                     ->method('objectExists')
+                     ->method('getObjectDetails')
                      ->with($this->identicalTo('/file'))
-                     ->willReturn(false);
+                     ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
         $this->assertFalse(is_link('cloudstorage:///file'));
     }
 
     public function testFileType()
     {
-        $this->client->expects($this->exactly(2))
-                     ->method('objectExists')
-                     ->withConsecutive(
-                         [$this->identicalTo('/file')],
-                         [$this->identicalTo('/directory/')]
-                     )
-                     ->willReturn(true);
-
         $this->client->expects($this->exactly(2))
                      ->method('getObjectDetails')
                      ->withConsecutive(
@@ -208,9 +200,69 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->assertFalse(mkdir('cloudstorage:///directory'));
     }
 
+    public function testReaddirCachesStatValue()
+    {
+        $this->client->expects($this->once())
+                     ->method('getObjects')
+                     ->with($this->identicalTo('directory/'))
+                     ->willReturn([
+                         ['Key' => 'directory/foo', 'Size' => 1],
+                         ['Key' => 'directory/bar', 'Size' => 2],
+                     ]);
+
+        $directory = 'cloudstorage:///directory';
+        $opendir = opendir($directory);
+
+        $this->assertIsResource($opendir);
+
+        $file1 = readdir($opendir);
+        $this->assertEquals('foo', $file1);
+        $this->assertEquals(1, filesize($directory.$file1));
+
+        $file2 = readdir($opendir);
+        $this->assertEquals('bar', $file2);
+        $this->assertEquals(2, filesize($directory.$file2));
+
+        closedir($opendir);
+    }
+
+    public function testReadingDirectory()
+    {
+        $this->client->expects($this->once())
+                     ->method('getObjects')
+                     ->with($this->identicalTo('directory/'))
+                     ->willReturn([
+                         ['Key' => 'directory/a', 'Size' => 1],
+                         ['Key' => 'directory/b', 'Size' => 2],
+                         ['Key' => 'directory/c', 'Size' => 3],
+                         ['Key' => 'directory/d', 'Size' => 4],
+                         ['Key' => 'directory/e', 'Size' => 5],
+                         ['Key' => 'directory/f', 'Size' => 6],
+                         ['Key' => 'directory/g', 'Size' => 7],
+                     ]);
+
+        $directory = 'cloudstorage:///directory';
+        $opendir = opendir($directory);
+
+        $this->assertIsResource($opendir);
+
+        $files = [];
+        while (false !== ($file = readdir($opendir))) {
+            $files[] = $file;
+        }
+
+        $expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        $this->assertEquals($expected, $files);
+
+        $this->assertSame(4, filesize($directory.'d'));
+        $this->assertSame(6, filesize($directory.'f'));
+
+        closedir($opendir);
+    }
+
     public function testReadingFile()
     {
-        $this->client->expects($this->exactly(2))
+        $this->client->expects($this->once())
                      ->method('objectExists')
                      ->with($this->identicalTo('/file'))
                      ->willReturn(true);
@@ -294,7 +346,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
     public function testReturnsStreamSizeFromHeaders()
     {
-        $this->client->expects($this->exactly(2))
+        $this->client->expects($this->once())
                      ->method('objectExists')
                      ->with($this->identicalTo('/file'))
                      ->willReturn(true);
@@ -370,6 +422,19 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->assertFalse(rmdir('cloudstorage://'));
     }
 
+    public function testScandirWithRegularDirectory()
+    {
+        $this->client->expects($this->once())
+            ->method('getObjects')
+            ->with($this->identicalTo('directory/'))
+            ->willReturn([
+                ['Key' => 'directory/foo'],
+                ['Key' => 'directory/bar'],
+            ]);
+
+        $this->assertSame(['bar', 'foo'], scandir('cloudstorage:///directory'));
+    }
+
     public function testStatWithProtocol()
     {
         clearstatcache(false, 'cloudstorage://');
@@ -434,11 +499,6 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testUrlStatDataClearedOnWrite()
     {
         $this->client->expects($this->exactly(2))
-                     ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
-                     ->willReturn(true);
-
-        $this->client->expects($this->exactly(2))
                      ->method('getObjectDetails')
                      ->with($this->identicalTo('/file'))
                      ->willReturnOnConsecutiveCalls(['size' => 124], ['size' => 125]);
@@ -462,11 +522,6 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $time = strtotime('now');
 
         $this->client->expects($this->once())
-                     ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
-                     ->willReturn(true);
-
-        $this->client->expects($this->once())
                      ->method('getObjectDetails')
                      ->with($this->identicalTo('/file'))
                      ->willReturn(['size' => 5, 'last-modified' => gmdate('r', $time)]);
@@ -483,11 +538,6 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testUrlStatUsesCacheData()
     {
         $this->client->expects($this->once())
-                     ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
-                     ->willReturn(true);
-
-        $this->client->expects($this->once())
                      ->method('getObjectDetails')
                      ->with($this->identicalTo('/file'))
                      ->willReturn(['size' => 124]);
@@ -499,12 +549,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testUrlStatWhenGetObjectDetailsThrowsException()
     {
         $this->expectException(Warning::class);
-        $this->expectExceptionMessage('Object "/file" not found');
-
-        $this->client->expects($this->once())
-                     ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
-                     ->willReturn(true);
+        $this->expectExceptionMessage('filesize(): stat failed for cloudstorage:///file');
 
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
