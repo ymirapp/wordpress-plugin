@@ -27,6 +27,7 @@ class YmirConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
+        $container['ymir_primary_domain_name'] = getenv('YMIR_PRIMARY_DOMAIN_NAME') ?: '';
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';
     }
 }

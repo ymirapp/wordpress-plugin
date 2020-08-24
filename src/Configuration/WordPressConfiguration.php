@@ -40,6 +40,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             return 'wordpress@'.$sitename;
         });
         $container['http_transport'] = _wp_http_get_object();
+        $container['is_multisite'] = is_multisite();
         $container['phpmailer'] = function () {
             if (!class_exists(\PHPMailer::class)) {
                 require_once ABSPATH.WPINC.'/class-phpmailer.php';
