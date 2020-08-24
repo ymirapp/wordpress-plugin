@@ -41,6 +41,24 @@ class WordPressSubscriberTest extends TestCase
         $this->assertTrue((new WordPressSubscriber('YMIR', 'https://'.$this->faker->domainName))->enableVisualEditor(false));
     }
 
+    public function testGetSubscribedEvents()
+    {
+        $callbacks = WordPressSubscriber::getSubscribedEvents();
+
+        foreach ($callbacks as $callback) {
+            $this->assertTrue(method_exists(WordPressSubscriber::class, is_array($callback) ? $callback[0] : $callback));
+        }
+
+        $subscribedEvents = [
+            'got_url_rewrite' => 'enableUrlRewrite',
+            'plugins_url' => 'rewritePluginUrl',
+            'sanitize_file_name_chars' => 'sanitizeFileNameCharacters',
+            'user_can_richedit' => 'enableVisualEditor',
+        ];
+
+        $this->assertSame($subscribedEvents, $callbacks);
+    }
+
     public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
     {
         $siteUrl = 'https://'.$this->faker->domainName;
