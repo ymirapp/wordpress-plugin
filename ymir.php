@@ -20,8 +20,8 @@ Version: 1.0.0
 License: GPL3
 */
 
-if (version_compare(PHP_VERSION, '7.1', '<')) {
-    exit(sprintf('Ymir requires PHP 7.1 or higher. Your WordPress site is using PHP %s.', PHP_VERSION));
+if (version_compare(PHP_VERSION, '7.2', '<')) {
+    exit(sprintf('Ymir requires PHP 7.2 or higher. Your WordPress site is using PHP %s.', PHP_VERSION));
 }
 
 // Setup class autoloader
