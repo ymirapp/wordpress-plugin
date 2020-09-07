@@ -188,7 +188,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $objects->expects($this->once())
                 ->method('current')
-                ->willReturn(['Key' => 'directory/file', 'LastModified' => '10 September 2000']);
+                ->willReturn(['Key' => 'directory/file.ext', 'LastModified' => '10 September 2000']);
 
         $objects->expects($this->once())
                 ->method('next');
@@ -228,8 +228,8 @@ class CloudStorageStreamWrapperTest extends TestCase
             12 => -1, 'blocks' => -1,
         ];
 
-        $this->assertSame('file', $wrapper->dir_readdir());
-        $this->assertSame(['cloudstorage:///directory/file' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
+        $this->assertSame('file.ext', $wrapper->dir_readdir());
+        $this->assertSame(['cloudstorage:///directory/file.ext' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
     public function testDirReaddirWithNoLastModifiedOrSize()
@@ -244,7 +244,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $objects->expects($this->once())
                 ->method('current')
-                ->willReturn(['Key' => 'directory/file']);
+                ->willReturn(['Key' => 'directory/file.ext']);
 
         $objects->expects($this->once())
                 ->method('next');
@@ -284,8 +284,8 @@ class CloudStorageStreamWrapperTest extends TestCase
             12 => -1, 'blocks' => -1,
         ];
 
-        $this->assertSame('file', $wrapper->dir_readdir());
-        $this->assertSame(['cloudstorage:///directory/file' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
+        $this->assertSame('file.ext', $wrapper->dir_readdir());
+        $this->assertSame(['cloudstorage:///directory/file.ext' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
     public function testDirReaddirWithSize()
@@ -300,7 +300,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
         $objects->expects($this->once())
                 ->method('current')
-                ->willReturn(['Key' => 'directory/file', 'Size' => 42]);
+                ->willReturn(['Key' => 'directory/file.ext', 'Size' => 42]);
 
         $objects->expects($this->once())
                 ->method('next');
@@ -340,8 +340,8 @@ class CloudStorageStreamWrapperTest extends TestCase
             12 => -1, 'blocks' => -1,
         ];
 
-        $this->assertSame('file', $wrapper->dir_readdir());
-        $this->assertSame(['cloudstorage:///directory/file' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
+        $this->assertSame('file.ext', $wrapper->dir_readdir());
+        $this->assertSame(['cloudstorage:///directory/file.ext' => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
     public function testDirRewinddirWithInvalidopenedDirectoryPrefix()
@@ -818,15 +818,13 @@ class CloudStorageStreamWrapperTest extends TestCase
         $this->assertFalse($wrapper->stream_stat());
     }
 
-    public function testStreamStatWithDirectory()
+    public function testStreamStatWithDirectoryWontMakeApiCall()
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = new CloudStorageStreamWrapper();
 
-        $client->expects($this->once())
-               ->method('getObjectDetails')
-               ->with($this->identicalTo('/directory/'))
-               ->willReturn(['size' => 0]);
+        $client->expects($this->never())
+               ->method('getObjectDetails');
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 
@@ -1032,15 +1030,13 @@ class CloudStorageStreamWrapperTest extends TestCase
         $this->assertSame(['cloudstorage:///foo.txt' => false], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testUrlStatWithDirectory()
+    public function testUrlStatWithDirectoryWontMakeApiCall()
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = new CloudStorageStreamWrapper();
 
-        $client->expects($this->once())
-               ->method('getObjectDetails')
-               ->with($this->identicalTo('/directory/'))
-               ->willReturn(['size' => 0]);
+        $client->expects($this->never())
+               ->method('getObjectDetails');
 
         $wrapperReflection = new \ReflectionObject($wrapper);
 

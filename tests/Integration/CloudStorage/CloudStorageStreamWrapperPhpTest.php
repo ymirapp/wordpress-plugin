@@ -42,17 +42,17 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('getObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn('test');
 
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file'), $this->identicalTo('test')],
-                         [$this->identicalTo('/file'), $this->identicalTo('testing'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test')],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing'), $this->identicalTo('')]
                      );
 
-        $file = fopen('cloudstorage:///file', 'a');
+        $file = fopen('cloudstorage:///file.ext', 'a');
 
         $this->assertEquals(4, ftell($file));
         $this->assertEquals(3, fwrite($file, 'ing'));
@@ -63,14 +63,14 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('getObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        $file = fopen('cloudstorage:///file', 'a');
+        $file = fopen('cloudstorage:///file.ext', 'a');
 
         $this->assertEquals(0, ftell($file));
         $this->assertTrue(fclose($file));
@@ -80,28 +80,28 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
-        $this->assertFileNotExists('cloudstorage:///file');
+        $this->assertFileNotExists('cloudstorage:///file.ext');
     }
 
     public function testDoesNotErrorOnIsLink()
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
-        $this->assertFalse(is_link('cloudstorage:///file'));
+        $this->assertFalse(is_link('cloudstorage:///file.ext'));
     }
 
     public function testFileType()
     {
-        $this->client->expects($this->exactly(2))
+        $this->client->expects($this->once())
                      ->method('getObjectDetails')
                      ->withConsecutive(
-                         [$this->identicalTo('/file')],
+                         [$this->identicalTo('/file.ext')],
                          [$this->identicalTo('/directory/')]
                      )
                      ->willReturnOnConsecutiveCalls(
@@ -109,7 +109,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          ['size' => 0]
                      );
 
-        $this->assertSame('file', filetype('cloudstorage:///file'));
+        $this->assertSame('file', filetype('cloudstorage:///file.ext'));
         $this->assertSame('dir', filetype('cloudstorage:///directory/'));
     }
 
@@ -120,10 +120,10 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(false);
 
-        fopen('cloudstorage:///file', 'r');
+        fopen('cloudstorage:///file.ext', 'r');
     }
 
     public function testFopenWithUnsupportedMode()
@@ -131,21 +131,21 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectException(Warning::class);
         $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "w", "a", "x"');
 
-        fopen('cloudstorage:///file', 'c');
+        fopen('cloudstorage:///file.ext', 'c');
     }
 
     public function testFopenWithXMode()
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(false);
 
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        fopen('cloudstorage:///file', 'x');
+        fopen('cloudstorage:///file.ext', 'x');
     }
 
     public function testFopenWithXModeAndExistingFile()
@@ -155,10 +155,10 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(true);
 
-        fopen('cloudstorage:///file', 'x');
+        fopen('cloudstorage:///file.ext', 'x');
     }
 
     public function testGuessContentType()
@@ -206,8 +206,8 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('getObjects')
                      ->with($this->identicalTo('directory/'))
                      ->willReturn([
-                         ['Key' => 'directory/foo', 'Size' => 1],
-                         ['Key' => 'directory/bar', 'Size' => 2],
+                         ['Key' => 'directory/foo.ext', 'Size' => 1],
+                         ['Key' => 'directory/bar.ext', 'Size' => 2],
                      ]);
 
         $directory = 'cloudstorage:///directory';
@@ -216,11 +216,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->assertIsResource($opendir);
 
         $file1 = readdir($opendir);
-        $this->assertEquals('foo', $file1);
+        $this->assertEquals('foo.ext', $file1);
         $this->assertEquals(1, filesize($directory.$file1));
 
         $file2 = readdir($opendir);
-        $this->assertEquals('bar', $file2);
+        $this->assertEquals('bar.ext', $file2);
         $this->assertEquals(2, filesize($directory.$file2));
 
         closedir($opendir);
@@ -232,13 +232,13 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('getObjects')
                      ->with($this->identicalTo('directory/'))
                      ->willReturn([
-                         ['Key' => 'directory/a', 'Size' => 1],
-                         ['Key' => 'directory/b', 'Size' => 2],
-                         ['Key' => 'directory/c', 'Size' => 3],
-                         ['Key' => 'directory/d', 'Size' => 4],
-                         ['Key' => 'directory/e', 'Size' => 5],
-                         ['Key' => 'directory/f', 'Size' => 6],
-                         ['Key' => 'directory/g', 'Size' => 7],
+                         ['Key' => 'directory/a.ext', 'Size' => 1],
+                         ['Key' => 'directory/b.ext', 'Size' => 2],
+                         ['Key' => 'directory/c.ext', 'Size' => 3],
+                         ['Key' => 'directory/d.ext', 'Size' => 4],
+                         ['Key' => 'directory/e.ext', 'Size' => 5],
+                         ['Key' => 'directory/f.ext', 'Size' => 6],
+                         ['Key' => 'directory/g.ext', 'Size' => 7],
                      ]);
 
         $directory = 'cloudstorage:///directory';
@@ -251,11 +251,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
             $files[] = $file;
         }
 
-        $expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        $expected = ['a.ext', 'b.ext', 'c.ext', 'd.ext', 'e.ext', 'f.ext', 'g.ext'];
         $this->assertEquals($expected, $files);
 
-        $this->assertSame(4, filesize($directory.'d'));
-        $this->assertSame(6, filesize($directory.'f'));
+        $this->assertSame(4, filesize($directory.'d.ext'));
+        $this->assertSame(6, filesize($directory.'f.ext'));
 
         closedir($opendir);
     }
@@ -264,15 +264,15 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(true);
 
         $this->client->expects($this->once())
                      ->method('getObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn('testing 123');
 
-        $file = fopen('cloudstorage:///file', 'r');
+        $file = fopen('cloudstorage:///file.ext', 'r');
 
         $this->assertEquals(0, ftell($file));
         $this->assertFalse(feof($file));
@@ -297,13 +297,13 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('copyObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo('/newfile.txt'));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo('/newfile.txt'));
 
         $this->client->expects($this->once())
                      ->method('deleteObject')
-                     ->with($this->identicalTo('/file'));
+                     ->with($this->identicalTo('/file.ext'));
 
-        $this->assertTrue(rename('cloudstorage:///file', 'cloudstorage:///newfile.txt'));
+        $this->assertTrue(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
     }
 
     public function testRenameWhenCopyObjectThrowsException()
@@ -313,10 +313,10 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('copyObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo('/newfile.txt'))
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo('/newfile.txt'))
                      ->willThrowException(new \RuntimeException('Could not copy object "/file"'));
 
-        $this->assertFalse(rename('cloudstorage:///file', 'cloudstorage:///newfile.txt'));
+        $this->assertFalse(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
     }
 
     public function testRenameWhenDeleteObjectThrowsException()
@@ -326,14 +326,14 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('copyObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo('/newfile.txt'));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo('/newfile.txt'));
 
         $this->client->expects($this->once())
                      ->method('deleteObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                     ->willThrowException(new \RuntimeException('Unable to delete object "/file"'));
 
-        $this->assertFalse(rename('cloudstorage:///file', 'cloudstorage:///newfile.txt'));
+        $this->assertFalse(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
     }
 
     public function testRenameWithDifferentProtocols()
@@ -341,27 +341,27 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectException(Warning::class);
         $this->expectExceptionMessage('rename(): Cannot rename a file across wrapper types');
 
-        $this->assertFalse(rename('cloudstorage:///file', 'php://temp'));
+        $this->assertFalse(rename('cloudstorage:///file.ext', 'php://temp'));
     }
 
     public function testReturnsStreamSizeFromHeaders()
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(true);
 
         $this->client->expects($this->once())
                      ->method('getObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn('testing 123');
 
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 5]);
 
-        $resource = fopen('cloudstorage:///file', 'r');
+        $resource = fopen('cloudstorage:///file.ext', 'r');
 
         $this->assertEquals(5, fstat($resource)['size']);
     }
@@ -406,7 +406,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->client->expects($this->once())
                      ->method('getObjects')
                      ->with($this->identicalTo('/directory/'), $this->identicalTo(2))
-                     ->willReturn(['/directory/', '/directory/file']);
+                     ->willReturn(['/directory/', '/directory/file.ext']);
 
         $this->client->expects($this->never())
                      ->method('deleteObject');
@@ -463,15 +463,15 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('objectExists')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(true);
 
         $this->client->expects($this->once())
                      ->method('getObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn('testing 123');
 
-        $read = [fopen('cloudstorage:///file', 'r')];
+        $read = [fopen('cloudstorage:///file.ext', 'r')];
         $write = $except = null;
 
         $this->assertFalse(stream_select($read, $write, $except, 0));
@@ -482,7 +482,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectException(Warning::class);
         $this->expectExceptionMessage('No cloud storage client found in the stream contex');
 
-        fopen('cloudstorage:///file', 'r', false, stream_context_create([
+        fopen('cloudstorage:///file.ext', 'r', false, stream_context_create([
             'cloudstorage' => ['client' => null],
         ]));
     }
@@ -491,9 +491,9 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('deleteObject')
-                     ->with($this->identicalTo('/file'));
+                     ->with($this->identicalTo('/file.ext'));
 
-        $this->assertTrue(unlink('cloudstorage:///file'));
+        $this->assertTrue(unlink('cloudstorage:///file.ext'));
     }
 
     public function testUnlinkWhenDeleteObjectThrowsException()
@@ -503,31 +503,45 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('deleteObject')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Unable to delete object "/file"'));
 
-        $this->assertFalse(unlink('cloudstorage:///file'));
+        $this->assertFalse(unlink('cloudstorage:///file.ext'));
     }
 
     public function testUrlStatDataClearedOnWrite()
     {
         $this->client->expects($this->exactly(2))
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturnOnConsecutiveCalls(['size' => 124], ['size' => 125]);
 
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file'), $this->identicalTo(''), $this->identicalTo('')],
-                         [$this->identicalTo('/file'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo('')],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
                      );
 
-        $this->assertEquals(124, filesize('cloudstorage:///file'));
+        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
 
-        file_put_contents('cloudstorage:///file', 'test');
+        file_put_contents('cloudstorage:///file.ext', 'test');
 
-        $this->assertEquals(125, filesize('cloudstorage:///file'));
+        $this->assertEquals(125, filesize('cloudstorage:///file.ext'));
+    }
+
+    public function testUrlStatMakesNoApiCallsForDirectories()
+    {
+        $this->client->expects($this->never())
+                     ->method('getObjectDetails');
+
+        clearstatcache(false, 'cloudstorage:///directory');
+        $stat = stat('cloudstorage:///directory');
+
+        $this->assertEquals(0040777, $stat['mode']);
+        $this->assertEquals(0, $stat['size']);
+        $this->assertEquals(0, $stat['mtime']);
+        $this->assertEquals(0, $stat['ctime']);
     }
 
     public function testUrlStatReturnsObjectDetails()
@@ -536,11 +550,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 5, 'last-modified' => gmdate('r', $time)]);
 
-        clearstatcache(false, 'cloudstorage:///file');
-        $stat = stat('cloudstorage:///file');
+        clearstatcache(false, 'cloudstorage:///file.ext');
+        $stat = stat('cloudstorage:///file.ext');
 
         $this->assertEquals(0100777, $stat['mode']);
         $this->assertEquals(5, $stat['size']);
@@ -552,33 +566,33 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 124]);
 
-        $this->assertEquals(124, filesize('cloudstorage:///file'));
-        $this->assertEquals(124, filesize('cloudstorage:///file'));
+        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
+        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
     }
 
     public function testUrlStatWhenGetObjectDetailsThrowsException()
     {
         $this->expectException(Warning::class);
-        $this->expectExceptionMessage('filesize(): stat failed for cloudstorage:///file');
+        $this->expectExceptionMessage('filesize(): stat failed for cloudstorage:///file.ext');
 
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file'))
+                     ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
-        $this->assertFalse(filesize('cloudstorage:///file'));
+        $this->assertFalse(filesize('cloudstorage:///file.ext'));
     }
 
     public function testWritingEmptyFile()
     {
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        $file = fopen('cloudstorage:///file', 'w');
+        $file = fopen('cloudstorage:///file.ext', 'w');
 
         $this->assertEquals(0, fwrite($file, ''));
         $this->assertTrue(fclose($file));
@@ -589,11 +603,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file'), $this->identicalTo('')],
-                         [$this->identicalTo('/file'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('')],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
                      );
 
-        $file = fopen('cloudstorage:///file', 'w');
+        $file = fopen('cloudstorage:///file.ext', 'w');
 
         $this->assertEquals(4, fwrite($file, 'test'));
         $this->assertTrue(fclose($file));
@@ -606,14 +620,14 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
         $this->client->expects($this->at(0))
                      ->method('putObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
         $this->client->expects($this->at(1))
                      ->method('putObject')
-                     ->with($this->identicalTo('/file'), $this->identicalTo('test'), $this->identicalTo(''))
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo(''))
                      ->willThrowException(new \RuntimeException('Unable to save object "/file"'));
 
-        $file = fopen('cloudstorage:///file', 'w');
+        $file = fopen('cloudstorage:///file.ext', 'w');
 
         fwrite($file, 'test');
         fclose($file);

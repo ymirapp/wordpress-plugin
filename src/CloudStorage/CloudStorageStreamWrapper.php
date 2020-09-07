@@ -672,7 +672,9 @@ class CloudStorageStreamWrapper
             12 => -1,     'blocks' => -1,
         ];
 
-        if (empty($key)) {
+        // Avoid doing API calls if the given object key has no extension. "wp_upload_dir" does a lot
+        // of file checks to create directories and that impacts performance significantly.
+        if (empty($key) || empty(pathinfo($key, PATHINFO_EXTENSION))) {
             return $stat;
         }
 
