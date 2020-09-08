@@ -111,6 +111,14 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
+    public function runCron(string $siteUrl)
+    {
+        $this->runWpCliCommand('cron event run --due-now --quiet', true, $siteUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getService(): string
     {
         return 'lambda';
@@ -158,13 +166,19 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * Run the given WP-CLI command.
      */
-    private function runWpCliCommand(string $command, bool $async = false): string
+    private function runWpCliCommand(string $command, bool $async = false, string $siteUrl = ''): string
     {
+        if (empty($siteUrl)) {
+            $siteUrl = $this->siteUrl;
+        }
+
         $response = $this->invoke([
-            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $this->siteUrl),
+            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $siteUrl),
         ], $async);
 
-        if (!isset($response['body'])) {
+        if ($async) {
+            return '';
+        } elseif (!isset($response['body'])) {
             throw new \RuntimeException('Lambda did not return a response body');
         }
 

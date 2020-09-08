@@ -80,6 +80,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return new \WP_Site_Icon();
         });
+        $container['site_query'] = $container->service(function () {
+            return class_exists(\WP_Site_Query::class) ? new \WP_Site_Query() : null;
+        });
         $container['site_url'] = set_url_scheme(get_home_url(), 'https');
         $container['uploads_basedir'] = $container->service(function () {
             return wp_upload_dir()['basedir'] ?? '';

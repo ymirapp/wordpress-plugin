@@ -37,4 +37,9 @@ interface ConsoleClientInterface
      * Resize the given attachment image to the given width and height.
      */
     public function resizeAttachmentImage($attachment, int $width, int $height);
+
+    /**
+     * Run the WordPress cron for the given site URL.
+     */
+    public function runCron(string $siteUrl);
 }

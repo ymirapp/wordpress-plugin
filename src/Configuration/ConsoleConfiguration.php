@@ -36,6 +36,7 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
                 new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon']),
                 new Console\EditAttachmentImageCommand($container['file_manager']),
                 new Console\ResizeAttachmentImageCommand($container['file_manager']),
+                new Console\RunAllCronCommand($container['console_client'], $container['site_query']),
             ];
         });
         $container['console_client'] = $container->service(function (Container $container) {

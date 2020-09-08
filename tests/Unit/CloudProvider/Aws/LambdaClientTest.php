@@ -237,4 +237,43 @@ class LambdaClientTest extends TestCase
 
         (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->resizeAttachmentImage($post, 42, 24);
     }
+
+    public function testRunCron()
+    {
+        $http = $this->getWPHttpMock();
+        $http->expects($this->once())
+             ->method('request')
+             ->with(
+                 $this->identicalTo('https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/test-function/invocations?Qualifier=deployed'),
+                 $this->identicalTo([
+                     'headers' => [
+                         'content-type' => 'application/json',
+                         'host' => 'lambda.us-east-1.amazonaws.com',
+                         'x-amz-content-sha256' => '932e59e434c88e538b72844e102a6824a9df9f1f3630d13b69acce052a40d240',
+                         'x-amz-date' => '20200515T181004Z',
+                         'x-amz-invocation-type' => 'Event',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=36565aae1cf89ec5f9773283f148aad42d0ec7b51b55118f92dd83460d7116f1',
+                     ],
+                     'method' => 'POST',
+                     'timeout' => 300,
+                     'body' => '{"php":"bin\/wp cron event run --due-now --quiet --url=\'https:\/\/site-url.com\'"}',
+                 ])
+             )
+             ->willReturn([
+                 'response' => ['code' => 202],
+             ]);
+
+        $gmdate = $this->getFunctionMock($this->getNamespace(LambdaClient::class), 'gmdate');
+        $gmdate->expects($this->exactly(5))
+               ->withConsecutive(
+                   [$this->identicalTo('Ymd\THis\Z')],
+                   [$this->identicalTo('Ymd')],
+                   [$this->identicalTo('Ymd\THis\Z')],
+                   [$this->identicalTo('Ymd')],
+                   [$this->identicalTo('Ymd')]
+               )
+               ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
+
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->runCron('https://site-url.com');
+    }
 }

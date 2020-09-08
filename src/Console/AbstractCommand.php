@@ -21,6 +21,14 @@ abstract class AbstractCommand implements CommandInterface
     /**
      * {@inheritdoc}
      */
+    public static function getArguments(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public static function getName(): string
     {
         return 'ymir';
