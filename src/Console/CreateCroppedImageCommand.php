@@ -45,9 +45,9 @@ class CreateCroppedImageCommand extends AbstractCropAttachmentImageCommand
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    protected static function getCommandName(): string
     {
-        return parent::getName().' create-cropped-image';
+        return 'create-cropped-image';
     }
 
     /**

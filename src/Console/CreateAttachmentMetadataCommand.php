@@ -55,8 +55,8 @@ class CreateAttachmentMetadataCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    protected static function getCommandName(): string
     {
-        return parent::getName().' create-attachment-metadata';
+        return 'create-attachment-metadata';
     }
 }

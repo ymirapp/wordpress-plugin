@@ -62,9 +62,9 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    protected static function getCommandName(): string
     {
-        return parent::getName().' run-all-cron';
+        return 'run-all-cron';
     }
 
     /**

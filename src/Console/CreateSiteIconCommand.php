@@ -49,9 +49,9 @@ class CreateSiteIconCommand extends AbstractCropAttachmentImageCommand
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    protected static function getCommandName(): string
     {
-        return parent::getName().' create-site-icon';
+        return 'create-site-icon';
     }
 
     /**

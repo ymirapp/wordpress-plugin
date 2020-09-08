@@ -102,8 +102,8 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    protected static function getCommandName(): string
     {
-        return parent::getName().' resize-attachment-image';
+        return 'resize-attachment-image';
     }
 }

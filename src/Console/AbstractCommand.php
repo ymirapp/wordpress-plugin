@@ -29,10 +29,15 @@ abstract class AbstractCommand implements CommandInterface
     /**
      * {@inheritdoc}
      */
-    public static function getName(): string
+    final public static function getName(): string
     {
-        return 'ymir';
+        return sprintf('ymir %s', static::getCommandName());
     }
+
+    /**
+     * Get the "ymir" command name.
+     */
+    abstract protected static function getCommandName(): string;
 
     /**
      * Write error message.
