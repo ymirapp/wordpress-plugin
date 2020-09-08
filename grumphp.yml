@@ -4,6 +4,7 @@ parameters:
     composer: ~
     git_commit_message:
       enforce_capitalized_subject: false
+      max_subject_width: 72
       type_scope_conventions:
         - types:
             - build
