@@ -59,7 +59,7 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
     /**
      * {@inheritdoc}
      */
-    public static function getArguments(): array
+    public static function getSynopsis(): array
     {
         return [
             [

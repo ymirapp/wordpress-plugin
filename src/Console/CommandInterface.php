@@ -24,11 +24,6 @@ interface CommandInterface
     public function __invoke(array $arguments, array $options);
 
     /**
-     * Get the positional and associative arguments a command accepts.
-     */
-    public static function getArguments(): array;
-
-    /**
      * Get the command description.
      */
     public static function getDescription(): string;
@@ -37,4 +32,9 @@ interface CommandInterface
      * Get the command name.
      */
     public static function getName(): string;
+
+    /**
+     * Get the positional and associative arguments a command accepts.
+     */
+    public static function getSynopsis(): array;
 }

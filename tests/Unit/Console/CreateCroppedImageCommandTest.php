@@ -32,7 +32,12 @@ class CreateCroppedImageCommandTest extends TestCase
     use WPPostMockTrait;
     use WPSiteIconMockTrait;
 
-    public function testGetArguments()
+    public function testGetName()
+    {
+        $this->assertSame('ymir create-cropped-image', CreateCroppedImageCommand::getName());
+    }
+
+    public function testGetSynopsis()
     {
         $this->assertArraySubset([
             [
@@ -69,12 +74,7 @@ class CreateCroppedImageCommandTest extends TestCase
                 'type' => 'assoc',
                 'name' => 'context',
             ],
-        ], CreateCroppedImageCommand::getArguments());
-    }
-
-    public function testGetName()
-    {
-        $this->assertSame('ymir create-cropped-image', CreateCroppedImageCommand::getName());
+        ], CreateCroppedImageCommand::getSynopsis());
     }
 
     public function testInvoke()

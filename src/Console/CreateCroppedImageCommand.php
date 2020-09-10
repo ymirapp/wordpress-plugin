@@ -21,9 +21,17 @@ class CreateCroppedImageCommand extends AbstractCropAttachmentImageCommand
     /**
      * {@inheritdoc}
      */
-    public static function getArguments(): array
+    public static function getDescription(): string
     {
-        $arguments = parent::getArguments();
+        return 'Create a cropped attachment image';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSynopsis(): array
+    {
+        $arguments = parent::getSynopsis();
 
         $arguments[] = [
             'type' => 'assoc',
@@ -32,14 +40,6 @@ class CreateCroppedImageCommand extends AbstractCropAttachmentImageCommand
         ];
 
         return $arguments;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getDescription(): string
-    {
-        return 'Create a cropped attachment image';
     }
 
     /**

@@ -75,7 +75,15 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public static function getArguments(): array
+    public static function getDescription(): string
+    {
+        return 'Edit the image associated with the given attachment';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSynopsis(): array
     {
         return [
             [
@@ -96,14 +104,6 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
                 'options' => ['all', 'full', 'nothumb', 'thumbnail'],
             ],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getDescription(): string
-    {
-        return 'Edit the image associated with the given attachment';
     }
 
     /**

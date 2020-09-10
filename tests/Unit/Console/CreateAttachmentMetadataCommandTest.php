@@ -28,19 +28,19 @@ class CreateAttachmentMetadataCommandTest extends TestCase
     use FunctionMockTrait;
     use WPPostMockTrait;
 
-    public function testGetArguments()
+    public function testGetName()
+    {
+        $this->assertSame('ymir create-attachment-metadata', CreateAttachmentMetadataCommand::getName());
+    }
+
+    public function testGetSynopsis()
     {
         $this->assertArraySubset([
             [
                 'type' => 'positional',
                 'name' => 'attachmentId',
             ],
-        ], CreateAttachmentMetadataCommand::getArguments());
-    }
-
-    public function testGetName()
-    {
-        $this->assertSame('ymir create-attachment-metadata', CreateAttachmentMetadataCommand::getName());
+        ], CreateAttachmentMetadataCommand::getSynopsis());
     }
 
     public function testInvoke()

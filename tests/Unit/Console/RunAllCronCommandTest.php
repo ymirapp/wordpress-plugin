@@ -28,14 +28,14 @@ class RunAllCronCommandTest extends TestCase
     use FunctionMockTrait;
     use WPSiteQueryMockTrait;
 
-    public function testGetArguments()
-    {
-        $this->assertSame([], RunAllCronCommand::getArguments());
-    }
-
     public function testGetName()
     {
         $this->assertSame('ymir run-all-cron', RunAllCronCommand::getName());
+    }
+
+    public function testGetSynopsis()
+    {
+        $this->assertSame([], RunAllCronCommand::getSynopsis());
     }
 
     public function testInvokeGetsCurrentSiteUrlWhenThereIsNoWPSiteQueryObject()

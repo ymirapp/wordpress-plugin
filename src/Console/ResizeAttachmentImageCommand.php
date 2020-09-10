@@ -70,7 +70,15 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public static function getArguments(): array
+    public static function getDescription(): string
+    {
+        return 'Resizes the image associated with the given attachment';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSynopsis(): array
     {
         return [
             [
@@ -89,14 +97,6 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
                 'description' => 'The width of the resized image',
             ],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getDescription(): string
-    {
-        return 'Resizes the image associated with the given attachment';
     }
 
     /**

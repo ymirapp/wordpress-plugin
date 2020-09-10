@@ -33,7 +33,15 @@ class CreateAttachmentMetadataCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public static function getArguments(): array
+    public static function getDescription(): string
+    {
+        return 'Creates the metadata for the given attachment';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSynopsis(): array
     {
         return [
             [
@@ -42,14 +50,6 @@ class CreateAttachmentMetadataCommand extends AbstractAttachmentCommand
                 'description' => 'The ID of the attachment',
             ],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getDescription(): string
-    {
-        return 'Creates the metadata for the given attachment';
     }
 
     /**

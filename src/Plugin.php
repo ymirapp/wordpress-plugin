@@ -130,7 +130,7 @@ class Plugin
 
         \WP_CLI::add_command($command::getName(), $command, [
             'shortdesc' => $command::getDescription(),
-            'synopsis' => $command::getArguments(),
+            'synopsis' => $command::getSynopsis(),
         ]);
     }
 }
