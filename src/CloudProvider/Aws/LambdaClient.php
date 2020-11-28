@@ -188,15 +188,17 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
             throw new \RuntimeException('Unable to parse the Lambda response body');
         }
 
-        if (!empty($response->output) && 0 === strpos($response->output, 'Success:')) {
-            return str_replace('Success: ', '', $response->output);
+        $matches = [];
+
+        if (1 === preg_match('/.*Success:[^\s]*\s(.*)/', $response->output, $matches)) {
+            return $matches[1];
         }
 
         $matches = [];
         $message = sprintf('Lambda was unable to run the "%s" WP-CLI command', $command);
 
         if (!empty($response->errorMessage)) {
-            preg_match('/^Error: (.*)$/m', $response->errorMessage, $matches);
+            preg_match('/^.*Error:[^\s]*\s(.*)$/m', $response->errorMessage, $matches);
         }
         if (!empty($matches[1])) {
             $message = $matches[1];

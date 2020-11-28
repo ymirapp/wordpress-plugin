@@ -70,6 +70,48 @@ class LambdaClientTest extends TestCase
         (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createAttachmentMetadata($post);
     }
 
+    public function testCreateAttachmentMetadataWithSpecialCharacters()
+    {
+        $http = $this->getWPHttpMock();
+        $http->expects($this->once())
+            ->method('request')
+            ->with(
+                $this->identicalTo('https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/test-function/invocations?Qualifier=deployed'),
+                $this->identicalTo([
+                    'headers' => [
+                        'content-type' => 'application/json',
+                        'host' => 'lambda.us-east-1.amazonaws.com',
+                        'x-amz-content-sha256' => '89ad346262253983d50de33f1c15c62e3ee594effee173409e334f12ff812fdb',
+                        'x-amz-date' => '20200515T181004Z',
+                        'x-amz-invocation-type' => 'RequestResponse',
+                        'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/lambda/aws4_request,SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-invocation-type,Signature=67fb8c95e6617ce371a940ece52e3cd54f0d4a31326b9ac373acf41de70f743e',
+                    ],
+                    'method' => 'POST',
+                    'timeout' => 300,
+                    'body' => '{"php":"bin\/wp ymir create-attachment-metadata 4 --url=\'https:\/\/foo.bar\'"}',
+                ])
+            )
+            ->willReturn([
+                'body' => '{"output": "\u001b[32;1mSuccess:\u001b[0m Created metadata for attachment \"4\""}',
+            ]);
+
+        $gmdate = $this->getFunctionMock($this->getNamespace(LambdaClient::class), 'gmdate');
+        $gmdate->expects($this->exactly(5))
+            ->withConsecutive(
+                [$this->identicalTo('Ymd\THis\Z')],
+                [$this->identicalTo('Ymd')],
+                [$this->identicalTo('Ymd\THis\Z')],
+                [$this->identicalTo('Ymd')],
+                [$this->identicalTo('Ymd')]
+            )
+            ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
+
+        $post = $this->getWPPostMock();
+        $post->ID = 4;
+
+        (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createAttachmentMetadata($post);
+    }
+
     public function testCreateCroppedAttachmentImage()
     {
         $http = $this->getWPHttpMock();
