@@ -12,7 +12,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.2'
-          tools: composer:v1
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -44,7 +43,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          tools: composer:v1
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
