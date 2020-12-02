@@ -1,4 +1,4 @@
-parameters:
+grumphp:
   process_timeout: 120
   tasks:
     composer: ~
@@ -19,7 +19,7 @@ parameters:
             - style
             - test
     phpcpd:
-      directory: './src'
+      directory: ['./src']
       names_exclude:
         - 'GDImageEditor.php'
         - 'ImagickImageEditor.php'
