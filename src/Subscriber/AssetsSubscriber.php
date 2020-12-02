@@ -57,8 +57,9 @@ class AssetsSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'script_loader_src' => 'replaceLoaderSource',
-            'style_loader_src' => 'replaceLoaderSource',
+            'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'theme_root_uri' => 'replaceSiteUrlWithAssetsUrl',
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
     }
@@ -77,23 +78,23 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
-     * Replace the loader source with the assets URL.
+     * Replace the site URL with the assets URL.
      */
-    public function replaceLoaderSource(string $src): string
+    public function replaceSiteUrlWithAssetsUrl(string $url): string
     {
-        if (empty($this->assetsUrl) || false !== stripos($src, $this->assetsUrl) || false === stripos($src, $this->siteUrl)) {
-            return $src;
+        if (empty($this->assetsUrl) || false !== stripos($url, $this->assetsUrl) || false === stripos($url, $this->siteUrl)) {
+            return $url;
         }
 
-        $src = str_ireplace($this->siteUrl, '', $src);
+        $url = str_ireplace($this->siteUrl, '', $url);
 
         // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
         // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
         // need to handle it programmatically instead.
-        if ('bedrock' === $this->projectType && '/wp/' !== substr($src, 0, 4) && '/app/' !== substr($src, 0, 5)) {
-            $src = '/wp'.$src;
+        if ('bedrock' === $this->projectType && '/wp/' !== substr($url, 0, 4) && '/app/' !== substr($url, 0, 5)) {
+            $url = '/wp'.$url;
         }
 
-        return $this->assetsUrl.$src;
+        return $this->assetsUrl.$url;
     }
 }
