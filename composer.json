@@ -21,7 +21,6 @@
         "fzaninotto/faker": "^1.9",
         "php-mock/php-mock-phpunit": "^2.6",
         "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpmailer/phpmailer": "^5.2",
         "phpmd/phpmd": "^2.8",
         "phpro/grumphp": "^0.19",
         "phpunit/phpunit": "^7.0",

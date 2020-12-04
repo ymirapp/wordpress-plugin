@@ -33,6 +33,7 @@ DG\BypassFinals::enable();
 
 require_once $_core_dir.'/wp-admin/includes/class-wp-site-icon.php';
 require_once $_core_dir.'/wp-includes/class-requests.php';
+require_once $_core_dir.'/wp-includes/class-phpmailer.php';
 require_once $_core_dir.'/wp-includes/class-http.php';
 require_once $_core_dir.'/wp-includes/class-wp-error.php';
 require_once $_core_dir.'/wp-includes/class-wp-image-editor.php';
