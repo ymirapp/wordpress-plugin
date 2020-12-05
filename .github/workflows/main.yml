@@ -12,18 +12,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.2'
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache Composer cache directory
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-cache-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-cache-${{ env.cache-name }}-
-            ${{ runner.os }}-composer-cache-
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
       - name: Run code quality checks
@@ -43,20 +31,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
-      - name: Cache Composer cache directory
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-cache-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-cache-${{ env.cache-name }}-
-            ${{ runner.os }}-composer-cache-
       - name: Install WordPress
         run: .github/workflows/install-wp.sh
       - name: Run unit tests
