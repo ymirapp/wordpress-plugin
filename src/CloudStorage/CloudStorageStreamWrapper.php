@@ -203,7 +203,7 @@ class CloudStorageStreamWrapper
      */
     public function mkdir($path, $mode): bool
     {
-        return $this->call(function () use ($path, $mode) {
+        return $this->call(function () use ($path) {
             $client = $this->getClient();
             $key = rtrim($this->parsePath($path), '/').'/';
 

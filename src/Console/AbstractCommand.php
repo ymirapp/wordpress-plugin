@@ -35,11 +35,6 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * Get the "ymir" command name.
-     */
-    abstract protected static function getCommandName(): string;
-
-    /**
      * Write error message.
      */
     protected function error(string $message)
@@ -50,6 +45,11 @@ abstract class AbstractCommand implements CommandInterface
 
         \WP_CLI::error($message);
     }
+
+    /**
+     * Get the "ymir" command name.
+     */
+    abstract protected static function getCommandName(): string;
 
     /**
      * Write success message.
