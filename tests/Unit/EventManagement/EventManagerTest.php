@@ -29,7 +29,7 @@ class EventManagerTest extends TestCase
      */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         require_once 'fixtures/functions.php';
         require_once 'fixtures/TestSubscriber.php';
@@ -38,7 +38,7 @@ class EventManagerTest extends TestCase
         $this->manager = new EventManager();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->manager = null;
     }

@@ -31,7 +31,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
      */
     private $client;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->client = $this->getCloudStorageClientInterfaceMock();
 

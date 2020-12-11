@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\Console;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Ymir\Plugin\Console\CreateCroppedImageCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
@@ -39,7 +40,7 @@ class CreateCroppedImageCommandTest extends TestCase
 
     public function testGetSynopsis()
     {
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             [
                 'type' => 'positional',
                 'name' => 'attachmentId',

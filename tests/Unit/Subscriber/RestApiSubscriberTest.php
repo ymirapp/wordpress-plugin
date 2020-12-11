@@ -24,7 +24,7 @@ class RestApiSubscriberTest extends TestCase
 {
     use FunctionMockTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         require_once 'fixtures/Endpoint.php';
     }

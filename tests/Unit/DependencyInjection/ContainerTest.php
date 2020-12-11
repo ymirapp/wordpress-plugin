@@ -29,12 +29,12 @@ class ContainerTest extends TestCase
      */
     private $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = new Container();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->container = null;
     }

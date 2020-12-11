@@ -32,7 +32,7 @@ class TestCase extends PHPUnitTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->faker = Factory::create();
     }
