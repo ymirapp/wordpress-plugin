@@ -24,8 +24,6 @@ if (!$_core_dir) {
     $_core_dir = '/tmp/wordpress';
 }
 
-require_once dirname(__DIR__).'/vendor/autoload.php';
-
 require_once __DIR__.'/constants.php';
 require_once __DIR__.'/functions.php';
 

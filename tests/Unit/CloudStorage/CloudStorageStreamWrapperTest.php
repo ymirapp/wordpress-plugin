@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\CloudStorage;
 
-use PHPUnit\Framework\Error\Warning;
 use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
@@ -414,7 +413,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testMkdirWhenDirectoryExists()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $this->expectExceptionMessage('Directory "cloudstorage:///foo" already exists');
 
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -538,7 +537,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testRmdirWithNonEmptydirectory()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $this->expectExceptionMessage('Directory "cloudstorage:///foo" isn\'t empty');
 
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -646,7 +645,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testStreamOpenWithInvalidMode()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $this->expectExceptionMessage('"r+" mode isn\'t supported. Must be "r", "w", "a", "x"');
 
         (new CloudStorageStreamWrapper())->stream_open('cloudstorage:///foo.txt', 'r+');
@@ -676,7 +675,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testStreamOpenWithModeRAndFileDoesntExist()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $this->expectExceptionMessage('Must have an existing object when opening with mode "r"');
 
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -762,7 +761,7 @@ class CloudStorageStreamWrapperTest extends TestCase
 
     public function testStreamOpenWithModeXAndFileExists()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $this->expectExceptionMessage('Cannot have an existing object when opening with mode "x"');
 
         $client = $this->getCloudStorageClientInterfaceMock();

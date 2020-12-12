@@ -3,7 +3,7 @@ on: push
 
 jobs:
   code-quality:
-    name: Run code quality checks on PHP 7.2
+    name: Run code quality checks on PHP 7.4
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -11,7 +11,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.4'
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
       - name: Run code quality checks
@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.2', '7.3', '7.4']
+        php-versions: ['7.2', '7.3', '7.4', '8.0']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -31,6 +31,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
+      - name: Remove GrumPHP
+        run: composer remove --dev phpro/grumphp
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
       - name: Install WordPress
