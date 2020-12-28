@@ -50,9 +50,10 @@ class AssetsSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
+            'content_url' => 'rewriteContentUrl',
+            'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
-            'theme_root_uri' => 'replaceSiteUrlWithAssetsUrl',
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
 
@@ -87,5 +88,22 @@ class AssetsSubscriberTest extends TestCase
     public function testreplaceSiteUrlWithAssetsUrlWithSourceSameAsSiteUrl()
     {
         $this->assertSame('https://assets.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
+    }
+
+    public function testRewriteContentUrlDoesntKeepDirectoryBelowContentDir()
+    {
+        $this->assertSame('https://assets.com/wp-content/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewriteContentUrl('https://foo.com/foo/directory/wp-content/test.php'));
+    }
+
+    public function testRewriteContentUrlUsesContentDirConstant()
+    {
+        define('CONTENT_DIR', '/app');
+
+        $this->assertSame('https://assets.com/app/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
+    }
+
+    public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
+    {
+        $this->assertSame('https://assets.com/directory/plugins/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
     }
 }

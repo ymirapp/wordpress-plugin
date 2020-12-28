@@ -50,7 +50,6 @@ class WordPressSubscriber implements SubscriberInterface
     {
         return [
             'got_url_rewrite' => 'enableUrlRewrite',
-            'plugins_url' => 'rewritePluginUrl',
             'sanitize_file_name_chars' => 'sanitizeFileNameCharacters',
             'user_can_richedit' => 'enableVisualEditor',
         ];
@@ -78,25 +77,6 @@ class WordPressSubscriber implements SubscriberInterface
         }
 
         return $visualEditorEnabled;
-    }
-
-    /**
-     * Rewrite the plugin URL so that it matches the site URL.
-     *
-     * The plugin URL doesn't use the current site URL when you're on the non-primary site
-     * of a multisite installation. This breaks the URL rewriting for pointing assets to the
-     * assets URL.
-     */
-    public function rewritePluginUrl(string $url): string
-    {
-        $matches = [];
-        preg_match('/http(s)?:\/\/.*(\/[^\/]*\/plugins.*)/', $url, $matches);
-
-        if (empty($matches[2])) {
-            return $url;
-        }
-
-        return $this->siteUrl.$matches[2];
     }
 
     /**

@@ -57,9 +57,10 @@ class AssetsSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            'content_url' => 'rewriteContentUrl',
+            'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
-            'theme_root_uri' => 'replaceSiteUrlWithAssetsUrl',
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
     }
@@ -96,5 +97,43 @@ class AssetsSubscriber implements SubscriberInterface
         }
 
         return $this->assetsUrl.$url;
+    }
+
+    /**
+     * Rewrite the wp-content URL so it points to the assets URL.
+     */
+    public function rewriteContentUrl(string $url): string
+    {
+        $contentDirectoryName = '/wp-content';
+
+        if (defined('CONTENT_DIR')) {
+            $contentDirectoryName = CONTENT_DIR;
+        }
+
+        $contentDirectoryName = '/'.ltrim($contentDirectoryName, '/');
+
+        $matches = [];
+        preg_match(sprintf('/http(s)?:\/\/.*(%s.*)/', preg_quote($contentDirectoryName, '/')), $url, $matches);
+
+        if (empty($matches[2])) {
+            return $url;
+        }
+
+        return $this->assetsUrl.$matches[2];
+    }
+
+    /**
+     * Rewrite the plugins URL so it points to the assets URL.
+     */
+    public function rewritePluginsUrl(string $url): string
+    {
+        $matches = [];
+        preg_match('/http(s)?:\/\/.*(\/[^\/]*\/plugins.*)/', $url, $matches);
+
+        if (empty($matches[2])) {
+            return $url;
+        }
+
+        return $this->assetsUrl.$matches[2];
     }
 }

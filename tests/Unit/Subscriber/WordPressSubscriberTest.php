@@ -51,19 +51,11 @@ class WordPressSubscriberTest extends TestCase
 
         $subscribedEvents = [
             'got_url_rewrite' => 'enableUrlRewrite',
-            'plugins_url' => 'rewritePluginUrl',
             'sanitize_file_name_chars' => 'sanitizeFileNameCharacters',
             'user_can_richedit' => 'enableVisualEditor',
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
-    }
-
-    public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
-    {
-        $siteUrl = 'https://'.$this->faker->domainName;
-
-        $this->assertSame($siteUrl.'/directory/plugins/test.php', (new WordPressSubscriber('PHP', $siteUrl))->rewritePluginUrl('https://'.$this->faker->domainName.'/foo/directory/plugins/test.php'));
     }
 
     public function testSanitizeFileNameCharacters()
