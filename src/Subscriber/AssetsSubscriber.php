@@ -16,12 +16,12 @@ namespace Ymir\Plugin\Subscriber;
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 
 /**
- * Subscriber for managing WordPress assets.
+ * Subscriber for managing the integration between WordPress and the deployed assets.
  */
 class AssetsSubscriber implements SubscriberInterface
 {
     /**
-     * URL to the plugin's assets folder.
+     * URL to the deployed WordPress assets on the cloud storage.
      *
      * @var string
      */
