@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Console;
 
+use Ymir\Plugin\Support\Collection;
+
 /**
  * Command to edit an attachment image.
  */
@@ -119,13 +121,11 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
      */
     private function deletePreviousImageVersions(array $images)
     {
-        $imageFiles = array_filter(array_map(function ($image) {
+        (new Collection($images))->filter()->map(function ($image) {
             return is_array($image) && !empty($image['file']) && preg_match('/-e[0-9]{13}-/', $image['file']) ? $image['file'] : null;
-        }, $images));
-
-        foreach ($imageFiles as $imageFile) {
+        })->each(function (string $imageFile) {
             wp_delete_file($this->fileManager->getUploadsFilePath($imageFile));
-        }
+        });
     }
 
     /**

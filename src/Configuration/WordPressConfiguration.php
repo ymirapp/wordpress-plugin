@@ -26,10 +26,14 @@ class WordPressConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
-        $container['blog_charset'] = get_bloginfo('charset');
+        $container['blog_charset'] = $container->service(function () {
+            return get_bloginfo('charset');
+        });
         $container['content_directory'] = WP_CONTENT_DIR;
         $container['content_url'] = WP_CONTENT_URL;
-        $container['current_user'] = wp_get_current_user();
+        $container['current_user'] = $container->service(function () {
+            return wp_get_current_user();
+        });
         $container['default_email_from'] = $container->service(function () {
             $sitename = strtolower(wp_parse_url(network_home_url(), PHP_URL_HOST));
 
@@ -39,7 +43,14 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return 'wordpress@'.$sitename;
         });
-        $container['http_transport'] = _wp_http_get_object();
+        $container['filesystem'] = $container->service(function () {
+            if (!class_exists(\WP_Filesystem_Direct::class)) {
+                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-base.php';
+                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-direct.php';
+            }
+
+            return new \WP_Filesystem_Direct(false);
+        });
         $container['is_multisite'] = is_multisite();
         $container['phpmailer'] = function () {
             if (!class_exists(\PHPMailer::class)) {
@@ -48,31 +59,33 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return new \PHPMailer(true);
         };
-        $container['plupload_error_messages'] = [
-            'queue_limit_exceeded' => __('You have attempted to queue too many files.'),
-            'file_exceeds_size_limit' => __('%s exceeds the maximum upload size for this site.'),
-            'zero_byte_file' => __('This file is empty. Please try another.'),
-            'invalid_filetype' => __('Sorry, this file type is not permitted for security reasons.'),
-            'not_an_image' => __('This file is not an image. Please try another.'),
-            'image_memory_exceeded' => __('Memory exceeded. Please try another smaller file.'),
-            'image_dimensions_exceeded' => __('This is larger than the maximum size. Please try another.'),
-            'default_error' => __('An error occurred in the upload. Please try again later.'),
-            'missing_upload_url' => __('There was a configuration error. Please contact the server administrator.'),
-            'upload_limit_exceeded' => __('You may only upload 1 file.'),
-            'http_error' => __('Unexpected response from the server. The file may have been uploaded successfully. Check in the Media Library or reload the page.'),
-            'http_error_image' => __('Post-processing of the image failed. If this is a photo or a large image, please scale it down to 2500 pixels and upload it again.'),
-            'upload_failed' => __('Upload failed.'),
-            'big_upload_failed' => __('Please try uploading this file with the %1$sbrowser uploader%2$s.'),
-            'big_upload_queued' => __('%s exceeds the maximum upload size for the multi-file uploader when used in your browser.'),
-            'io_error' => __('IO error.'),
-            'security_error' => __('Security error.'),
-            'file_cancelled' => __('File canceled.'),
-            'upload_stopped' => __('Upload stopped.'),
-            'dismiss' => __('Dismiss'),
-            'crunching' => __('Crunching&hellip;'),
-            'deleted' => __('moved to the trash.'),
-            'error_uploading' => __('&#8220;%s&#8221; has failed to upload.'),
-        ];
+        $container['plupload_error_messages'] = $container->service(function () {
+            return [
+                'queue_limit_exceeded' => __('You have attempted to queue too many files.'),
+                'file_exceeds_size_limit' => __('%s exceeds the maximum upload size for this site.'),
+                'zero_byte_file' => __('This file is empty. Please try another.'),
+                'invalid_filetype' => __('Sorry, this file type is not permitted for security reasons.'),
+                'not_an_image' => __('This file is not an image. Please try another.'),
+                'image_memory_exceeded' => __('Memory exceeded. Please try another smaller file.'),
+                'image_dimensions_exceeded' => __('This is larger than the maximum size. Please try another.'),
+                'default_error' => __('An error occurred in the upload. Please try again later.'),
+                'missing_upload_url' => __('There was a configuration error. Please contact the server administrator.'),
+                'upload_limit_exceeded' => __('You may only upload 1 file.'),
+                'http_error' => __('Unexpected response from the server. The file may have been uploaded successfully. Check in the Media Library or reload the page.'),
+                'http_error_image' => __('Post-processing of the image failed. If this is a photo or a large image, please scale it down to 2500 pixels and upload it again.'),
+                'upload_failed' => __('Upload failed.'),
+                'big_upload_failed' => __('Please try uploading this file with the %1$sbrowser uploader%2$s.'),
+                'big_upload_queued' => __('%s exceeds the maximum upload size for the multi-file uploader when used in your browser.'),
+                'io_error' => __('IO error.'),
+                'security_error' => __('Security error.'),
+                'file_cancelled' => __('File canceled.'),
+                'upload_stopped' => __('Upload stopped.'),
+                'dismiss' => __('Dismiss'),
+                'crunching' => __('Crunching&hellip;'),
+                'deleted' => __('moved to the trash.'),
+                'error_uploading' => __('&#8220;%s&#8221; has failed to upload.'),
+            ];
+        });
         $container['site_icon'] = $container->service(function () {
             if (!class_exists(\WP_Site_Icon::class)) {
                 require_once ABSPATH.'wp-admin/includes/class-wp-site-icon.php';
@@ -83,7 +96,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         $container['site_query'] = $container->service(function () {
             return class_exists(\WP_Site_Query::class) ? new \WP_Site_Query() : null;
         });
-        $container['site_url'] = set_url_scheme(get_home_url(), 'https');
+        $container['site_url'] = $container->service(function () {
+            return set_url_scheme(get_home_url(), 'https');
+        });
         $container['uploads_basedir'] = $container->service(function () {
             return wp_upload_dir()['basedir'] ?? '';
         });

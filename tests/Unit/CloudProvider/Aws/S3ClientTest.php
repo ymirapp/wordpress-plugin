@@ -15,7 +15,7 @@ namespace Ymir\Plugin\Tests\Unit\CloudProvider\Aws;
 
 use Ymir\Plugin\CloudProvider\Aws\S3Client;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
-use Ymir\Plugin\Tests\Mock\WPHttpMockTrait;
+use Ymir\Plugin\Tests\Mock\HttpClientMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
@@ -24,11 +24,11 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 class S3ClientTest extends TestCase
 {
     use FunctionMockTrait;
-    use WPHttpMockTrait;
+    use HttpClientMockTrait;
 
     public function testCopyObject()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -77,12 +77,12 @@ class S3ClientTest extends TestCase
                )
                ->willReturnOnConsecutiveCalls('20200515', '20200515T181004Z', '20200515T181004Z', '20200515', '20200515');
 
-        $this->assertSame('https://test-bucket.s3.us-east-1.amazonaws.com/object-key?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-key%2F20200515%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200515T181004Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=196d3b99d39a506d8edbd65eb976b3916ec08bc2b8be1859c676c7cf98df1578', (new S3Client($this->getWPHttpMock(), 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->createPutObjectRequest('object-key'));
+        $this->assertSame('https://test-bucket.s3.us-east-1.amazonaws.com/object-key?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-key%2F20200515%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200515T181004Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=196d3b99d39a506d8edbd65eb976b3916ec08bc2b8be1859c676c7cf98df1578', (new S3Client($this->getHttpClientMock(), 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->createPutObjectRequest('object-key'));
     }
 
     public function testDeleteObject()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -119,7 +119,7 @@ class S3ClientTest extends TestCase
 
     public function testGetObject()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -157,7 +157,7 @@ class S3ClientTest extends TestCase
 
     public function testGetObjectDetails()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -203,7 +203,7 @@ class S3ClientTest extends TestCase
 
     public function testGetObjects()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -252,7 +252,7 @@ class S3ClientTest extends TestCase
 
     public function testObjectExists()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -294,7 +294,7 @@ class S3ClientTest extends TestCase
 
     public function testPutObject()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
             ->method('request')
             ->with(

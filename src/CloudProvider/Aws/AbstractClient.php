@@ -13,11 +13,20 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\CloudProvider\Aws;
 
+use Ymir\Plugin\Http\Client;
+
 /**
  * Base AWS client.
  */
 abstract class AbstractClient
 {
+    /**
+     * The Ymir HTTP client.
+     *
+     * @var Client
+     */
+    private $client;
+
     /**
      * The AWS API key.
      *
@@ -47,18 +56,11 @@ abstract class AbstractClient
     private $securityToken;
 
     /**
-     * The WordPress HTTP transport.
-     *
-     * @var \WP_Http
-     */
-    private $transport;
-
-    /**
      * Constructor.
      */
-    public function __construct(\WP_Http $transport, string $key, string $region, string $secret)
+    public function __construct(Client $client, string $key, string $region, string $secret)
     {
-        $this->transport = $transport;
+        $this->client = $client;
         $this->key = $key;
         $this->region = $region;
         $this->secret = $secret;
@@ -142,15 +144,7 @@ abstract class AbstractClient
             $arguments['body'] = $body;
         }
 
-        $response = $this->transport->request($this->createRequestUrl($uri), $arguments);
-
-        if ($response instanceof \WP_Error) {
-            throw new \RuntimeException($response->get_error_message());
-        } elseif (!is_array($response)) {
-            throw new \RuntimeException('Response must be an array');
-        }
-
-        return $response;
+        return $this->client->request($this->createRequestUrl($uri), $arguments);
     }
 
     /**

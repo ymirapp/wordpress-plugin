@@ -32,6 +32,6 @@ trait ServiceLocatorTrait
             throw new \RuntimeException('Ymir plugin isn\'t active');
         }
 
-        return $ymir->getContainer()->offsetGet($service);
+        return $ymir->getContainer()->get($service);
     }
 }

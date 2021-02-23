@@ -15,6 +15,7 @@ namespace Ymir\Plugin\CloudProvider\Aws;
 
 use Ymir\Plugin\Console;
 use Ymir\Plugin\Console\ConsoleClientInterface;
+use Ymir\Plugin\Http\Client;
 
 /**
  * The client for AWS Lambda API.
@@ -38,9 +39,9 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(\WP_Http $transport, string $functionName, string $key, string $region, string $secret, string $siteUrl)
+    public function __construct(Client $client, string $functionName, string $key, string $region, string $secret, string $siteUrl)
     {
-        parent::__construct($transport, $key, $region, $secret);
+        parent::__construct($client, $key, $region, $secret);
 
         $this->functionName = $functionName;
         $this->siteUrl = $siteUrl;

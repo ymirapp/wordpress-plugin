@@ -16,7 +16,7 @@ namespace Ymir\Plugin\Tests\Unit\CloudProvider\Aws;
 use Ymir\Plugin\CloudProvider\Aws\SesClient;
 use Ymir\Plugin\Tests\Mock\EmailMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
-use Ymir\Plugin\Tests\Mock\WPHttpMockTrait;
+use Ymir\Plugin\Tests\Mock\HttpClientMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
@@ -26,7 +26,7 @@ class SesClientTest extends TestCase
 {
     use EmailMockTrait;
     use FunctionMockTrait;
-    use WPHttpMockTrait;
+    use HttpClientMockTrait;
 
     public function testSendEmail()
     {
@@ -35,7 +35,7 @@ class SesClientTest extends TestCase
               ->method('toString')
               ->willReturn('email');
 
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(

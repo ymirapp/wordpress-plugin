@@ -30,6 +30,13 @@ class Plugin
     private $container;
 
     /**
+     * The file path of the plugin.
+     *
+     * @var string
+     */
+    private $filePath;
+
+    /**
      * Flag to track if the plugin is loaded.
      *
      * @var bool
@@ -39,7 +46,7 @@ class Plugin
     /**
      * Constructor.
      */
-    public function __construct(string $file)
+    public function __construct(string $filePath)
     {
         if (!defined('ABSPATH')) {
             throw new \RuntimeException('"ABSPATH" constant isn\'t defined');
@@ -53,12 +60,26 @@ class Plugin
 
         $this->container = new Container([
             'root_directory' => $rootDirectory,
-            'plugin_name' => basename($file, '.php'),
-            'plugin_basename' => plugin_basename($file),
-            'plugin_path' => plugin_dir_path($file),
-            'plugin_relative_path' => '/'.trim(str_replace($rootDirectory, '', plugin_dir_path($file)), '/'),
-            'plugin_url' => plugin_dir_url($file),
+            'plugin_name' => basename($filePath, '.php'),
         ]);
+        $this->filePath = $filePath;
+
+        $this->container->configure([
+            Configuration\AssetsConfiguration::class,
+            Configuration\AttachmentConfiguration::class,
+            Configuration\CloudProviderConfiguration::class,
+            Configuration\CloudStorageConfiguration::class,
+            Configuration\ConsoleConfiguration::class,
+            Configuration\EmailConfiguration::class,
+            Configuration\EventManagementConfiguration::class,
+            Configuration\ObjectCacheConfiguration::class,
+            Configuration\PhpConfiguration::class,
+            Configuration\RestApiConfiguration::class,
+            Configuration\UploadsConfiguration::class,
+            Configuration\WordPressConfiguration::class,
+            Configuration\YmirConfiguration::class,
+        ]);
+
         $this->loaded = false;
     }
 
@@ -87,20 +108,10 @@ class Plugin
             return;
         }
 
-        $this->container->configure([
-            Configuration\AssetsConfiguration::class,
-            Configuration\AttachmentConfiguration::class,
-            Configuration\CloudProviderConfiguration::class,
-            Configuration\CloudStorageConfiguration::class,
-            Configuration\ConsoleConfiguration::class,
-            Configuration\EmailConfiguration::class,
-            Configuration\EventManagementConfiguration::class,
-            Configuration\PhpConfiguration::class,
-            Configuration\RestApiConfiguration::class,
-            Configuration\UploadsConfiguration::class,
-            Configuration\WordPressConfiguration::class,
-            Configuration\YmirConfiguration::class,
-        ]);
+        $this->container['plugin_basename'] = plugin_basename($this->filePath);
+        $this->container['plugin_dir_path'] = plugin_dir_path($this->filePath);
+        $this->container['plugin_dir_url'] = plugin_dir_url($this->filePath);
+        $this->container['plugin_relative_path'] = '/'.trim(str_replace($this->container['root_directory'], '', plugin_dir_path($this->filePath)), '/');
 
         CloudStorageStreamWrapper::register($this->container['cloud_storage_client']);
 

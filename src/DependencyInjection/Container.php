@@ -55,6 +55,14 @@ class Container implements \ArrayAccess
     }
 
     /**
+     * Finds an entry of the container by its identifier and returns it.
+     */
+    public function get($id)
+    {
+        return $this->offsetGet($id);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function offsetExists($key)

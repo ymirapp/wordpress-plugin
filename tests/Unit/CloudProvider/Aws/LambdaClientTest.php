@@ -15,7 +15,7 @@ namespace Ymir\Plugin\Tests\Unit\CloudProvider\Aws;
 
 use Ymir\Plugin\CloudProvider\Aws\LambdaClient;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
-use Ymir\Plugin\Tests\Mock\WPHttpMockTrait;
+use Ymir\Plugin\Tests\Mock\HttpClientMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
@@ -25,12 +25,12 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 class LambdaClientTest extends TestCase
 {
     use FunctionMockTrait;
-    use WPHttpMockTrait;
+    use HttpClientMockTrait;
     use WPPostMockTrait;
 
     public function testCreateAttachmentMetadata()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -72,7 +72,7 @@ class LambdaClientTest extends TestCase
 
     public function testCreateAttachmentMetadataWithSpecialCharacters()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
             ->method('request')
             ->with(
@@ -114,7 +114,7 @@ class LambdaClientTest extends TestCase
 
     public function testCreateCroppedAttachmentImage()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -156,7 +156,7 @@ class LambdaClientTest extends TestCase
 
     public function testCreateCroppedAttachmentImageWithSiteIconContext()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -198,7 +198,7 @@ class LambdaClientTest extends TestCase
 
     public function testEditAttachmentImage()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -240,7 +240,7 @@ class LambdaClientTest extends TestCase
 
     public function testResizeAttachmentImage()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(
@@ -282,7 +282,7 @@ class LambdaClientTest extends TestCase
 
     public function testRunCron()
     {
-        $http = $this->getWPHttpMock();
+        $http = $this->getHttpClientMock();
         $http->expects($this->once())
              ->method('request')
              ->with(

@@ -14,15 +14,16 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Mock;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Ymir\Plugin\CloudProvider\Aws\DynamoDbClient;
 
-trait WPHttpMockTrait
+trait DynamoDbClientMockTrait
 {
     /**
-     * Creates a mock of a WP_Error object.
+     * Creates a mock of a DynamoDbClient object.
      */
-    private function getWPHttpMock(): MockObject
+    private function getDynamoDbClientMock(): MockObject
     {
-        return $this->getMockBuilder(\WP_Http::class)
+        return $this->getMockBuilder(DynamoDbClient::class)
                     ->disableOriginalConstructor()
                     ->getMock();
     }
