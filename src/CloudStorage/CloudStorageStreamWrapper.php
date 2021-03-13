@@ -199,7 +199,7 @@ class CloudStorageStreamWrapper
     /**
      * Create a directory.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.mkdir.php
+     * @see https://www.php.net/manual/en/streamwrapper.mkdir.php
      */
     public function mkdir($path, $mode): bool
     {
@@ -220,7 +220,7 @@ class CloudStorageStreamWrapper
     /**
      * Rename a file.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.rename.php
+     * @see https://www.php.net/manual/en/streamwrapper.rename.php
      */
     public function rename(string $pathFrom, string $pathTo): bool
     {
@@ -240,7 +240,7 @@ class CloudStorageStreamWrapper
     /**
      * Removes a directory.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.rmdir.php
+     * @see https://www.php.net/manual/en/streamwrapper.rmdir.php
      */
     public function rmdir(string $path): bool
     {
@@ -266,7 +266,7 @@ class CloudStorageStreamWrapper
     /**
      * Retrieve the underlaying resource.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-cast.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-cast.php
      */
     public function stream_cast(): bool
     {
@@ -276,7 +276,7 @@ class CloudStorageStreamWrapper
     /**
      * Close the file.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-close.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-close.php
      */
     public function stream_close()
     {
@@ -287,7 +287,7 @@ class CloudStorageStreamWrapper
     /**
      * Checks if we're at the end of a file.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-eof.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-eof.php
      */
     public function stream_eof(): bool
     {
@@ -297,7 +297,7 @@ class CloudStorageStreamWrapper
     /**
      * Flushes the output of the cloud storage object.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-flush.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-flush.php
      *
      * @return bool
      */
@@ -319,7 +319,7 @@ class CloudStorageStreamWrapper
     /**
      * Change stream metadata.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-metadata.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-metadata.php
      */
     public function stream_metadata(): bool
     {
@@ -329,7 +329,7 @@ class CloudStorageStreamWrapper
     /**
      * Opens the cloud storage object at the given path.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-open.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-open.php
      */
     public function stream_open(string $path, string $mode): bool
     {
@@ -366,7 +366,7 @@ class CloudStorageStreamWrapper
     /**
      * Read from the cloud storage object.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-read.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-read.php
      */
     public function stream_read(int $count)
     {
@@ -376,7 +376,7 @@ class CloudStorageStreamWrapper
     /**
      * Seeks to specific location in the cloud storage object.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-seek.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-seek.php
      */
     public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
@@ -386,7 +386,7 @@ class CloudStorageStreamWrapper
     /**
      * Get information about the cloud storage object.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-stat.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-stat.php
      */
     public function stream_stat()
     {
@@ -396,7 +396,7 @@ class CloudStorageStreamWrapper
     /**
      * Retrieve the current position of a stream.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-tell.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-tell.php
      */
     public function stream_tell()
     {
@@ -406,7 +406,7 @@ class CloudStorageStreamWrapper
     /**
      * Write to cloud storage object.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
+     * @see https://www.php.net/manual/en/streamwrapper.stream-write.php
      */
     public function stream_write($data)
     {
@@ -432,7 +432,7 @@ class CloudStorageStreamWrapper
     /**
      * Retrieve information about the file at the given path.
      *
-     * @see http://www.php.net/manual/en/streamwrapper.url-stat.php
+     * @see https://www.php.net/manual/en/streamwrapper.url-stat.php
      */
     public function url_stat(string $path, int $flags)
     {
