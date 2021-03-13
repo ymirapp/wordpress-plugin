@@ -115,6 +115,14 @@ class Plugin
 
         CloudStorageStreamWrapper::register($this->container['cloud_storage_client']);
 
+        foreach ($this->container['local_commands'] as $command) {
+            $this->registerCommand($command);
+        }
+
+        if ($this->isLocal()) {
+            return;
+        }
+
         foreach ($this->container['priority_subscribers'] as $subscriber) {
             $this->container['event_manager']->addSubscriber($subscriber);
         }
@@ -128,6 +136,14 @@ class Plugin
         }
 
         $this->loaded = true;
+    }
+
+    /**
+     * Checks if the code is running locally.
+     */
+    private function isLocal(): bool
+    {
+        return empty($this->container['ymir_environment']);
     }
 
     /**

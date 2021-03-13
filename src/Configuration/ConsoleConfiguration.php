@@ -28,20 +28,24 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
-        $container['is_wp_cli'] = defined('WP_CLI') && WP_CLI;
         $container['commands'] = $container->service(function (Container $container) {
             return [
                 new Console\CreateAttachmentMetadataCommand($container['file_manager']),
                 new Console\CreateCroppedImageCommand($container['file_manager'], $container['event_manager']),
                 new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon']),
                 new Console\EditAttachmentImageCommand($container['file_manager']),
-                new Console\InstallObjectCacheCommand($container['content_directory'], $container['filesystem'], $container['plugin_dir_path']),
                 new Console\ResizeAttachmentImageCommand($container['file_manager']),
                 new Console\RunAllCronCommand($container['console_client'], $container['site_query']),
             ];
         });
         $container['console_client'] = $container->service(function (Container $container) {
             return new LambdaClient($container['ymir_http_client'], $container['cloud_provider_function_name'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['site_url']);
+        });
+        $container['is_wp_cli'] = defined('WP_CLI') && WP_CLI;
+        $container['local_commands'] = $container->service(function (Container $container) {
+            return [
+                new Console\InstallObjectCacheCommand($container['content_directory'], $container['filesystem'], $container['plugin_dir_path']),
+            ];
         });
     }
 }
