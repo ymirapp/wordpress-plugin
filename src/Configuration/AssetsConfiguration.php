@@ -27,7 +27,7 @@ class AssetsConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['assets_url'] = $container->service(function () {
-            return getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : '');
+            return getenv('YMIR_CUSTOM_ASSETS_URL') ?: (getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : ''));
         });
     }
 }
