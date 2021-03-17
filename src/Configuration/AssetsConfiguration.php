@@ -33,7 +33,7 @@ class AssetsConfiguration implements ContainerConfigurationInterface
             $customAssetsUrl = getenv('YMIR_CUSTOM_ASSETS_URL');
 
             if (is_string($customAssetsUrl)) {
-                $customAssetsUrl .= '/'.$container['assets_path'];
+                $customAssetsUrl = rtrim($customAssetsUrl, '/').'/'.$container['assets_path'];
             }
 
             return $customAssetsUrl ?: (getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : ''));
