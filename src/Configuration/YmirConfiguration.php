@@ -33,6 +33,6 @@ class YmirConfiguration implements ContainerConfigurationInterface
         });
         $container['ymir_primary_domain_name'] = getenv('YMIR_PRIMARY_DOMAIN_NAME') ?: '';
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';
-        $container['ymir_plugin_version'] = '1.2.1';
+        $container['ymir_plugin_version'] = '1.2.2';
     }
 }
