@@ -1148,12 +1148,44 @@ class AbstractPersistentObjectCacheTest extends TestCase
                     )
                     ->willReturn(true);
 
-        $this->assertTrue($objectCache->replace('options', 'alloptions', ['key1' => 'value1', 'key2' => 'value2']));
+        $this->assertTrue($objectCache->set('options', 'alloptions', ['key1' => 'value1', 'key2' => 'value2']));
 
         $this->assertSame([
             'options:alloptions_keys' => ['key1' => true, 'key2' => true],
             'alloptions_values:key1' => 'value1',
             'alloptions_values:key2' => 'value2',
+            'options:alloptions' => ['key1' => 'value1', 'key2' => 'value2'],
+        ], $cacheProperty->getValue($objectCache));
+    }
+
+    public function testSetStoresAlloptionsInPersistentCacheWhenPersistentCacheHasNoKeys()
+    {
+        $objectCache = $this->getMockForAbstractClass(AbstractPersistentObjectCache::class, [false]);
+        $objectCacheReflection = new \ReflectionClass(AbstractPersistentObjectCache::class);
+
+        $cacheProperty = $objectCacheReflection->getProperty('cache');
+        $cacheProperty->setAccessible(true);
+
+        $objectCache->expects($this->exactly(2))
+                    ->method('getValuesFromPersistentCache')
+                    ->with($this->identicalTo('options:alloptions_keys'))
+                    ->willReturn(false);
+
+        $objectCache->expects($this->exactly(3))
+                    ->method('storeValueInPersistentCache')
+                    ->withConsecutive(
+                        [$this->identicalTo('alloptions_values:key1'), $this->identicalTo('value1'), $this->identicalTo(0), $this->identicalTo(0)],
+                        [$this->identicalTo('alloptions_values:key2'), $this->identicalTo('value2'), $this->identicalTo(0), $this->identicalTo(0)],
+                        [$this->identicalTo('options:alloptions_keys'), $this->identicalTo(['key1' => true, 'key2' => true]), $this->identicalTo(0), $this->identicalTo(0)]
+                    )
+                    ->willReturn(true);
+
+        $this->assertTrue($objectCache->set('options', 'alloptions', ['key1' => 'value1', 'key2' => 'value2']));
+
+        $this->assertSame([
+            'alloptions_values:key1' => 'value1',
+            'alloptions_values:key2' => 'value2',
+            'options:alloptions_keys' => ['key1' => true, 'key2' => true],
             'options:alloptions' => ['key1' => 'value1', 'key2' => 'value2'],
         ], $cacheProperty->getValue($objectCache));
     }

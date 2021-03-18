@@ -441,7 +441,9 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
      */
     private function getAllOptionsKeys(): array
     {
-        return (new Collection($this->get('options', 'alloptions_keys')))->keys()->all();
+        $allOptionsKeys = $this->get('options', 'alloptions_keys');
+
+        return !empty($allOptionsKeys) ? (new Collection($allOptionsKeys))->keys()->all() : [];
     }
 
     /**
