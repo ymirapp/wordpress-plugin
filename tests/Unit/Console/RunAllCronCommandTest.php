@@ -16,6 +16,7 @@ namespace Ymir\Plugin\Tests\Unit\Console;
 use Ymir\Plugin\Console\RunAllCronCommand;
 use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WPSiteMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteQueryMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
@@ -26,6 +27,7 @@ class RunAllCronCommandTest extends TestCase
 {
     use ConsoleClientInterfaceMockTrait;
     use FunctionMockTrait;
+    use WPSiteMockTrait;
     use WPSiteQueryMockTrait;
 
     public function testGetName()
@@ -58,6 +60,8 @@ class RunAllCronCommandTest extends TestCase
     {
         $consoleClient = $this->getConsoleClientInterfaceMock();
         $get_site_url = $this->getFunctionMock($this->getNamespace(RunAllCronCommand::class), 'get_site_url');
+        $wpSite1 = $this->getWPSiteMock();
+        $wpSite2 = $this->getWPSiteMock();
         $wpSiteQuery = $this->getWPSiteQueryMock();
 
         $consoleClient->expects($this->exactly(2))
@@ -74,6 +78,10 @@ class RunAllCronCommandTest extends TestCase
                      )
                      ->willReturnOnConsecutiveCalls('site_url_1', 'site_url_2');
 
+        $wpSite1->blog_id = 1;
+
+        $wpSite2->blog_id = 2;
+
         $wpSiteQuery->expects($this->once())
                     ->method('query')
                     ->with($this->identicalTo([
@@ -82,10 +90,7 @@ class RunAllCronCommandTest extends TestCase
                         'deleted' => 0,
                         'archived' => 0,
                     ]))
-                    ->willReturn([
-                        (object) ['blog_id' => 1],
-                        (object) ['blog_id' => 2],
-                    ]);
+                    ->willReturn([$wpSite1, $wpSite2]);
 
         (new RunAllCronCommand($consoleClient, $wpSiteQuery))([], []);
     }

@@ -34,6 +34,7 @@ require_once $_core_dir.'/wp-includes/class-phpmailer.php';
 require_once $_core_dir.'/wp-includes/class-wp-error.php';
 require_once $_core_dir.'/wp-includes/class-wp-image-editor.php';
 require_once $_core_dir.'/wp-includes/class-wp-post.php';
+require_once $_core_dir.'/wp-includes/class-wp-site.php';
 require_once $_core_dir.'/wp-includes/class-wp-site-query.php';
 require_once $_core_dir.'/wp-includes/class.wp-dependencies.php';
 require_once $_core_dir.'/wp-includes/class.wp-scripts.php';

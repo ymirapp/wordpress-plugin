@@ -75,7 +75,7 @@ class RunAllCronCommand extends AbstractCommand
         $blogIds = [0];
 
         if ($this->siteQuery instanceof \WP_Site_Query) {
-            $blogIds = array_map(function (\stdClass $site) {
+            $blogIds = array_map(function (\WP_Site $site) {
                 return (int) $site->blog_id;
             }, $this->siteQuery->query([
                 'number' => 0,
