@@ -16,7 +16,7 @@ Plugin Name: Ymir
 Description: Integrates WordPress with the Ymir platform.
 Author: Carl Alexander
 Author URI: https://ymirapp.com
-Version: 1.2.3
+Version: 1.2.4
 License: GPL3
 */
 
