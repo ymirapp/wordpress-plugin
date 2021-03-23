@@ -54,7 +54,7 @@ class Client
         curl_setopt($handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
         curl_setopt($handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
         curl_setopt($handle, CURLOPT_CAINFO, ABSPATH.WPINC.'/certificates/ca-bundle.crt');
-        curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
+        curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         $this->handle = $handle;
