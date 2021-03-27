@@ -52,6 +52,18 @@ abstract class AbstractCommand implements CommandInterface
     abstract protected static function getCommandName(): string;
 
     /**
+     * Write an information message.
+     */
+    protected function info(string $message)
+    {
+        if (!class_exists(\WP_CLI::class)) {
+            return;
+        }
+
+        \WP_CLI::log($message);
+    }
+
+    /**
      * Write success message.
      */
     protected function success(string $message)

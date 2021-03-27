@@ -47,8 +47,10 @@ class RunAllCronCommand extends AbstractCommand
     public function __invoke(array $arguments, array $options)
     {
         foreach ($this->getSiteUrls() as $siteUrl) {
+            $this->info(sprintf('Running "wp cron event run" on "%s"', $siteUrl));
             $this->consoleClient->runCron($siteUrl);
         }
+        $this->success('All cron commands run successfully');
     }
 
     /**
