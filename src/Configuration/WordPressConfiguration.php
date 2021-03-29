@@ -111,5 +111,10 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         $container['uploads_subdir'] = $container->service(function () {
             return wp_upload_dir()['subdir'] ?? '';
         });
+        $container['wp_object_cache'] = $container->service(function () {
+            global $wp_object_cache;
+
+            return $wp_object_cache;
+        });
     }
 }

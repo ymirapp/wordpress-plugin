@@ -80,6 +80,14 @@ class Collection implements \ArrayAccess
     }
 
     /**
+     * Count the number of items in the collection.
+     */
+    public function count(): int
+    {
+        return count($this->items);
+    }
+
+    /**
      * Get the items in the collection that are not present in the given items.
      */
     public function diff($items): self
@@ -215,6 +223,22 @@ class Collection implements \ArrayAccess
     public function offsetUnset($key)
     {
         unset($this->items[$key]);
+    }
+
+    /**
+     * Search the collection for a given value and return the corresponding key if successful.
+     */
+    public function search($value, $strict = false)
+    {
+        return array_search($value, $this->items, $strict);
+    }
+
+    /**
+     * Extract a slice of the collection.
+     */
+    public function slice(int $offset, ?int $length = null): self
+    {
+        return new static(array_slice($this->items, $offset, $length, true));
     }
 
     /**

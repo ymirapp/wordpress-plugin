@@ -135,6 +135,8 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
      */
     private function getValue(string $key)
     {
+        $start = round(microtime(true) * 1000);
+
         $response = $this->dynamoDbClient->getItem([
             'TableName' => $this->table,
             'ConsistentRead' => false,
@@ -142,6 +144,9 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
                 'key' => ['S' => $key],
             ],
         ]);
+
+        ++$this->requests;
+        $this->requestTime += (round(microtime(true) * 1000) - $start);
 
         if (!isset($response['Item']['value']['S']) || $this->isExpired($response['Item'])) {
             return false;
@@ -156,6 +161,8 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
     private function getValues(array $keys): array
     {
         return (new Collection($keys))->chunk(100)->map(function (Collection $chunkedKeys) {
+            $start = round(microtime(true) * 1000);
+
             $response = $this->dynamoDbClient->batchGetItem([
                 'RequestItems' => [
                     $this->table => [
@@ -166,6 +173,9 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
                     ],
                 ],
             ]);
+
+            ++$this->requests;
+            $this->requestTime += (round(microtime(true) * 1000) - $start);
 
             $current = time();
 

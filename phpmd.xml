@@ -28,6 +28,7 @@
     <rule ref="rulesets/naming.xml">
         <exclude name="LongVariable"/>
         <exclude name="ShortVariable"/>
+        <exclude name="ShortMethodName" />
     </rule>
 
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity"
@@ -86,6 +87,17 @@
         <properties>
             <property name="minimum" description="Minimum length for a variable, property or parameter name" value="3"/>
             <property name="exceptions" value="id,x,y" />
+        </properties>
+    </rule>
+    <rule name="ShortMethodName"
+          since="0.2"
+          message="Avoid using short method names like {0}::{1}(). The configured minimum method name length is {2}."
+          class="PHPMD\Rule\Naming\ShortMethodName"
+          externalInfoUrl="https://phpmd.org/rules/naming.html#shortmethodname">
+        <priority>3</priority>
+        <properties>
+            <property name="minimum" description="Minimum length for a method or function name" value="3"/>
+            <property name="exceptions" description="Comma-separated list of exceptions" value="id"/>
         </properties>
     </rule>
 </ruleset>

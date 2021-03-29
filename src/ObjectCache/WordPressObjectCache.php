@@ -100,6 +100,19 @@ class WordPressObjectCache implements ObjectCacheInterface
     /**
      * {@inheritdoc}
      */
+    public function getInfo(): array
+    {
+        return [
+            'hits' => $this->cache->cache_hits,
+            'misses' => $this->cache->cache_misses,
+            'ratio' => round(($this->cache->cache_hits / ($this->cache->cache_hits + $this->cache->cache_misses)) * 100, 1),
+            'type' => str_replace('ObjectCache', '', (new \ReflectionClass($this))->getShortName()),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getMultiple(string $group, array $keys, bool $force = false): array
     {
         return $this->cache->get_multiple($keys, $group, $force);

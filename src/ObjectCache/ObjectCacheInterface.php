@@ -71,6 +71,11 @@ interface ObjectCacheInterface
     public function get(string $group, string $key, bool $force = false, &$found = null);
 
     /**
+     * Get information on the object cache.
+     */
+    public function getInfo(): array;
+
+    /**
      * Retrieves multiple values from the cache in one call.
      *
      * @see https://developer.wordpress.org/reference/classes/wp_object_cache/get_multiple

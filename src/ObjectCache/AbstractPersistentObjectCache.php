@@ -35,6 +35,20 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
     protected const MODE_REPLACE = 2;
 
     /**
+     * The amount of requests made to the persistent cache.
+     *
+     * @var int
+     */
+    protected $requests;
+
+    /**
+     * The total time spent making requests to the persistent cache.
+     *
+     * @var int
+     */
+    protected $requestTime;
+
+    /**
      * The current blog ID when multisite is active.
      *
      * @var int
@@ -53,7 +67,14 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
      *
      * @var array
      */
-    private $globalGroups = [];
+    private $globalGroups;
+
+    /**
+     * The amount of times the cache data was already stored in the cache.
+     *
+     * @var int
+     */
+    private $hits;
 
     /**
      * Flag whether this is a multisite installation or not.
@@ -63,11 +84,18 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
     private $isMultisite;
 
     /**
+     * Amount of times the cache didn't have the request in cache.
+     *
+     * @var int
+     */
+    private $misses;
+
+    /**
      * List of non-persistent groups.
      *
      * @var array
      */
-    private $nonPersistentGroups = [];
+    private $nonPersistentGroups;
 
     /**
      * Prefix used for all cache keys.
@@ -89,9 +117,15 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
     public function __construct(bool $isMultisite, string $prefix = '')
     {
         $this->cache = [];
+        $this->globalGroups = [];
+        $this->hits = 0;
         $this->isMultisite = $isMultisite;
+        $this->misses = 0;
+        $this->nonPersistentGroups = [];
         $this->prefix = trim($prefix);
         $this->requestedKeys = [];
+        $this->requests = 0;
+        $this->requestTime = 0;
 
         if (!empty($this->prefix)) {
             $this->prefix = $this->sanitizeCacheKeyPart($this->prefix);
@@ -207,9 +241,13 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
         if ($this->isNonPersistentGroup($group) && !$this->hasInMemory($cacheKey)) {
             $found = false;
 
+            ++$this->misses;
+
             return false;
         } elseif ((!$force || $this->isNonPersistentGroup($group)) && $this->hasInMemory($cacheKey)) {
             $found = true;
+
+            ++$this->hits;
 
             return $this->getFromMemory($cacheKey);
         }
@@ -222,12 +260,29 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
 
         $found = false !== $value;
 
+        $found ? $this->hits++ : $this->misses++;
+
         if (false !== $value) {
             $this->requestedKeys[$cacheKey] = true;
             $this->storeInMemory($cacheKey, $value);
         }
 
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInfo(): array
+    {
+        return [
+            'hits' => $this->hits,
+            'misses' => $this->misses,
+            'ratio' => round(($this->hits / ($this->hits + $this->misses)) * 100, 1),
+            'requests' => $this->requests,
+            'request_time' => $this->requestTime,
+            'type' => str_replace('ObjectCache', '', (new \ReflectionClass($this))->getShortName()),
+        ];
     }
 
     /**
@@ -251,7 +306,11 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             $value = false;
 
             if ((!$force || $this->isNonPersistentGroup($group)) && $this->hasInMemory($cacheKey)) {
+                ++$this->hits;
+
                 $value = $this->getFromMemory($cacheKey);
+            } elseif ($this->isNonPersistentGroup($group) && !$this->hasInMemory($cacheKey)) {
+                ++$this->misses;
             }
 
             return [$key => $value];
@@ -269,10 +328,6 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             return $cacheKeys[$key] ?? '';
         })->filter()->all()));
 
-        $valuesFromPersistentCache->each(function ($value, string $key) {
-            $this->storeInMemory($key, $value);
-        });
-
         $keysWithMissingValues->each(function (string $key) use ($cacheKeys, $values, $valuesFromPersistentCache) {
             $cacheKey = $cacheKeys[$key] ?? '';
 
@@ -281,6 +336,16 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             }
 
             $values[$key] = $valuesFromPersistentCache[$cacheKey] ?? false;
+
+            if (false === $values[$key]) {
+                ++$this->misses;
+
+                return;
+            }
+
+            ++$this->hits;
+
+            $this->storeInMemory($cacheKey, $values[$key]);
         });
 
         $order = $keys->flip()->all();

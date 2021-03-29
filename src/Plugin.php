@@ -74,6 +74,7 @@ class Plugin
             Configuration\EventManagementConfiguration::class,
             Configuration\ObjectCacheConfiguration::class,
             Configuration\PhpConfiguration::class,
+            Configuration\QueryMonitorConfiguration::class,
             Configuration\RestApiConfiguration::class,
             Configuration\UploadsConfiguration::class,
             Configuration\WordPressConfiguration::class,
