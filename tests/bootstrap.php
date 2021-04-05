@@ -11,6 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use Symfony\Component\Dotenv\Dotenv;
+
+require_once __DIR__.'/../vendor/autoload.php';
+
+$dotEnvFilePath = __DIR__.'/../.env';
+
+if (file_exists($dotEnvFilePath)) {
+    (new Dotenv())->load($dotEnvFilePath);
+}
+
 /**
  * PHPUnit bootstrap file for Ymir WordPress plugin.
  */

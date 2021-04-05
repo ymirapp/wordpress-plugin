@@ -65,7 +65,7 @@ return PhpCsFixer\Config::create()
         'php_unit_construct' => true,
         'php_unit_method_casing' => ['case' => 'camel_case'],
         'php_unit_test_class_requires_covers' => true,
-        'php_unit_dedicate_assert' => true,
+        'php_unit_dedicate_assert' => false,
         'phpdoc_order' => true,
         'phpdoc_types_order' => ['null_adjustment' => 'always_last'],
         'semicolon_after_instruction' => true,

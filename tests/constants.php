@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 // WordPress constants
 
+define('ABSPATH', '/tmp/wordpress/');
+define('WPINC', 'wp-includes');
+
 define('MINUTE_IN_SECONDS', 60);
 define('HOUR_IN_SECONDS', 60 * MINUTE_IN_SECONDS);
 define('DAY_IN_SECONDS', 24 * HOUR_IN_SECONDS);
