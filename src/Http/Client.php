@@ -47,16 +47,6 @@ class Client
             throw new \RuntimeException('Unable to initialize a cURL session');
         }
 
-        curl_setopt($handle, CURLINFO_HEADER_OUT, true);
-
-        curl_setopt($handle, CURLOPT_HEADER, false);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-        curl_setopt($handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-        curl_setopt($handle, CURLOPT_CAINFO, ABSPATH.WPINC.'/certificates/ca-bundle.crt');
-        curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        curl_setopt($handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
         $this->handle = $handle;
         $this->version = $version;
     }
@@ -78,6 +68,7 @@ class Client
      */
     public function request(string $url, array $options = []): array
     {
+        $handle = $this->getHandle();
         $options = array_merge([
             'method' => 'GET',
             'timeout' => 5,
@@ -96,32 +87,32 @@ class Client
         $options['headers']['expect'] = !empty($options['body']) && strlen($options['body']) > 1048576 ? '100-Continue' : '';
 
         if (!in_array($options['method'], ['GET', 'POST'])) {
-            curl_setopt($this->handle, CURLOPT_CUSTOMREQUEST, $options['method']);
+            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $options['method']);
         } elseif ('POST' === $options['method']) {
-            curl_setopt($this->handle, CURLOPT_POST, true);
+            curl_setopt($handle, CURLOPT_POST, true);
         }
 
         if ('HEAD' === $options['method']) {
-            curl_setopt($this->handle, CURLOPT_NOBODY, true);
+            curl_setopt($handle, CURLOPT_NOBODY, true);
         } elseif (in_array($options['method'], ['POST', 'PUT'])) {
-            curl_setopt($this->handle, CURLOPT_POSTFIELDS, $options['body'] ?? '');
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $options['body'] ?? '');
         } elseif (!empty($options['body'])) {
-            curl_setopt($this->handle, CURLOPT_POSTFIELDS, $options['body']);
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $options['body']);
         }
 
         if (!empty($options['headers'])) {
-            curl_setopt($this->handle, CURLOPT_HTTPHEADER, array_map(function ($key, $value) {
+            curl_setopt($handle, CURLOPT_HTTPHEADER, array_map(function ($key, $value) {
                 return sprintf('%s: %s', $key, $value);
             }, array_keys($options['headers']), $options['headers']));
         }
 
-        curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
-        curl_setopt($this->handle, CURLOPT_TIMEOUT_MS, round($options['timeout'] * 1000));
-        curl_setopt($this->handle, CURLOPT_REFERER, $url);
-        curl_setopt($this->handle, CURLOPT_URL, $url);
-        curl_setopt($this->handle, CURLOPT_USERAGENT, $options['user-agent']);
+        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
+        curl_setopt($handle, CURLOPT_TIMEOUT_MS, round($options['timeout'] * 1000));
+        curl_setopt($handle, CURLOPT_REFERER, $url);
+        curl_setopt($handle, CURLOPT_URL, $url);
+        curl_setopt($handle, CURLOPT_USERAGENT, $options['user-agent']);
 
-        $response = $this->execute($this->handle);
+        $response = $this->execute($handle);
 
         return $response;
     }
@@ -141,7 +132,9 @@ class Client
 
         $body = curl_exec($handle);
 
-        curl_setopt($this->handle, CURLOPT_HEADERFUNCTION, null);
+        if (false === $body) {
+            throw new \RuntimeException('cURL request failed');
+        }
 
         if (curl_errno($handle)) {
             throw new \RuntimeException(sprintf('cURL error %s: %s', curl_errno($handle), curl_error($handle)));
@@ -168,5 +161,28 @@ class Client
                 'message' => $matches[3],
             ],
         ];
+    }
+
+    /**
+     * Get a reset cURL handle to use for a new request.
+     */
+    private function getHandle()
+    {
+        curl_reset($this->handle);
+        curl_setopt($this->handle, CURLOPT_HEADERFUNCTION, null);
+        curl_setopt($this->handle, CURLOPT_READFUNCTION, null);
+        curl_setopt($this->handle, CURLOPT_WRITEFUNCTION, null);
+        curl_setopt($this->handle, CURLOPT_PROGRESSFUNCTION, null);
+
+        curl_setopt($this->handle, CURLINFO_HEADER_OUT, true);
+        curl_setopt($this->handle, CURLOPT_HEADER, false);
+        curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        curl_setopt($this->handle, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        curl_setopt($this->handle, CURLOPT_CAINFO, ABSPATH.WPINC.'/certificates/ca-bundle.crt');
+        curl_setopt($this->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($this->handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+        return $this->handle;
     }
 }
