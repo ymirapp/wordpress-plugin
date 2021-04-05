@@ -21,7 +21,7 @@ use Ymir\Plugin\Http\Client;
 /**
  * @covers \Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper
  */
-class CloudStorageSteamWrapperS3Test extends TestCase
+class CloudStorageStreamWrapperS3Test extends TestCase
 {
     private $client;
 
