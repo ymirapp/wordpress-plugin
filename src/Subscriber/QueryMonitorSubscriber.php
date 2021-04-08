@@ -58,8 +58,9 @@ class QueryMonitorSubscriber implements SubscriberInterface
     {
         return [
             'init' => 'addCollectors',
-            'qm/outputter/html' => ['addPanels', 10, 2],
+            'qm/output/menus' => ['addPanelsToAdminBarMenu', 99],
             'qm/output/panel_menus' => 'addPanelsToMenu',
+            'qm/outputter/html' => ['addPanels', 99, 2],
         ];
     }
 
@@ -94,9 +95,21 @@ class QueryMonitorSubscriber implements SubscriberInterface
     }
 
     /**
+     * Add panels to WordPress admin bar menu.
+     */
+    public function addPanelsToAdminBarMenu(array $menu): array
+    {
+        foreach ($this->panels as $panel) {
+            $menu = $panel->addToAdminBarMenu($menu);
+        }
+
+        return $menu;
+    }
+
+    /**
      * Add panels to Query Monitor panel menu.
      */
-    public function addPanelsToMenu(array $menu)
+    public function addPanelsToMenu(array $menu): array
     {
         foreach ($this->panels as $panel) {
             $menu = $panel->addToMenu($menu);

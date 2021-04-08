@@ -49,6 +49,18 @@ class ObjectCachePanel extends \QM_Output_Html
     }
 
     /**
+     * Add the panel to the WordPress admin bar menu.
+     */
+    public function addToAdminBarMenu(array $menu): array
+    {
+        $menu[$this->collector->id()] = $this->menu([
+            'title' => esc_html($this->name()),
+        ]);
+
+        return $menu;
+    }
+
+    /**
      * Add the panel to the Query Monitor panel menu.
      */
     public function addToMenu(array $menu): array
