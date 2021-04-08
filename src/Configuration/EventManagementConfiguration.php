@@ -53,7 +53,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
             ];
 
             if ($container['query_monitor_active']) {
-                $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/assets/view/query-monitor');
+                $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/resources/views/query-monitor');
             }
 
             return $subscribers;
