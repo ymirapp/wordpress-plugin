@@ -28,6 +28,9 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
+        $container['query_monitor_active'] = $container->service(function () {
+            return is_plugin_active('query-monitor/query-monitor.php');
+        });
         $container['query_monitor_collectors'] = $container->service(function (Container $container) {
             return [
                 $container['query_monitor_object_cache_collector'],

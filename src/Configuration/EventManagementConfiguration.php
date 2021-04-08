@@ -42,16 +42,21 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
         });
 
         $container['subscribers'] = $container->service(function (Container $container) {
-            return [
+            $subscribers = [
                 new Subscriber\AssetsSubscriber($container['site_url'], $container['assets_url'], $container['ymir_project_type']),
                 new Subscriber\ImageEditorSubscriber($container['console_client'], $container['file_manager']),
                 new Subscriber\PluploadSubscriber($container['plugin_relative_path'], $container['rest_namespace'], $container['assets_url'], $container['plupload_error_messages']),
-                new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/assets/view/query-monitor'),
                 new Subscriber\RedirectSubscriber($container['ymir_primary_domain_name'], $container['is_multisite']),
                 new Subscriber\RestApiSubscriber($container['rest_namespace'], $container['rest_endpoints']),
                 new Subscriber\SecurityHeadersSubscriber(),
                 new Subscriber\WordPressSubscriber($container['server_software'], $container['site_url']),
             ];
+
+            if ($container['query_monitor_active']) {
+                $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/assets/view/query-monitor');
+            }
+
+            return $subscribers;
         });
     }
 }
