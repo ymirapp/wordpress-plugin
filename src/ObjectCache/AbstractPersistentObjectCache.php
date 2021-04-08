@@ -396,7 +396,9 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             'query' => urldecode($_SERVER['QUERY_STRING'] ?? ''),
         ])));
 
-        $preloadedValues = new Collection($this->getValuesFromPersistentCache((new Collection($this->getValuesFromPersistentCache($requestKey)))->keys()->all()));
+        $preloadedValues = new Collection($this->getValuesFromPersistentCache((new Collection($this->getValuesFromPersistentCache($requestKey)))->keys()->filter(function (string $key) {
+            return $this->getAllOptionsCacheKey() !== $key;
+        })->all()));
 
         $this->cache = $preloadedValues->all();
         $this->requestedKeys = $preloadedValues->keys()->mapWithKeys(function (string $key) {
