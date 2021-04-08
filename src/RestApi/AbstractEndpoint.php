@@ -43,15 +43,15 @@ abstract class AbstractEndpoint implements EndpointInterface
     }
 
     /**
-     * Respond to a request to the REST API endpoint.
-     */
-    abstract public function respond(\WP_REST_Request $request);
-
-    /**
      * Validates the request made to the REST API endpoint.
      */
     public function validateRequest(\WP_REST_Request $request): bool
     {
         return true;
     }
+
+    /**
+     * Respond to a request to the REST API endpoint.
+     */
+    abstract public function respond(\WP_REST_Request $request);
 }

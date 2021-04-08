@@ -112,11 +112,6 @@ abstract class AbstractClient
     }
 
     /**
-     * Get the AWS service that we're making a request to.
-     */
-    abstract protected function getService(): string;
-
-    /**
      * Parse the status code from the given response.
      */
     protected function parseResponseStatusCode(array $response): int
@@ -146,6 +141,11 @@ abstract class AbstractClient
 
         return $this->client->request($this->createRequestUrl($uri), $arguments);
     }
+
+    /**
+     * Get the AWS service that we're making a request to.
+     */
+    abstract protected function getService(): string;
 
     /**
      * Create the authorization header used for the AWS request for the given URI.

@@ -56,7 +56,9 @@ return PhpCsFixer\Config::create()
                 'method_protected_static',
                 'method_private_static',
                 'method_public',
+                'method_public_abstract',
                 'method_protected',
+                'method_protected_abstract',
                 'method_private',
             ],
             'sortAlgorithm' => 'alpha'
