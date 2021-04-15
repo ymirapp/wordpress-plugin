@@ -24,13 +24,15 @@ require_once __DIR__.'/bootstrap.php';
 
 global $ymir;
 
+// Load "is_plugin_active" function used by the plugin
+if (!function_exists('is_plugin_active')) {
+    require_once ABSPATH.'wp-admin/includes/plugin.php';
+}
+
 // Add load plugin action
-add_action('after_setup_theme', array($ymir, 'load'));
+$ymir->load();
 
 // Load Ymir pluggable functions if the plugin is active
-if (!function_exists('is_plugin_active')) {
-    require_once ABSPATH . 'wp-admin/includes/plugin.php';
-}
 if (is_plugin_active(plugin_basename(__FILE__))) {
     require_once __DIR__.'/pluggable.php';
 }
