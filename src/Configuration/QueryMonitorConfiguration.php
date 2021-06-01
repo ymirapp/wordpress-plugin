@@ -29,7 +29,13 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['query_monitor_active'] = $container->service(function () {
-            return is_plugin_active('query-monitor/query-monitor.php');
+            $isActive = is_plugin_active('query-monitor/query-monitor.php');
+
+            if ($isActive) {
+                require_once WP_CONTENT_DIR.'/plugins/query-monitor/classes/Collector.php';
+            }
+
+            return $isActive;
         });
         $container['query_monitor_collectors'] = $container->service(function (Container $container) {
             return [
