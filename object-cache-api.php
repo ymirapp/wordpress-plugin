@@ -27,7 +27,7 @@ use Ymir\Plugin\ObjectCache\PersistentObjectCacheInterface;
  *
  * @link https://developer.wordpress.org/reference/functions/wp_cache_add
  */
-function wp_cache_add($key, $data,$group = '', $expire = 0): bool
+function wp_cache_add($key, $data, $group = '', $expire = 0): bool
 {
     global $wp_object_cache;
 
