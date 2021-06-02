@@ -15,7 +15,6 @@ require_once __DIR__.'/bootstrap.php';
 
 use Ymir\Plugin\ObjectCache\ObjectCacheInterface;
 use Ymir\Plugin\ObjectCache\PersistentObjectCacheInterface;
-use Ymir\Plugin\ObjectCache\PreloadedObjectCacheInterface;
 
 /**
  * Ymir object cache API.
@@ -162,10 +161,6 @@ function wp_cache_init()
         }
 
         $wp_object_cache = $objectCache;
-
-        if ($objectCache instanceof PreloadedObjectCacheInterface) {
-            $objectCache->load();
-        }
     } catch (Exception $exception) {
         $wp_object_cache = $ymir->getContainer()->get('wordpress_object_cache');
     }

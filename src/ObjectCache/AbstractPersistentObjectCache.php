@@ -18,7 +18,7 @@ use Ymir\Plugin\Support\Collection;
 /**
  * A persistent object cache stores data outside the PHP runtime.
  */
-abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInterface, PreloadedObjectCacheInterface
+abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInterface
 {
     /**
      * Save a cache item only if it doesn't exist.
@@ -378,36 +378,6 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
         $value = max(0, $value);
 
         return $this->store($group, $key, $value) ? $value : false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load()
-    {
-        if (!isset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']) || !in_array(strtoupper($_SERVER['REQUEST_METHOD']), ['GET', 'HEAD'])) {
-            return;
-        }
-
-        $requestKey = $this->generateCacheKey('ymir-preload', md5(serialize([
-            'method' => $_SERVER['REQUEST_METHOD'],
-            'host' => $_SERVER['HTTP_HOST'],
-            'path' => urldecode($_SERVER['REQUEST_URI']),
-            'query' => urldecode($_SERVER['QUERY_STRING'] ?? ''),
-        ])));
-
-        $preloadedValues = new Collection($this->getValuesFromPersistentCache((new Collection($this->getValuesFromPersistentCache($requestKey)))->keys()->filter(function (string $key) {
-            return $this->getAllOptionsCacheKey() !== $key;
-        })->all()));
-
-        $this->cache = $preloadedValues->all();
-        $this->requestedKeys = $preloadedValues->keys()->mapWithKeys(function (string $key) {
-            return [$key => true];
-        })->all();
-
-        register_shutdown_function(function () use ($requestKey) {
-            $this->storeValueInPersistentCache($requestKey, $this->requestedKeys);
-        });
     }
 
     /**
