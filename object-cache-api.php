@@ -162,7 +162,7 @@ function wp_cache_init()
 
         $wp_object_cache = $objectCache;
     } catch (Exception $exception) {
-        $wp_object_cache = $ymir->getContainer()->get('wordpress_object_cache');
+        $wp_object_cache = $ymir->getContainer()->get('ymir_wordpress_object_cache');
     }
 
 }

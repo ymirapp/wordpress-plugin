@@ -4,7 +4,7 @@
     "keywords": ["ymir", "wordpress"],
     "type" : "wordpress-plugin",
     "license": "GPL-3.0+",
-    "authors" : [
+    "authors": [
         {
             "name": "Carl Alexander",
             "email": "support@ymirapp.com",
@@ -42,5 +42,8 @@
         "psr-4": {
             "Ymir\\Plugin\\Tests\\": "tests/"
         }
+    },
+    "suggest": {
+        "ext-redis": "Required to use the Redis object cache."
     }
 }

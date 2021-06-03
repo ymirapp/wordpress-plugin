@@ -17,6 +17,7 @@ use Ymir\Plugin\CloudProvider\Aws\DynamoDbClient;
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
 use Ymir\Plugin\ObjectCache\DynamoDbObjectCache;
+use Ymir\Plugin\ObjectCache\RedisClusterObjectCache;
 use Ymir\Plugin\ObjectCache\WordPressObjectCache;
 
 /**
@@ -32,7 +33,29 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
         $container['dynamodb_client'] = $container->service(function (Container $container) {
             return new DynamoDbClient($container['ymir_http_client'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret']);
         });
-        $container['wordpress_object_cache'] = $container->service(function (Container $container) {
+        $container['redis_client'] = $container->service(function () {
+            $client = null;
+            $endpoint = getenv('YMIR_REDIS_ENDPOINT');
+
+            if (is_string($endpoint)) {
+                $client = new \RedisCluster(null, [$endpoint.':6379'], 0, 0, false);
+
+                $client->setOption(\RedisCluster::OPT_SERIALIZER, \RedisCluster::SERIALIZER_PHP);
+            }
+
+            return $client;
+        });
+        $container['ymir_dynamodb_object_cache'] = $container->service(function (Container $container) {
+            $table = getenv('YMIR_CACHE_TABLE');
+
+            return is_string($table) ? new DynamoDbObjectCache($container['dynamodb_client'], $container['is_multisite'], $table) : null;
+        });
+        $container['ymir_redis_object_cache'] = $container->service(function (Container $container) {
+            $client = $container['redis_client'];
+
+            return $client instanceof \RedisCluster ? new RedisClusterObjectCache($client, $container['is_multisite']) : null;
+        });
+        $container['ymir_wordpress_object_cache'] = $container->service(function () {
             if (!class_exists(\WP_Object_Cache::class)) {
                 require_once ABSPATH.WPINC.'/class-wp-object-cache.php';
             }
@@ -40,9 +63,15 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
             return new WordPressObjectCache(new \WP_Object_Cache());
         });
         $container['ymir_object_cache'] = $container->service(function (Container $container) {
-            $table = getenv('YMIR_CACHE_TABLE');
+            $cache = $container['ymir_wordpress_object_cache'];
 
-            return is_string($table) ? new DynamoDbObjectCache($container['dynamodb_client'], $container['is_multisite'], $table) : $container['wordpress_object_cache'];
+            if ($container['ymir_redis_object_cache'] instanceof RedisClusterObjectCache) {
+                $cache = $container['ymir_redis_object_cache'];
+            } elseif ($container['ymir_dynamodb_object_cache'] instanceof DynamoDbObjectCache) {
+                $cache = $container['ymir_dynamodb_object_cache'];
+            }
+
+            return $cache;
         });
     }
 }

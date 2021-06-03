@@ -492,7 +492,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
      */
     private function getAllOptionsValueFromPersistentCache()
     {
-        return $this->getMultiple('alloptions_values', $this->getAllOptionsKeys());
+        return $this->getMultiple('alloptions_values', $this->getAllOptionsKeys()) ?: false;
     }
 
     /**
@@ -591,7 +591,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             return [$key => true];
         })->all();
         $options = new Collection($options);
-        $newOptions = $storedOptions = new Collection($this->getAllOptionsValueFromPersistentCache());
+        $newOptions = $storedOptions = new Collection($this->getAllOptionsValueFromPersistentCache() ?: []);
 
         $options->filter(function ($value, $key) use ($storedOptions) {
             return !isset($storedOptions[$key]) || $storedOptions[$key] !== $value;
@@ -614,9 +614,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
                 unset($keys[$key]);
             }
         })->each(function ($key) use ($newOptions) {
-            if (!$this->delete('alloptions_values', (string) $key)) {
-                throw new \RuntimeException('Unable to delete alloptions value');
-            }
+            $this->delete('alloptions_values', (string) $key);
 
             unset($newOptions[$key]);
         });
