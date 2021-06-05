@@ -40,7 +40,8 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
             if (is_string($endpoint)) {
                 $client = new \RedisCluster(null, [$endpoint.':6379'], 0, 0, false);
 
-                $client->setOption(\RedisCluster::OPT_SERIALIZER, \RedisCluster::SERIALIZER_PHP);
+                $client->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
+                $client->setOption(\Redis::OPT_COMPRESSION, \Redis::COMPRESSION_ZSTD);
             }
 
             return $client;
