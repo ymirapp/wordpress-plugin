@@ -25,7 +25,7 @@ grumphp:
         - 'src/Attachment/GDImageEditor.php'
     phpcsfixer2:
       allow_risky: true
-      config: '.php_cs'
+      config: '.php-cs-fixer.dist.php'
     phplint: ~
     phpmd:
       ruleset: ['phpmd.xml']

@@ -20,7 +20,7 @@
         "dg/bypass-finals": "^1.2",
         "dms/phpunit-arraysubset-asserts": "^0.1 || ^0.2",
         "fakerphp/faker": "^1.12",
-        "friendsofphp/php-cs-fixer": "^2.16",
+        "friendsofphp/php-cs-fixer": "^3.0",
         "php-mock/php-mock-phpunit": "^2.6",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpmd/phpmd": "^2.8",
