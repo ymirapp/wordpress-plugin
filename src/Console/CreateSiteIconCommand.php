@@ -59,7 +59,7 @@ class CreateSiteIconCommand extends AbstractCropAttachmentImageCommand
      */
     protected function createCroppedImageAttachment(\WP_Post $originalAttachment, string $context, string $croppedImage): int
     {
-        if ('site-icon' == $originalAttachment->_wp_attachment_context) {
+        if (!empty($originalAttachment->_wp_attachment_context) && 'site-icon' == $originalAttachment->_wp_attachment_context) {
             wp_delete_file($croppedImage);
 
             return $originalAttachment->ID;

@@ -37,28 +37,28 @@ class CloudStorageStreamWrapper
     /**
      * Cache of object and directory lookups.
      *
-     * @var \ArrayObject
+     * @var \ArrayObject|null
      */
     private $cache;
 
     /**
      * The cloud storage objects retrieved with "dir_opendir".
      *
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     private $openedDirectoryObjects;
 
     /**
      * The path when "dir_opendir" was called.
      *
-     * @var string
+     * @var string|null
      */
     private $openedDirectoryPath;
 
     /**
      * The prefix used to get the cloud storage objects with "dir_opendir".
      *
-     * @var string
+     * @var string|null
      */
     private $openedDirectoryPrefix;
 

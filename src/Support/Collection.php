@@ -238,7 +238,7 @@ class Collection implements \ArrayAccess
      */
     public function slice(int $offset, ?int $length = null): self
     {
-        return new static(array_slice($this->items, $offset, $length, true));
+        return new self(array_slice($this->items, $offset, $length, true));
     }
 
     /**

@@ -44,7 +44,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
     /**
      * The total time spent making requests to the persistent cache.
      *
-     * @var int
+     * @var float
      */
     protected $requestTime;
 

@@ -103,10 +103,6 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
         $extension = pathinfo($file, PATHINFO_EXTENSION);
         $filename = preg_replace('/-e([0-9]+)$/', '', pathinfo($file, PATHINFO_FILENAME));
 
-        if (is_array($filename)) {
-            $filename = reset($filename);
-        }
-
         return sprintf('%s/%s-e%s.%s', $dirname, $filename, $suffix, $extension);
     }
 
@@ -149,13 +145,13 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
      */
     protected function getBackupImageSizes(\WP_Post $attachment): array
     {
-        $backupSizes = $attachment->_wp_attachment_backup_sizes;
+        $backupSizes = [];
 
-        if (!is_array($backupSizes)) {
-            $backupSizes = [];
+        if (!empty($attachment->_wp_attachment_backup_sizes)) {
+            $backupSizes = $attachment->_wp_attachment_backup_sizes;
         }
 
-        return $backupSizes;
+        return is_array($backupSizes) ? $backupSizes : [];
     }
 
     /**

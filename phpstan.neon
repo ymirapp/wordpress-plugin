@@ -1,0 +1,16 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        - src\Configuration
+        - src\QueryMonitor
+        - src\Subscriber\QueryMonitorSubscriber.php
+    ignoreErrors:
+        - '#Constant [^\s]* not found#'
+        - '#invalid typehint type \\GdImage#'
+        - '#invalid typehint type PHPMailer#'
+        - '#method RedisCluster::#'
+        - '#unknown class PHPMailer#'

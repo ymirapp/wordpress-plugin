@@ -115,7 +115,7 @@ class ImageEditorSubscriber extends AbstractEventManagerAwareSubscriber
         $operation = $_POST['do'];
 
         if (!$this->isAttachmentIdValid($attachmentId)) {
-            wp_die(-1);
+            wp_die('-1');
         }
 
         $message = wp_json_encode($this->runImageEditorOperationCommand($attachmentId, $operation));

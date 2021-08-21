@@ -38,6 +38,8 @@ grumphp:
         - 'src/ObjectCache/AbstractPersistentObjectCache.php'
         - 'src/Support/Collection.php'
         - 'tests'
+    phpstan:
+      ignore_patterns: ['/^(?!src)/']
     phpunit:
       always_execute: true
   testsuites:
@@ -48,3 +50,4 @@ grumphp:
         - phpcsfixer2
         - phplint
         - phpmd
+        - phpstan
