@@ -18,7 +18,7 @@
     },
     "require-dev": {
         "dg/bypass-finals": "^1.2",
-        "dms/phpunit-arraysubset-asserts": "^0.1 || ^0.2",
+        "dms/phpunit-arraysubset-asserts": "~0.1",
         "fakerphp/faker": "^1.12",
         "friendsofphp/php-cs-fixer": "^3.0",
         "php-mock/php-mock-phpunit": "^2.6",
