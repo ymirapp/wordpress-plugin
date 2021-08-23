@@ -105,7 +105,9 @@ class Plugin
      */
     public function isSesEnabled(): bool
     {
-        return false === getenv('YMIR_DISABLE_SES') && (!defined('YMIR_DISABLE_SES') || !YMIR_DISABLE_SES);
+        return !$this->container['ymir_using_vanity_domain']
+            && false === getenv('YMIR_DISABLE_SES')
+            && (!defined('YMIR_DISABLE_SES') || !YMIR_DISABLE_SES);
     }
 
     /**

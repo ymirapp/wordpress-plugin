@@ -21,13 +21,13 @@ use Ymir\Plugin\Tests\Unit\TestCase;
  */
 class DisallowIndexingSubscriberTest extends TestCase
 {
-    public function testFilterBlogPublicReturnsSameValueIfIndexingAllowed()
+    public function testFilterBlogPublicReturnsSameValueIfUsingVanityDomainIsFalse()
     {
-        $this->assertSame('value', (new DisallowIndexingSubscriber('https://foo.com'))->filterBlogPublic('value'));
+        $this->assertSame('value', (new DisallowIndexingSubscriber(false))->filterBlogPublic('value'));
     }
 
-    public function testFilterBlogPublicReturnsZeroValueIfSiteUrlUsesVanityDomain()
+    public function testFilterBlogPublicReturnsZeroValueIfUsingVanityDomainIsTrue()
     {
-        $this->assertSame(0, (new DisallowIndexingSubscriber('https://subdomain.ymirsites.com'))->filterBlogPublic('value'));
+        $this->assertSame(0, (new DisallowIndexingSubscriber(true))->filterBlogPublic('value'));
     }
 }

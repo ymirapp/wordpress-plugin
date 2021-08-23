@@ -21,18 +21,18 @@ use Ymir\Plugin\EventManagement\SubscriberInterface;
 class DisallowIndexingSubscriber implements SubscriberInterface
 {
     /**
-     * WordPress site URL.
+     * Flag whether the WordPress site is using a vanity domain or not.
      *
-     * @var string
+     * @var bool
      */
-    private $siteUrl;
+    private $usingVanityDomain;
 
     /**
      * Constructor.
      */
-    public function __construct(string $siteUrl)
+    public function __construct(bool $usingVanityDomain)
     {
-        $this->siteUrl = rtrim($siteUrl, '/');
+        $this->usingVanityDomain = $usingVanityDomain;
     }
 
     /**
@@ -51,7 +51,7 @@ class DisallowIndexingSubscriber implements SubscriberInterface
      */
     public function displayAdminNotice()
     {
-        if ($this->isIndexingAllowed()) {
+        if (!$this->usingVanityDomain) {
             return;
         }
 
@@ -63,18 +63,10 @@ class DisallowIndexingSubscriber implements SubscriberInterface
      */
     public function filterBlogPublic($value)
     {
-        if (!$this->isIndexingAllowed()) {
+        if ($this->usingVanityDomain) {
             $value = 0;
         }
 
         return $value;
-    }
-
-    /**
-     * Determine whether if search engine indexing should be allowed or not.
-     */
-    private function isIndexingAllowed(): bool
-    {
-        return false === stripos($this->siteUrl, '.ymirsites.com');
     }
 }
