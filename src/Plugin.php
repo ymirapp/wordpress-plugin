@@ -101,6 +101,14 @@ class Plugin
     }
 
     /**
+     * Checks if SES is enabled.
+     */
+    public function isSesEnabled(): bool
+    {
+        return false === getenv('YMIR_DISABLE_SES') && (!defined('YMIR_DISABLE_SES') || !YMIR_DISABLE_SES);
+    }
+
+    /**
      * Loads the plugin into WordPress.
      */
     public function load()

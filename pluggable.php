@@ -18,11 +18,11 @@ use Ymir\Plugin\Plugin;
 /**
  * Pluggable functions used by the Ymir plugin.
  */
-global $pagenow;
+global $pagenow, $ymir;
 
-if (function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
+if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
     exit('"wp_mail" function already overridden by another plugin');
-} elseif (!function_exists('wp_mail')) {
+} elseif ($ymir->isSesEnabled() && !function_exists('wp_mail')) {
     /**
      * Send email using the cloud provider email client.
      */
@@ -58,7 +58,7 @@ if (function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-co
         } catch (\Exception $exception) {
             $errorData = compact('to', 'subject', 'message', 'headers', 'attachments');
 
-            if ($exception instanceof \phpmailerException) {
+            if ($exception instanceof phpmailerException) {
                 $errorData['phpmailer_exception_code'] = $exception->getCode();
             }
 
