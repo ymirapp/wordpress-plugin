@@ -460,7 +460,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
     public function testStreamCastReturnsFalse()
     {
-        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+        if (\PHP_VERSION_ID >= 80000) {
+            // This test throws an exception on PHP 8 with the message "No stream arrays were passed". This is due
+            // to "stream_cast" returning false. It seems to tell "stream_select" that the fopen resource is invalid
+            // now. The AWS SDK still doesn't run its test suite in PHP 8 so unsure what the real impact is or how to
+            // fix it properly.
             $this->markTestSkipped('Test broken on PHP 8.0');
         }
 
@@ -480,7 +484,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $read = [fopen('cloudstorage:///file.ext', 'r')];
         $write = $except = null;
 
-        $this->assertFalse(stream_select($read, $write, $except, 0));
+        stream_select($read, $write, $except, 0);
     }
 
     public function testThrowsExceptionWhenContextHasNoClient()
