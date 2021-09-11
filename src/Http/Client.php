@@ -25,7 +25,7 @@ class Client
     /**
      * The cURL handle.
      *
-     * @var resource
+     * @var \CurlHandle|resource
      */
     private $handle;
 
@@ -43,7 +43,7 @@ class Client
     {
         $handle = curl_init();
 
-        if (!is_resource($handle)) {
+        if (!$this->isHandle($handle)) {
             throw new \RuntimeException('Unable to initialize a cURL session');
         }
 
@@ -56,7 +56,7 @@ class Client
      */
     public function __destruct()
     {
-        if (is_resource($this->handle)) {
+        if ($this->isHandle($this->handle)) {
             curl_close($this->handle);
         }
     }
@@ -184,5 +184,14 @@ class Client
         curl_setopt($this->handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         return $this->handle;
+    }
+
+    /**
+     * Checks if we have a valid cURL handle.
+     */
+    private function isHandle($handle): bool
+    {
+        return (\PHP_VERSION_ID < 80000 && is_resource($handle))
+            || (\PHP_VERSION_ID >= 80000 && $handle instanceof \CurlHandle);
     }
 }
