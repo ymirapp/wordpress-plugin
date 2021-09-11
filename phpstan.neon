@@ -5,12 +5,22 @@ parameters:
     paths:
         - src
     excludePaths:
-        - src\Configuration
-        - src\QueryMonitor
-        - src\Subscriber\QueryMonitorSubscriber.php
+        - src/Configuration
+        - src/QueryMonitor
+        - src/Subscriber\QueryMonitorSubscriber.php
     ignoreErrors:
-        - '#Constant [^\s]* not found#'
-        - '#invalid typehint type \\GdImage#'
-        - '#invalid typehint type PHPMailer#'
-        - '#method RedisCluster::#'
-        - '#unknown class PHPMailer#'
+        - message: '#Constant [^\s]* not found#'
+          paths:
+            - src/Http/Client.php
+        - message: '#invalid typehint type \\GdImage#'
+          paths:
+            - src/Attachment/GDImageEditor.php
+        - message: '#method RedisCluster::#'
+          paths:
+            - src/ObjectCache/RedisClusterObjectCache.php
+        - message: '#unknown class PHPMailer|invalid typehint type PHPMailer#'
+          paths:
+            - src/Email/Email.php
+        - message: '#unknown class CurlHandle|Class CurlHandle not found#'
+          paths:
+            - src/Http/Client.php
