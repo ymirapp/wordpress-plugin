@@ -34,6 +34,7 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
             if ($isActive) {
                 require_once WP_CONTENT_DIR.'/plugins/query-monitor/classes/Collector.php';
                 require_once WP_CONTENT_DIR.'/plugins/query-monitor/classes/Collectors.php';
+                require_once WP_CONTENT_DIR.'/plugins/query-monitor/classes/Output.php';
                 require_once WP_CONTENT_DIR.'/plugins/query-monitor/output/Html.php';
             }
 
