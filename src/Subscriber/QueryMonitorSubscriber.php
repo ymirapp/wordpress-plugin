@@ -69,10 +69,6 @@ class QueryMonitorSubscriber implements SubscriberInterface
      */
     public function addCollectors()
     {
-        if (!is_plugin_active('query-monitor/query-monitor.php') || !class_exists(\QM_Collector::class)) {
-            return;
-        }
-
         foreach ($this->collectors as $collector) {
             \QM_Collectors::add($collector);
         }
@@ -83,10 +79,6 @@ class QueryMonitorSubscriber implements SubscriberInterface
      */
     public function addPanels(array $panels, \QM_Collectors $collectors): array
     {
-        if (!class_exists(\QM_Output_Html::class)) {
-            return $panels;
-        }
-
         $this->panels = array_map(function (string $panel) use ($collectors) {
             return $panel::createFromCollectors($collectors, $this->viewsDirectory);
         }, $this->panels);
