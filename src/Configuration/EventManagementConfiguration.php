@@ -43,7 +43,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
 
         $container['subscribers'] = $container->service(function (Container $container) {
             $subscribers = [
-                new Subscriber\AssetsSubscriber($container['site_url'], $container['assets_url'], $container['ymir_project_type']),
+                new Subscriber\AssetsSubscriber($container['site_url'], $container['assets_url'], $container['ymir_project_type'], $container['upload_url']),
                 new Subscriber\DisallowIndexingSubscriber($container['ymir_using_vanity_domain']),
                 new Subscriber\ImageEditorSubscriber($container['console_client'], $container['file_manager']),
                 new Subscriber\PluploadSubscriber($container['plugin_relative_path'], $container['rest_namespace'], $container['assets_url'], $container['plupload_error_messages']),

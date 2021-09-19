@@ -42,13 +42,21 @@ class AssetsSubscriber implements SubscriberInterface
     private $siteUrl;
 
     /**
+     * URL to the the uploads directory on the cloud storage.
+     *
+     * @var string
+     */
+    private $uploadUrl;
+
+    /**
      * Constructor.
      */
-    public function __construct(string $siteUrl, string $assetsUrl = '', string $projectType = '')
+    public function __construct(string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadUrl = '')
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
         $this->projectType = $projectType;
         $this->siteUrl = rtrim($siteUrl, '/');
+        $this->uploadUrl = rtrim($uploadUrl, '/');
     }
 
     /**
@@ -83,7 +91,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function replaceSiteUrlWithAssetsUrl(string $url): string
     {
-        if (empty($this->assetsUrl) || false !== stripos($url, $this->assetsUrl) || false === stripos($url, $this->siteUrl)) {
+        if (!$this->doesUrlNeedRewrite($url)) {
             return $url;
         }
 
@@ -135,5 +143,15 @@ class AssetsSubscriber implements SubscriberInterface
         }
 
         return $this->assetsUrl.$matches[2];
+    }
+
+    /**
+     * Check if we need to rewrite the given URL.
+     */
+    private function doesUrlNeedRewrite(string $url): bool
+    {
+        return false !== stripos($url, $this->siteUrl)
+            && (!empty($this->assetsUrl) && false === stripos($url, $this->assetsUrl))
+            && (empty($this->assetsUrl) || false === stripos($url, $this->uploadUrl));
     }
 }

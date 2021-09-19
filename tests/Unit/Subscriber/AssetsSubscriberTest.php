@@ -23,7 +23,7 @@ class AssetsSubscriberTest extends TestCase
 {
     public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
     {
-        $this->assertSame(['https://assets.com'], (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
+        $this->assertSame(['https://assets.com/assets/uuid'], (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
     }
 
     public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsWhenSameDomainAsSiteUrl()
@@ -38,7 +38,7 @@ class AssetsSubscriberTest extends TestCase
 
     public function testAddAssetsUrlToDnsPrefetchWhenWrongTypeAndDifferentAssetsDomain()
     {
-        $this->assertSame([], (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->addAssetsUrlToDnsPrefetch([], 'foo'));
+        $this->assertSame([], (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'foo'));
     }
 
     public function testGetSubscribedEvents()
@@ -62,17 +62,17 @@ class AssetsSubscriberTest extends TestCase
 
     public function testReplaceSiteUrlWithAssetsUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
     {
-        $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
     }
 
     public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithAppUrl()
     {
-        $this->assertSame('https://assets.com/app/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/app/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/app/asset.css'));
     }
 
     public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
     {
-        $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/wp/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/wp/asset.css'));
     }
 
     public function testReplaceSiteUrlWithAssetsUrlWithEmptyAssetsUrl()
@@ -82,28 +82,33 @@ class AssetsSubscriberTest extends TestCase
 
     public function testReplaceSiteUrlWithAssetsUrlWithSourceDifferentFromSiteUrl()
     {
-        $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceSiteUrlWithAssetsUrl('https://bar.com/asset.css'));
+        $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->replaceSiteUrlWithAssetsUrl('https://bar.com/asset.css'));
     }
 
     public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsSiteUrl()
     {
-        $this->assertSame('https://assets.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
+    }
+
+    public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsUploadUrl()
+    {
+        $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/uploads/asset.css'));
     }
 
     public function testRewriteContentUrlDoesntKeepDirectoryBelowContentDir()
     {
-        $this->assertSame('https://assets.com/wp-content/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewriteContentUrl('https://foo.com/foo/directory/wp-content/test.php'));
+        $this->assertSame('https://assets.com/assets/uuid/wp-content/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/wp-content/test.php'));
     }
 
     public function testRewriteContentUrlUsesContentDirConstant()
     {
         define('CONTENT_DIR', '/app');
 
-        $this->assertSame('https://assets.com/app/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
+        $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
     }
 
     public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
     {
-        $this->assertSame('https://assets.com/directory/plugins/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
+        $this->assertSame('https://assets.com/assets/uuid/directory/plugins/test.php', (new AssetsSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
     }
 }
