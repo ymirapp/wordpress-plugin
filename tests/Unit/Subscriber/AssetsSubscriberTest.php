@@ -60,32 +60,32 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
+    public function testReplaceSiteUrlWithAssetsUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
     {
         $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithAppUrl()
+    public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithAppUrl()
     {
         $this->assertSame('https://assets.com/app/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/app/asset.css'));
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
+    public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
     {
         $this->assertSame('https://assets.com/wp/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com', 'bedrock'))->replaceSiteUrlWithAssetsUrl('https://foo.com/wp/asset.css'));
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlWithEmptyAssetsUrl()
+    public function testReplaceSiteUrlWithAssetsUrlWithEmptyAssetsUrl()
     {
         $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('https://foo.com'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlWithSourceDifferentFromSiteUrl()
+    public function testReplaceSiteUrlWithAssetsUrlWithSourceDifferentFromSiteUrl()
     {
         $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceSiteUrlWithAssetsUrl('https://bar.com/asset.css'));
     }
 
-    public function testreplaceSiteUrlWithAssetsUrlWithSourceSameAsSiteUrl()
+    public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsSiteUrl()
     {
         $this->assertSame('https://assets.com/asset.css', (new AssetsSubscriber('https://foo.com', 'https://assets.com'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
     }
