@@ -290,7 +290,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
      */
     public function getMultiple(string $group, array $keys, bool $force = false): array
     {
-        $keys = (new Collection($keys))->map(function ($key) {
+        $keys = (new Collection($keys))->values()->map(function ($key) {
             return (string) $key;
         });
 

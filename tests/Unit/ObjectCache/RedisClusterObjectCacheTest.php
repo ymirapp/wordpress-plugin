@@ -97,6 +97,23 @@ class RedisClusterObjectCacheTest extends TestCase
         ], $objectCache->getMultiple('group', ['key1', 'key2']));
     }
 
+    public function testGetMultipleReturnsAllValuesWithAssociativeArrayOfKeys()
+    {
+        $client = $this->getRedisClusterMock();
+
+        $client->expects($this->once())
+               ->method('mget')
+               ->with($this->identicalTo(['group:key1', 'group:key2']))
+               ->willReturn(['foo', 'bar']);
+
+        $objectCache = new RedisClusterObjectCache($client, false);
+
+        $this->assertSame([
+            'key1' => 'foo',
+            'key2' => 'bar',
+        ], $objectCache->getMultiple('group', ['foo' => 'key1', 'bar' => 'key2']));
+    }
+
     public function testGetMultipleWithException()
     {
         $client = $this->getRedisClusterMock();

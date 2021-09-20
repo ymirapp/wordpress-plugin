@@ -148,6 +148,38 @@ class DynamoDbObjectCacheTest extends TestCase
         ], $objectCache->getMultiple('group', ['key1', 'key2']));
     }
 
+    public function testGetMultipleReturnsAllValuesWithAssociativeArrayOfKeys()
+    {
+        $client = $this->getDynamoDbClientMock();
+
+        $client->expects($this->once())
+               ->method('batchGetItem')
+               ->with($this->identicalTo([
+                   'RequestItems' => [
+                       'table' => [
+                           'ConsistentRead' => false,
+                           'Keys' => [
+                               ['key' => ['S' => 'group:key1']],
+                               ['key' => ['S' => 'group:key2']],
+                           ],
+                       ],
+                   ],
+               ]))
+               ->willReturn([
+                   'Responses' => ['table' => [
+                       ['key' => ['S' => 'group:key1'], 'value' => ['S' => 's:3:"foo";']],
+                       ['key' => ['S' => 'group:key2'], 'value' => ['S' => 's:3:"bar";']],
+                   ]],
+               ]);
+
+        $objectCache = new DynamoDbObjectCache($client, false, 'table');
+
+        $this->assertSame([
+            'key1' => 'foo',
+            'key2' => 'bar',
+        ], $objectCache->getMultiple('group', ['foo' => 'key1', 'bar' => 'key2']));
+    }
+
     public function testGetMultipleWithExpiredValues()
     {
         $client = $this->getDynamoDbClientMock();
