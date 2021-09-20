@@ -152,6 +152,6 @@ class AssetsSubscriber implements SubscriberInterface
     {
         return false !== stripos($url, $this->siteUrl)
             && (!empty($this->assetsUrl) && false === stripos($url, $this->assetsUrl))
-            && (empty($this->assetsUrl) || false === stripos($url, $this->uploadUrl));
+            && (empty($this->uploadUrl) || false === stripos($url, $this->uploadUrl));
     }
 }
