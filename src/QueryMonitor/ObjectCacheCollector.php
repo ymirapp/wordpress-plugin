@@ -22,7 +22,7 @@ class ObjectCacheCollector extends \QM_Collector
      *
      * @var string
      */
-    public const COLLECTOR_ID = 'cache';
+    public const COLLECTOR_ID = 'ymir-object-cache';
 
     /**
      * The ID of the collector.
