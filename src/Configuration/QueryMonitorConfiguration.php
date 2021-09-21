@@ -51,7 +51,7 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
             return true;
         });
         $container['query_monitor_display_object_cache_active'] = $container->service(function () {
-            return wp_using_ext_object_cache() && !is_plugin_active('object-cache-pro/redis-cache-pro.php');
+            return wp_using_ext_object_cache() && !is_plugin_active('object-cache-pro/redis-cache-pro.php') && !is_plugin_active('redis-cache-pro/redis-cache-pro.php');
         });
         $container['query_monitor_collectors'] = $container->service(function (Container $container) {
             $collectors = [];
