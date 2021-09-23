@@ -38,7 +38,7 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
             $endpoint = getenv('YMIR_REDIS_ENDPOINT');
 
             if (is_string($endpoint)) {
-                $client = new \RedisCluster(null, [$endpoint.':6379'], 0, 0, false);
+                $client = new \RedisCluster(null, [$endpoint.':6379'], 1.0, 1.0, true);
 
                 $client->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
                 $client->setOption(\Redis::OPT_COMPRESSION, \Redis::COMPRESSION_ZSTD);
