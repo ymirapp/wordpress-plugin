@@ -146,7 +146,7 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
         ]);
 
         ++$this->requests;
-        $this->requestTime += (round(microtime(true) * 1000) - $start);
+        $this->requestTime += round((microtime(true) * 1000) - $start, 2);
 
         if (!isset($response['Item']['value']['S']) || $this->isExpired($response['Item'])) {
             return false;
@@ -175,7 +175,7 @@ class DynamoDbObjectCache extends AbstractPersistentObjectCache
             ]);
 
             ++$this->requests;
-            $this->requestTime += (round(microtime(true) * 1000) - $start);
+            $this->requestTime += round((microtime(true) * 1000) - $start, 2);
 
             $current = time();
 

@@ -87,7 +87,7 @@ class RedisClusterObjectCache extends AbstractPersistentObjectCache
         $values = is_array($keys) ? $this->getValues($keys) : $this->getValue($keys);
 
         ++$this->requests;
-        $this->requestTime += (round(microtime(true) * 1000) - $start);
+        $this->requestTime += round((microtime(true) * 1000) - $start, 2);
 
         return $values;
     }
