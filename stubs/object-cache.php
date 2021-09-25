@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of Ymir WordPress plugin.
- *
- * (c) Carl Alexander <support@ymirapp.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+/**
+ * Plugin Name: Ymir object cache drop-in
+ * Plugin URI: https://ymirapp.com
+ * Description: Connects your WordPress object-cache to the cache server managed by the Ymir platform.
+ * Author: Carl Alexander
+ * Author URI: https://ymirapp.com
  */
 
 $objectCacheApiPaths = array_filter(array_map(function (string $filePath) {

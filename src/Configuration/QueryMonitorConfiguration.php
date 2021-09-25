@@ -50,8 +50,15 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
 
             return true;
         });
-        $container['query_monitor_display_object_cache_active'] = $container->service(function () {
-            return wp_using_ext_object_cache() && !is_plugin_active('object-cache-pro/redis-cache-pro.php') && !is_plugin_active('redis-cache-pro/redis-cache-pro.php');
+        $container['query_monitor_display_object_cache_active'] = $container->service(function (Container $container) {
+            if (!wp_using_ext_object_cache()) {
+                return false;
+            }
+
+            $dropInData = get_plugin_data(WP_CONTENT_DIR.'/object-cache.php', false, false);
+            $pluginData = get_plugin_data($container['plugin_dir_path'].'/stubs/object-cache.php', false, false);
+
+            return isset($dropInData['PluginName'], $pluginData['PluginName']) && $dropInData['PluginName'] === $pluginData['PluginName'];
         });
         $container['query_monitor_collectors'] = $container->service(function (Container $container) {
             $collectors = [];
