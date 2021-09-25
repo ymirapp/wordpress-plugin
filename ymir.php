@@ -11,14 +11,15 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-/*
-Plugin Name: Ymir
-Description: Integrates WordPress with the Ymir platform.
-Author: Carl Alexander
-Author URI: https://ymirapp.com
-Version: 1.8.6
-License: GPL3
-*/
+/**
+ * Plugin Name: Ymir
+ * Plugin URI: https://ymirapp.com
+ * Description: Integrates WordPress with the Ymir platform.
+ * Version: 1.8.6
+ * Author: Carl Alexander
+ * Author URI: https://ymirapp.com
+ * License: GPL3
+ */
 
 require_once __DIR__.'/bootstrap.php';
 
