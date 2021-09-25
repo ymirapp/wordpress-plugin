@@ -42,21 +42,21 @@ class AssetsSubscriber implements SubscriberInterface
     private $siteUrl;
 
     /**
-     * URL to the the uploads directory on the cloud storage.
+     * The URL to uploads directory.
      *
      * @var string
      */
-    private $uploadUrl;
+    private $uploadsUrl;
 
     /**
      * Constructor.
      */
-    public function __construct(string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadUrl = '')
+    public function __construct(string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadsUrl = '')
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
         $this->projectType = $projectType;
         $this->siteUrl = rtrim($siteUrl, '/');
-        $this->uploadUrl = rtrim($uploadUrl, '/');
+        $this->uploadsUrl = rtrim($uploadsUrl, '/');
     }
 
     /**
@@ -152,6 +152,6 @@ class AssetsSubscriber implements SubscriberInterface
     {
         return false !== stripos($url, $this->siteUrl)
             && (!empty($this->assetsUrl) && false === stripos($url, $this->assetsUrl))
-            && (empty($this->uploadUrl) || false === stripos($url, $this->uploadUrl));
+            && (empty($this->uploadsUrl) || false === stripos($url, $this->uploadsUrl));
     }
 }
