@@ -24,6 +24,60 @@ class RedirectSubscriberTest extends TestCase
 {
     use FunctionMockTrait;
 
+    /**
+     * @backupGlobals enabled
+     */
+    public function testAddSlashToWpAdminWithHttpHostDifferentThanPrimaryDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'another_domain_name';
+        $_SERVER['REQUEST_URI'] = '/wp-admin';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->once())
+                    ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
+                    ->willReturn(false);
+
+        (new RedirectSubscriber('domain_name', false))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testAddSlashToWpAdminWithHttpHostSameAsPrimaryDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'domain_name';
+        $_SERVER['REQUEST_URI'] = '/wp-admin';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->once())
+            ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
+            ->willReturn(false);
+
+        (new RedirectSubscriber('domain_name', false))->redirect();
+    }
+
+    public function testDoesntRedirectToPrimaryDomainNameWhenMultisiteEnabled()
+    {
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->never());
+
+        (new RedirectSubscriber('domain_name', true))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testDoesntRedirectWhenWpAdminHasSlashAlready()
+    {
+        $_SERVER['HTTP_HOST'] = 'domain_name';
+        $_SERVER['REQUEST_URI'] = '/wp-admin/';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->never());
+
+        (new RedirectSubscriber('domain_name', false))->redirect();
+    }
+
     public function testGetSubscribedEvents()
     {
         $callbacks = RedirectSubscriber::getSubscribedEvents();
@@ -33,7 +87,7 @@ class RedirectSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
-            'init' => ['redirectToDomainName', 1],
+            'init' => ['redirect', 1],
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
@@ -42,7 +96,7 @@ class RedirectSubscriberTest extends TestCase
     /**
      * @backupGlobals enabled
      */
-    public function testRedirectToDomainNameWithHttpHostDifferentThanDomainName()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainName()
     {
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
 
@@ -51,13 +105,13 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirectToDomainName();
+        (new RedirectSubscriber('domain_name', false))->redirect();
     }
 
     /**
      * @backupGlobals enabled
      */
-    public function testRedirectToDomainNameWithHttpHostDifferentThanDomainNameAddsRequestUri()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainNameAddsRequestUri()
     {
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
         $_SERVER['REQUEST_URI'] = '/uri';
@@ -67,27 +121,19 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/uri'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirectToDomainName();
+        (new RedirectSubscriber('domain_name', false))->redirect();
     }
 
     /**
      * @backupGlobals enabled
      */
-    public function testRedirectToDomainNameWithHttpHostSameAsDomainName()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostSameAsPrimaryDomainName()
     {
         $_SERVER['HTTP_HOST'] = 'domain_name';
 
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber('domain_name', false))->redirectToDomainName();
-    }
-
-    public function testRedirectToDomainNameWithMultisiteEnabled()
-    {
-        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
-        $wp_redirect->expects($this->never());
-
-        (new RedirectSubscriber('domain_name', true))->redirectToDomainName();
+        (new RedirectSubscriber('domain_name', false))->redirect();
     }
 }

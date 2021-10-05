@@ -49,27 +49,66 @@ class RedirectSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'init' => ['redirectToDomainName', 1],
+            'init' => ['redirect', 1],
         ];
+    }
+
+    /**
+     * Perform a redirect if needed.
+     */
+    public function redirect()
+    {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $url = '';
+
+        if (empty($host)) {
+            return;
+        }
+
+        $url = $this->redirectToPrimaryDomainName($url, $host, $uri);
+        $url = $this->addSlashToWpAdmin($url, $uri);
+
+        if (!empty($url) && wp_redirect($url, 301)) {
+            exit;
+        }
+    }
+
+    /**
+     * Add slash to "wp-admin" if necessary.
+     */
+    private function addSlashToWpAdmin(string $url, string $uri): string
+    {
+        if (!preg_match('%^(/wp)?/wp-admin$%i', $uri)) {
+            return $url;
+        }
+
+        return !empty($url) ? $url.'/' : $this->getBaseUrl().'/wp-admin/';
+    }
+
+    /**
+     * Get the base URL for the redirects.
+     */
+    private function getBaseUrl(): string
+    {
+        return 'https://'.$this->domainName;
     }
 
     /**
      * Redirect to the primary domain name if necessary.
      */
-    public function redirectToDomainName()
+    private function redirectToPrimaryDomainName(string $url, string $host, string $uri): string
     {
-        if ($this->isMultisite || empty($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === $this->domainName) {
-            return;
+        if ($this->isMultisite || $host === $this->domainName) {
+            return $url;
         }
 
-        $url = 'https://'.$this->domainName;
+        $url = $this->getBaseUrl();
 
-        if (!empty($_SERVER['REQUEST_URI'])) {
-            $url .= $_SERVER['REQUEST_URI'];
+        if (!empty($uri)) {
+            $url .= $uri;
         }
 
-        if (wp_redirect($url, 301)) {
-            exit;
-        }
+        return $url;
     }
 }
