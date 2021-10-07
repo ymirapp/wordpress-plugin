@@ -46,15 +46,20 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
 
             return $client;
         });
+        $container['ymir_cache_prefix'] = $container->service(function () {
+            $prefix = getenv('YMIR_CACHE_PREFIX');
+
+            return is_string($prefix) ? $prefix : '';
+        });
         $container['ymir_dynamodb_object_cache'] = $container->service(function (Container $container) {
             $table = getenv('YMIR_CACHE_TABLE');
 
-            return is_string($table) ? new DynamoDbObjectCache($container['dynamodb_client'], $container['is_multisite'], $table) : null;
+            return is_string($table) ? new DynamoDbObjectCache($container['dynamodb_client'], $container['is_multisite'], $table, $container['ymir_cache_prefix']) : null;
         });
         $container['ymir_redis_object_cache'] = $container->service(function (Container $container) {
             $client = $container['redis_client'];
 
-            return $client instanceof \RedisCluster ? new RedisClusterObjectCache($client, $container['is_multisite']) : null;
+            return $client instanceof \RedisCluster ? new RedisClusterObjectCache($client, $container['is_multisite'], $container['ymir_cache_prefix']) : null;
         });
         $container['ymir_wordpress_object_cache'] = $container->service(function () {
             if (!class_exists(\WP_Object_Cache::class)) {
