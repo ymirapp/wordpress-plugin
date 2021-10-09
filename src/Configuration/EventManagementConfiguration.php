@@ -47,7 +47,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\DisallowIndexingSubscriber($container['ymir_using_vanity_domain']),
                 new Subscriber\ImageEditorSubscriber($container['console_client'], $container['file_manager']),
                 new Subscriber\PluploadSubscriber($container['plugin_relative_path'], $container['rest_namespace'], $container['assets_url'], $container['plupload_error_messages']),
-                new Subscriber\RedirectSubscriber($container['ymir_primary_domain_name'], $container['is_multisite']),
+                new Subscriber\RedirectSubscriber($container['ymir_primary_domain_name'], $container['is_multisite'], $container['ymir_project_type']),
                 new Subscriber\RestApiSubscriber($container['rest_namespace'], $container['rest_endpoints']),
                 new Subscriber\SecurityHeadersSubscriber(),
                 new Subscriber\WordPressSubscriber($container['server_software'], $container['site_url']),

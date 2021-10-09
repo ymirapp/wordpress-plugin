@@ -27,6 +27,38 @@ class RedirectSubscriberTest extends TestCase
     /**
      * @backupGlobals enabled
      */
+    public function testAddSlashToBedrockWpAdminWithHttpHostDifferentThanPrimaryDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'another_domain_name';
+        $_SERVER['REQUEST_URI'] = '/wp/wp-admin';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->once())
+                    ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
+                    ->willReturn(false);
+
+        (new RedirectSubscriber('domain_name', false, 'bedrock'))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testAddSlashToBedrockWpAdminWithHttpHostSameAsPrimaryDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'domain_name';
+        $_SERVER['REQUEST_URI'] = '/wp/wp-admin';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->once())
+                    ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
+                    ->willReturn(false);
+
+        (new RedirectSubscriber('domain_name', false, 'bedrock'))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
     public function testAddSlashToWpAdminWithHttpHostDifferentThanPrimaryDomainName()
     {
         $_SERVER['HTTP_HOST'] = 'another_domain_name';

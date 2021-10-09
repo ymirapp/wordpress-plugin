@@ -35,12 +35,20 @@ class RedirectSubscriber implements SubscriberInterface
     private $isMultisite;
 
     /**
+     * The Ymir project type.
+     *
+     * @var string
+     */
+    private $projectType;
+
+    /**
      * Constructor.
      */
-    public function __construct(string $domainName, bool $isMultisite)
+    public function __construct(string $domainName, bool $isMultisite, string $projectType = '')
     {
         $this->domainName = $domainName;
         $this->isMultisite = $isMultisite;
+        $this->projectType = $projectType;
     }
 
     /**
@@ -81,9 +89,17 @@ class RedirectSubscriber implements SubscriberInterface
     {
         if (!preg_match('%^(/wp)?/wp-admin$%i', $uri)) {
             return $url;
+        } elseif (!empty($url)) {
+            return $url.'/';
         }
 
-        return !empty($url) ? $url.'/' : $this->getBaseUrl().'/wp-admin/';
+        $url = $this->getBaseUrl();
+
+        if ('bedrock' === $this->projectType) {
+            $url .= '/wp';
+        }
+
+        return $url.'/wp-admin/';
     }
 
     /**
