@@ -82,8 +82,8 @@ class RedirectSubscriberTest extends TestCase
 
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
-            ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
-            ->willReturn(false);
+                    ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
+                    ->willReturn(false);
 
         (new RedirectSubscriber('domain_name', false))->redirect();
     }
