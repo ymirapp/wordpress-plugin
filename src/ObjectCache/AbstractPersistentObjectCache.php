@@ -201,7 +201,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
             return false;
         }
 
-        unset($this->cache[$cacheKey], $this->requestedKeys[$cacheKey]);
+        $this->deleteFromMemory($cacheKey);
 
         $result = true;
 
@@ -221,8 +221,7 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
      */
     public function flush(): bool
     {
-        $this->cache = [];
-        $this->requestedKeys = [];
+        $this->flushMemory();
 
         try {
             return $this->flushPersistentCache();
@@ -402,6 +401,23 @@ abstract class AbstractPersistentObjectCache implements PersistentObjectCacheInt
     public function switchToBlog(int $blogId)
     {
         $this->blogId = $this->isMultisite ? $blogId : null;
+    }
+
+    /**
+     * Delete the data stored in the in-memory object cache for the given key.
+     */
+    protected function deleteFromMemory(string $key)
+    {
+        unset($this->cache[$key], $this->requestedKeys[$key]);
+    }
+
+    /**
+     * Flush the in-memory object cache.
+     */
+    protected function flushMemory()
+    {
+        $this->cache = [];
+        $this->requestedKeys = [];
     }
 
     /**

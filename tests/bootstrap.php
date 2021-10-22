@@ -48,4 +48,5 @@ require_once $_core_dir.'/wp-includes/class-wp-site.php';
 require_once $_core_dir.'/wp-includes/class-wp-site-query.php';
 require_once $_core_dir.'/wp-includes/class.wp-dependencies.php';
 require_once $_core_dir.'/wp-includes/class.wp-scripts.php';
+require_once $_core_dir.'/wp-includes/load.php';
 require_once $_core_dir.'/wp-includes/rest-api/class-wp-rest-request.php';

@@ -13,83 +13,105 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\ObjectCache;
 
-use Ymir\Plugin\ObjectCache\RedisClusterObjectCache;
-use Ymir\Plugin\Tests\Mock\RedisClusterMockTrait;
+use Ymir\Plugin\ObjectCache\RelayObjectCache;
+use Ymir\Plugin\Tests\Mock\RelayMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
- * @covers \Ymir\Plugin\ObjectCache\RedisClusterObjectCache
+ * @covers \Ymir\Plugin\ObjectCache\RelayObjectCache
  */
-class RedisClusterObjectCacheTest extends TestCase
+class RelayObjectCacheTest extends TestCase
 {
-    use RedisClusterMockTrait;
+    use RelayMockTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp(): void
+    {
+        if (!extension_loaded('relay')) {
+            $this->markTestSkipped('No relay extension installed');
+        }
+    }
 
     public function testAddWithExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo(['nx', 'ex' => 60]))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->add('group', 'key', 'value', 60));
     }
 
     public function testAddWithoutExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo(['nx']))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->add('group', 'key', 'value'));
     }
 
     public function testDelete()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('del')
                ->with($this->identicalTo('group:key'))
                ->willReturn(1);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->delete('group', 'key'));
     }
 
     public function testFlush()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
 
         $client->expects($this->once())
                ->method('flushDB')
                ->with($this->identicalTo(true))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->flush());
     }
 
     public function testGetMultipleReturnsAllValues()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('mget')
                ->with($this->identicalTo(['group:key1', 'group:key2']))
                ->willReturn(['foo', 'bar']);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertSame([
             'key1' => 'foo',
@@ -99,14 +121,17 @@ class RedisClusterObjectCacheTest extends TestCase
 
     public function testGetMultipleReturnsAllValuesWithAssociativeArrayOfKeys()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('mget')
                ->with($this->identicalTo(['group:key1', 'group:key2']))
                ->willReturn(['foo', 'bar']);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertSame([
             'key1' => 'foo',
@@ -116,14 +141,17 @@ class RedisClusterObjectCacheTest extends TestCase
 
     public function testGetMultipleWithException()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('mget')
                ->with($this->identicalTo(['group:key1', 'group:key2']))
                ->willThrowException(new \Exception());
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertSame([
             'key1' => false,
@@ -133,14 +161,17 @@ class RedisClusterObjectCacheTest extends TestCase
 
     public function testGetMultipleWithMissingValues()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('mget')
                ->with($this->identicalTo(['group:key1', 'group:key2']))
                ->willReturn([false, 'bar']);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertSame([
             'key1' => false,
@@ -150,101 +181,116 @@ class RedisClusterObjectCacheTest extends TestCase
 
     public function testGetReturnsFalseWithException()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('get')
                ->with($this->identicalTo('group:key'))
                ->willThrowException(new \Exception());
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertFalse($objectCache->get('group', 'key'));
     }
 
     public function testGetReturnsValue()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('get')
                ->with($this->identicalTo('group:key'))
                ->willReturn('value');
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertSame('value', $objectCache->get('group', 'key'));
     }
 
     public function testIsAvailable()
     {
-        $client = $this->getRedisClusterMock();
-
+        $client = $this->getRelayMock();
         $client->expects($this->once())
-               ->method('_masters')
-               ->willReturn([[0 => '127.0.0.1', '6379'], [0 => '127.0.0.1', '6380']]);
+               ->method('ping');
 
-        $client->expects($this->once())
-               ->method('ping')
-               ->with($this->identicalTo([0 => '127.0.0.1', '6379']));
-
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->isAvailable());
     }
 
     public function testReplaceWithExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo(['xx', 'ex' => 60]))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->replace('group', 'key', 'value', 60));
     }
 
     public function testReplaceWithoutExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo(['xx']))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->replace('group', 'key', 'value'));
     }
 
     public function testSetWithExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo(['ex' => 60]))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->set('group', 'key', 'value', 60));
     }
 
     public function testSetWithoutExpiry()
     {
-        $client = $this->getRedisClusterMock();
+        $client = $this->getRelayMock();
+
+        $client->expects($this->once())
+               ->method('dispatchEvents');
 
         $client->expects($this->once())
                ->method('set')
                ->with($this->identicalTo('group:key'), $this->identicalTo('value'), $this->identicalTo([]))
                ->willReturn(true);
 
-        $objectCache = new RedisClusterObjectCache($client, false);
+        $objectCache = new RelayObjectCache($client, false);
 
         $this->assertTrue($objectCache->set('group', 'key', 'value'));
     }
