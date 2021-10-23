@@ -35,10 +35,11 @@ if (!$_core_dir) {
 }
 
 require_once __DIR__.'/constants.php';
-require_once __DIR__.'/functions.php';
 
 DG\BypassFinals::enable();
 
+require_once $_core_dir.'/wp-admin/includes/class-wp-filesystem-base.php';
+require_once $_core_dir.'/wp-admin/includes/class-wp-filesystem-direct.php';
 require_once $_core_dir.'/wp-admin/includes/class-wp-site-icon.php';
 require_once $_core_dir.'/wp-includes/class-phpmailer.php';
 require_once $_core_dir.'/wp-includes/class-wp-error.php';
@@ -48,5 +49,7 @@ require_once $_core_dir.'/wp-includes/class-wp-site.php';
 require_once $_core_dir.'/wp-includes/class-wp-site-query.php';
 require_once $_core_dir.'/wp-includes/class.wp-dependencies.php';
 require_once $_core_dir.'/wp-includes/class.wp-scripts.php';
+require_once $_core_dir.'/wp-includes/formatting.php';
+require_once $_core_dir.'/wp-includes/functions.php';
 require_once $_core_dir.'/wp-includes/load.php';
 require_once $_core_dir.'/wp-includes/rest-api/class-wp-rest-request.php';
