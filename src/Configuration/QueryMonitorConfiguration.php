@@ -58,7 +58,7 @@ class QueryMonitorConfiguration implements ContainerConfigurationInterface
             $dropInData = get_plugin_data(WP_CONTENT_DIR.'/object-cache.php', false, false);
             $pluginData = get_plugin_data($container['plugin_dir_path'].'/stubs/object-cache.php', false, false);
 
-            return isset($dropInData['PluginName'], $pluginData['PluginName']) && $dropInData['PluginName'] === $pluginData['PluginName'];
+            return isset($dropInData['Name'], $pluginData['Name']) && $dropInData['Name'] === $pluginData['Name'];
         });
         $container['query_monitor_collectors'] = $container->service(function (Container $container) {
             $collectors = [];
