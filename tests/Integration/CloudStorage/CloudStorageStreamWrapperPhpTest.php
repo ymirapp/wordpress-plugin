@@ -490,7 +490,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testThrowsExceptionWhenContextHasNoClient()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('No cloud storage client found in the stream contex');
+        $this->expectExceptionMessage('No cloud storage client found in the stream context');
 
         fopen('cloudstorage:///file.ext', 'r', false, stream_context_create([
             'cloudstorage' => ['client' => null],
