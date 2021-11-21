@@ -56,6 +56,9 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
             if ($container['query_monitor_active']) {
                 $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/resources/views/query-monitor');
             }
+            if (is_plugin_active('woocommerce/woocommerce.php')) {
+                $subscribers[] = new Subscriber\WooCommerceSubscriber();
+            }
 
             return $subscribers;
         });
