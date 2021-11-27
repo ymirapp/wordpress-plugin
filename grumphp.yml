@@ -36,6 +36,7 @@ grumphp:
         - 'src/CloudStorage/CloudStorageStreamWrapper.php'
         - 'src/Email/Email.php'
         - 'src/ObjectCache/AbstractPersistentObjectCache.php'
+        - 'src/Subscriber/ContentDeliveryNetworkPageCachingSubscriber.php'
         - 'src/Support/Collection.php'
         - 'tests'
     phpstan:

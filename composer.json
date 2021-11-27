@@ -14,7 +14,8 @@
     "require": {
         "php": ">=7.2.5",
         "ext-curl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "dg/bypass-finals": "^1.2",

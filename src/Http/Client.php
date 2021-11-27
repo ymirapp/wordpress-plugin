@@ -132,12 +132,10 @@ class Client
 
         $body = curl_exec($handle);
 
-        if (false === $body) {
-            throw new \RuntimeException('cURL request failed');
-        }
-
         if (curl_errno($handle)) {
             throw new \RuntimeException(sprintf('cURL error %s: %s', curl_errno($handle), curl_error($handle)));
+        } elseif (false === $body) {
+            throw new \RuntimeException('cURL request failed');
         }
 
         $headers = (new Collection(explode("\n", preg_replace('/\n[ \t]/', ' ', str_replace("\r\n", "\n", $rawHeaders)))))->filter();
@@ -149,9 +147,9 @@ class Client
         }
 
         // Parse HTTP response
-        preg_match('#^HTTP/(1\.\d)[ \t]+(\d+)[ \t]+(.+)#i', $headers->shift(), $matches);
+        preg_match('#^HTTP/(1\.\d)[ \t]+(\d+)([ \t]+(.+))?#i', $headers->shift(), $matches);
 
-        if (!isset($matches[2], $matches[3])) {
+        if (empty($matches[2])) {
             throw new \RuntimeException('Unable to parse HTTP response code');
         }
 
@@ -164,7 +162,7 @@ class Client
             })->all(),
             'response' => [
                 'code' => (int) $matches[2],
-                'message' => $matches[3],
+                'message' => $matches[4] ?? '',
             ],
         ];
     }

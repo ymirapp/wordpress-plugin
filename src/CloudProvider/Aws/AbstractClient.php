@@ -112,6 +112,14 @@ abstract class AbstractClient
     }
 
     /**
+     * Get the hostname for the AWS request.
+     */
+    protected function getHostname(): string
+    {
+        return "{$this->getEndpointName()}.{$this->region}.amazonaws.com";
+    }
+
+    /**
      * Parse the status code from the given response.
      */
     protected function parseResponseStatusCode(array $response): int
@@ -239,14 +247,6 @@ abstract class AbstractClient
     private function getDate(): string
     {
         return gmdate('Ymd');
-    }
-
-    /**
-     * Get the hostname for the AWS request.
-     */
-    private function getHostname(): string
-    {
-        return "{$this->getEndpointName()}.{$this->region}.amazonaws.com";
     }
 
     /**

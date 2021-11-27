@@ -128,6 +128,14 @@ class Collection implements \ArrayAccess
     }
 
     /**
+     * Map a collection and flatten the result by a single level.
+     */
+    public function flatMap(callable $callback)
+    {
+        return $this->map($callback)->collapse();
+    }
+
+    /**
      * Flip the items in the collection.
      */
     public function flip(): self
@@ -263,6 +271,18 @@ class Collection implements \ArrayAccess
     public function slice(int $offset, ?int $length = null): self
     {
         return new self(array_slice($this->items, $offset, $length, true));
+    }
+
+    /**
+     * Sort through each item with a callback.
+     */
+    public function sort(callable $callback = null)
+    {
+        $items = $this->items;
+
+        is_callable($callback) ? uasort($items, $callback) : asort($items);
+
+        return new self($items);
     }
 
     /**

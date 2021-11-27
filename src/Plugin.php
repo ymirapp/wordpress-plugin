@@ -73,6 +73,7 @@ class Plugin
             Configuration\EmailConfiguration::class,
             Configuration\EventManagementConfiguration::class,
             Configuration\ObjectCacheConfiguration::class,
+            Configuration\PageCacheConfiguration::class,
             Configuration\PhpConfiguration::class,
             Configuration\QueryMonitorConfiguration::class,
             Configuration\RestApiConfiguration::class,

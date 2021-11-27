@@ -86,6 +86,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
                 'error_uploading' => __('&#8220;%s&#8221; has failed to upload.'),
             ];
         });
+        $container['rest_url'] = $container->service(function () {
+            return get_rest_url();
+        });
         $container['site_icon'] = $container->service(function () {
             if (!class_exists(\WP_Site_Icon::class)) {
                 require_once ABSPATH.'wp-admin/includes/class-wp-site-icon.php';

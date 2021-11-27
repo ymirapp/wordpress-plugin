@@ -26,8 +26,9 @@
         <exclude name="UnusedLocalVariable" />
     </rule>
     <rule ref="rulesets/naming.xml">
-        <exclude name="LongVariable"/>
-        <exclude name="ShortVariable"/>
+        <exclude name="LongClassName" />
+        <exclude name="LongVariable" />
+        <exclude name="ShortVariable" />
         <exclude name="ShortMethodName" />
     </rule>
 
@@ -68,6 +69,17 @@
             <property name="ignorepattern" description="Ignore methods matching this regex" value="(^(add|set|get|is|has|with|test))i"/>
         </properties>
     </rule>
+    <rule name="rulesets/naming.xml/LongClassName"
+          since="2.9"
+          message="Avoid excessively long class names like {0}. Keep class name length under {1}."
+          class="PHPMD\Rule\Naming\LongClassName"
+          externalInfoUrl="https://phpmd.org/rules/naming.html#longclassname">
+        <priority>3</priority>
+        <properties>
+            <property name="maximum" description="The class name length reporting threshold" value="40"/>
+            <property name="subtract-suffixes" description="Comma-separated list of suffixes that will not count in the length of the class name. Only the first matching suffix will be subtracted." value="Interface, Subscriber"/>
+        </properties>
+    </rule>
     <rule rf="rulesets/naming.xml/LongVariable"
         since="0.2"
         message="Avoid excessively long variable names like {0}. Keep variable name length under {1}."
@@ -89,7 +101,7 @@
             <property name="exceptions" value="id,x,y" />
         </properties>
     </rule>
-    <rule name="ShortMethodName"
+    <rule name="rulesets/naming.xml/ShortMethodName"
           since="0.2"
           message="Avoid using short method names like {0}::{1}(). The configured minimum method name length is {2}."
           class="PHPMD\Rule\Naming\ShortMethodName"
