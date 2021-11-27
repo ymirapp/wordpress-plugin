@@ -28,6 +28,13 @@ class AssetsSubscriber implements SubscriberInterface
     private $assetsUrl;
 
     /**
+     * The WordPress content directory.
+     *
+     * @var string
+     */
+    private $contentDirectory;
+
+    /**
      * The Ymir project type.
      *
      * @var string
@@ -51,9 +58,10 @@ class AssetsSubscriber implements SubscriberInterface
     /**
      * Constructor.
      */
-    public function __construct(string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadsUrl = '')
+    public function __construct(string $contentDirectory, string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadsUrl = '')
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
+        $this->contentDirectory = '/'.ltrim($contentDirectory, '/');
         $this->projectType = $projectType;
         $this->siteUrl = rtrim($siteUrl, '/');
         $this->uploadsUrl = rtrim($uploadsUrl, '/');
@@ -112,16 +120,8 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteContentUrl(string $url): string
     {
-        $contentDirectoryName = '/wp-content';
-
-        if (defined('CONTENT_DIR')) {
-            $contentDirectoryName = CONTENT_DIR;
-        }
-
-        $contentDirectoryName = '/'.ltrim($contentDirectoryName, '/');
-
         $matches = [];
-        preg_match(sprintf('/http(s)?:\/\/.*(%s.*)/', preg_quote($contentDirectoryName, '/')), $url, $matches);
+        preg_match(sprintf('/http(s)?:\/\/.*(%s.*)/', preg_quote($this->contentDirectory, '/')), $url, $matches);
 
         if (empty($matches[2])) {
             return $url;
