@@ -121,13 +121,13 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewriteContentUrl(string $url): string
     {
         $matches = [];
-        preg_match(sprintf('/http(s)?:\/\/.*(%s.*)/', preg_quote($this->contentDirectory, '/')), $url, $matches);
+        preg_match(sprintf('/https?:\/\/.*(%s.*)/', preg_quote($this->contentDirectory, '/')), $url, $matches);
 
-        if (empty($matches[2])) {
+        if (empty($matches[1])) {
             return $url;
         }
 
-        return $this->assetsUrl.$matches[2];
+        return $this->assetsUrl.$matches[1];
     }
 
     /**
@@ -136,13 +136,13 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewritePluginsUrl(string $url): string
     {
         $matches = [];
-        preg_match('/http(s)?:\/\/.*(\/[^\/]*\/plugins.*)/', $url, $matches);
+        preg_match('/https?:\/\/.*(\/[^\/]*\/plugins.*)/', $url, $matches);
 
-        if (empty($matches[2])) {
+        if (empty($matches[1])) {
             return $url;
         }
 
-        return $this->assetsUrl.$matches[2];
+        return $this->assetsUrl.$matches[1];
     }
 
     /**
