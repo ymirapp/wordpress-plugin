@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Subscriber;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
+use Ymir\Plugin\Support\Collection;
 
 /**
  * Subscriber for managing the integration between WordPress and the deployed assets.
@@ -77,6 +78,7 @@ class AssetsSubscriber implements SubscriberInterface
             'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'the_content' => ['replaceUrlsInContent', 99999], // Make the priority high, but less than 999999 which is the Jetpack Photon hook priority
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
     }
@@ -116,18 +118,80 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
+     * Replace broken URLs in the post content so they correctly point to the current assets URL.
+     */
+    public function replaceUrlsInContent(string $content): string
+    {
+        if (empty($this->assetsUrl)) {
+            return $content;
+        }
+
+        // The assumption is that all URLs are surrounded by either quotes or double quotes.
+        $patterns = [
+            '%"(?P<url>https?://[^"]*?)"%is',
+            "%'(?P<url>https?://[^']*?)'%is",
+        ];
+        $urls = new Collection();
+
+        foreach ($patterns as $pattern) {
+            $matches = [];
+
+            preg_match_all($pattern, $content, $matches);
+
+            $urls = $urls->merge($matches['url'] ?? []);
+        }
+
+        if ($urls->isEmpty()) {
+            return $content;
+        }
+
+        $assetsHost = parse_url($this->assetsUrl, PHP_URL_HOST);
+        $siteHost = parse_url($this->siteUrl, PHP_URL_HOST);
+        $uploadsDirectory = $this->contentDirectory.'/uploads';
+        $urls = $urls->unique();
+
+        // If we have a hardcoded URL to an asset, we want to dynamically update it to the
+        // current asset URL.
+        $assetsUrls = $urls->filter(function (string $url) use ($assetsHost) {
+            return parse_url($url, PHP_URL_HOST) === $assetsHost;
+        })->mapWithKeys(function (string $url) {
+            return [$url => $this->rewriteAssetsUrl('%https?://[^/]*/assets/[^/]*(.*)%i', $url)];
+        })->all();
+
+        // Get all the URLs pointing to the "/wp-content" directory
+        $contentUrls = $urls->filter(function (string $url) use ($siteHost) {
+            return parse_url($url, PHP_URL_HOST) === $siteHost;
+        })->filter(function (string $url) {
+            return 0 === stripos(parse_url($url, PHP_URL_PATH), $this->contentDirectory);
+        });
+
+        // Point all non-uploads "/wp-content" URLs to the assets URL.
+        $nonUploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
+            return false === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
+        })->mapWithKeys(function (string $url) {
+            return [$url => $this->rewriteAssetsUrl(sprintf('%%https?://[^/]*(%s.*)%%', $this->contentDirectory), $url)];
+        })->all();
+
+        // Point all URLs to "/wp-content/uploads" to the uploads URL.
+        $uploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
+            return 0 === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
+        })->mapWithKeys(function (string $url) use ($uploadsDirectory) {
+            return [$url => $this->rewriteUploadsUrl(sprintf('%%https?://[^/]*%s(.*)%%', $uploadsDirectory), $url)];
+        })->all();
+
+        foreach (array_merge($assetsUrls, $nonUploadsUrls, $uploadsUrls) as $originalUrl => $newUrl) {
+            $content = str_replace($originalUrl, $newUrl, $content);
+        }
+
+        return $content;
+    }
+
+    /**
      * Rewrite the wp-content URL so it points to the assets URL.
      */
     public function rewriteContentUrl(string $url): string
     {
-        $matches = [];
-        preg_match(sprintf('/https?:\/\/.*(%s.*)/', preg_quote($this->contentDirectory, '/')), $url, $matches);
-
-        if (empty($matches[1])) {
-            return $url;
-        }
-
-        return $this->assetsUrl.$matches[1];
+        return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectory), $url);
     }
 
     /**
@@ -135,14 +199,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewritePluginsUrl(string $url): string
     {
-        $matches = [];
-        preg_match('/https?:\/\/.*(\/[^\/]*\/plugins.*)/', $url, $matches);
-
-        if (empty($matches[1])) {
-            return $url;
-        }
-
-        return $this->assetsUrl.$matches[1];
+        return $this->rewriteAssetsUrl('%https?://.*(/[^/]*/plugins.*)%', $url);
     }
 
     /**
@@ -153,5 +210,35 @@ class AssetsSubscriber implements SubscriberInterface
         return false !== stripos($url, $this->siteUrl)
             && (!empty($this->assetsUrl) && false === stripos($url, $this->assetsUrl))
             && (empty($this->uploadsUrl) || false === stripos($url, $this->uploadsUrl));
+    }
+
+    /**
+     * Rewrite the given URL to point to the assets URL based on the given REGEX pattern.
+     */
+    private function rewriteAssetsUrl(string $pattern, string $url): string
+    {
+        $matches = [];
+        preg_match($pattern, $url, $matches);
+
+        if (empty($matches[1])) {
+            return $url;
+        }
+
+        return $this->assetsUrl.'/'.ltrim($matches[1], '/');
+    }
+
+    /**
+     * Rewrite the given URL to point to the uploads URL based on the given REGEX pattern.
+     */
+    private function rewriteUploadsUrl(string $pattern, string $url): string
+    {
+        $matches = [];
+        preg_match($pattern, $url, $matches);
+
+        if (empty($matches[1])) {
+            return $url;
+        }
+
+        return $this->uploadsUrl.'/'.ltrim($matches[1], '/');
     }
 }

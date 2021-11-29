@@ -21,6 +21,15 @@ use Ymir\Plugin\Tests\Unit\TestCase;
  */
 class AssetsSubscriberTest extends TestCase
 {
+    public function provideReplaceUrlsInContent(): array
+    {
+        return [
+            ['replaces-with-assets-url.html'],
+            ['replaces-with-uploads-url.html'],
+            ['updates-assets-urls.html'],
+        ];
+    }
+
     public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
     {
         $this->assertSame(['https://assets.com/assets/uuid'], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
@@ -54,6 +63,7 @@ class AssetsSubscriberTest extends TestCase
             'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'the_content' => ['replaceUrlsInContent', 99999],
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
 
@@ -93,6 +103,26 @@ class AssetsSubscriberTest extends TestCase
     public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsUploadUrl()
     {
         $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/uploads/asset.css'));
+    }
+
+    /**
+     * @dataProvider provideReplaceUrlsInContent
+     */
+    public function testReplaceUrlsInContentWithDifferentAssetsAndSiteDomain(string $filename)
+    {
+        list($content, $expected) = explode("\n--EXPECTED--\n", trim(file_get_contents(__DIR__.'/data/replace-urls-content/different-assets-and-site-domain/'.$filename)), 2);
+
+        $this->assertSame($expected, (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', '', 'https://assets.com/uploads'))->replaceUrlsInContent($content));
+    }
+
+    /**
+     * @dataProvider provideReplaceUrlsInContent
+     */
+    public function testReplaceUrlsInContentWithSameAssetsAndSiteDomain(string $filename)
+    {
+        list($content, $expected) = explode("\n--EXPECTED--\n", trim(file_get_contents(__DIR__.'/data/replace-urls-content/same-assets-and-site-domain/'.$filename)), 2);
+
+        $this->assertSame($expected, (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->replaceUrlsInContent($content));
     }
 
     public function testRewriteContentUrlDoesntKeepDirectoryBelowContentDir()

@@ -242,6 +242,14 @@ class Collection implements \ArrayAccess
     }
 
     /**
+     * Return a collection with only unique values in the collection array.
+     */
+    public function unique(): self
+    {
+        return new self(array_unique($this->items));
+    }
+
+    /**
      * Reset the keys on the underlying array.
      */
     public function values()
