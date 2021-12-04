@@ -140,18 +140,24 @@ class Client
             throw new \RuntimeException(sprintf('cURL error %s: %s', curl_errno($handle), curl_error($handle)));
         }
 
-        $headers = explode("\n", preg_replace('/\n[ \t]/', ' ', str_replace("\r\n", "\n", $rawHeaders)));
+        $headers = (new Collection(explode("\n", preg_replace('/\n[ \t]/', ' ', str_replace("\r\n", "\n", $rawHeaders)))))->filter();
         $matches = [];
 
-        preg_match('#^HTTP/(1\.\d)[ \t]+(\d+)[ \t]+(.+)#i', array_shift($headers), $matches);
+        // Remove HTTP Continue header if present
+        if (preg_match('#^HTTP/1\.\d[ \t]+100[ \t]+Continue#i', $headers[0])) {
+            $headers->shift();
+        }
+
+        // Parse HTTP response
+        preg_match('#^HTTP/(1\.\d)[ \t]+(\d+)[ \t]+(.+)#i', $headers->shift(), $matches);
 
         if (!isset($matches[2], $matches[3])) {
-            throw new \RuntimeException('Unable to parse response code');
+            throw new \RuntimeException('Unable to parse HTTP response code');
         }
 
         return [
             'body' => $body,
-            'headers' => (new Collection($headers))->filter()->mapWithKeys(function (string $header) {
+            'headers' => $headers->mapWithKeys(function (string $header) {
                 list($key, $value) = explode(':', $header, 2);
 
                 return [strtolower($key) => preg_replace('#(\s+)#i', ' ', trim($value))];

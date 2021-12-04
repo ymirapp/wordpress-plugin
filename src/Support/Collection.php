@@ -234,6 +234,30 @@ class Collection implements \ArrayAccess
     }
 
     /**
+     * Get and remove the first N items from the collection.
+     */
+    public function shift(int $count = 1)
+    {
+        if (1 === $count) {
+            return array_shift($this->items);
+        }
+
+        if ($this->isEmpty()) {
+            return new self();
+        }
+
+        $results = [];
+
+        $collectionCount = $this->count();
+
+        foreach (range(1, min($count, $collectionCount)) as $item) {
+            $results[] = array_shift($this->items);
+        }
+
+        return new self($results);
+    }
+
+    /**
      * Extract a slice of the collection.
      */
     public function slice(int $offset, ?int $length = null): self
