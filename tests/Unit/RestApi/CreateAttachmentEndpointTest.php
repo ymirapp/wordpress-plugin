@@ -65,7 +65,7 @@ class CreateAttachmentEndpointTest extends TestCase
 
         $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
         $get_current_user_id->expects($this->once())
-            ->willReturn('user_id');
+                            ->willReturn('user_id');
 
         $request = $this->getWPRESTRequestMock();
         $request->expects($this->once())
