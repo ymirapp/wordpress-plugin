@@ -29,7 +29,8 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         $container['blog_charset'] = $container->service(function () {
             return get_bloginfo('charset');
         });
-        $container['content_directory'] = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH.'wp-content';
+        $container['content_directory'] = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '';
+        $container['content_directory_name'] = defined('CONTENT_DIR') ? CONTENT_DIR : 'wp-content';
         $container['content_url'] = defined('WP_CONTENT_URL') ? WP_CONTENT_URL : '';
         $container['current_user'] = $container->service(function () {
             return wp_get_current_user();

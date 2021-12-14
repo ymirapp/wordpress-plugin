@@ -29,11 +29,11 @@ class AssetsSubscriber implements SubscriberInterface
     private $assetsUrl;
 
     /**
-     * The WordPress content directory.
+     * The WordPress content directory name.
      *
      * @var string
      */
-    private $contentDirectory;
+    private $contentDirectoryName;
 
     /**
      * The Ymir project type.
@@ -59,10 +59,10 @@ class AssetsSubscriber implements SubscriberInterface
     /**
      * Constructor.
      */
-    public function __construct(string $contentDirectory, string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadsUrl = '')
+    public function __construct(string $contentDirectoryName, string $siteUrl, string $assetsUrl = '', string $projectType = '', string $uploadsUrl = '')
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
-        $this->contentDirectory = '/'.ltrim($contentDirectory, '/');
+        $this->contentDirectoryName = '/'.ltrim($contentDirectoryName, '/');
         $this->projectType = $projectType;
         $this->siteUrl = rtrim($siteUrl, '/');
         $this->uploadsUrl = rtrim($uploadsUrl, '/');
@@ -147,7 +147,7 @@ class AssetsSubscriber implements SubscriberInterface
 
         $assetsHost = parse_url($this->assetsUrl, PHP_URL_HOST);
         $siteHost = parse_url($this->siteUrl, PHP_URL_HOST);
-        $uploadsDirectory = $this->contentDirectory.'/uploads';
+        $uploadsDirectory = $this->contentDirectoryName.'/uploads';
         $urls = $urls->unique();
 
         // If we have a hardcoded URL to an asset, we want to dynamically update it to the
@@ -162,14 +162,14 @@ class AssetsSubscriber implements SubscriberInterface
         $contentUrls = $urls->filter(function (string $url) use ($siteHost) {
             return parse_url($url, PHP_URL_HOST) === $siteHost;
         })->filter(function (string $url) {
-            return 0 === stripos(parse_url($url, PHP_URL_PATH), $this->contentDirectory);
+            return 0 === stripos(parse_url($url, PHP_URL_PATH), $this->contentDirectoryName);
         });
 
         // Point all non-uploads "/wp-content" URLs to the assets URL.
         $nonUploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
             return false === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
         })->mapWithKeys(function (string $url) {
-            return [$url => $this->rewriteAssetsUrl(sprintf('%%https?://[^/]*(%s.*)%%', $this->contentDirectory), $url)];
+            return [$url => $this->rewriteAssetsUrl(sprintf('%%https?://[^/]*(%s.*)%%', $this->contentDirectoryName), $url)];
         })->all();
 
         // Point all URLs to "/wp-content/uploads" to the uploads URL.
@@ -191,7 +191,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteContentUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectory), $url);
+        return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectoryName), $url);
     }
 
     /**
