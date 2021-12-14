@@ -87,6 +87,13 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             ];
         });
         $container['rest_url'] = $container->service(function () {
+            global $wp_rewrite;
+
+            if (!$wp_rewrite instanceof \WP_Rewrite) {
+                $wp_rewrite = new \WP_Rewrite();
+                $wp_rewrite->init();
+            }
+
             return get_rest_url();
         });
         $container['site_icon'] = $container->service(function () {
