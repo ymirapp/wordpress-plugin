@@ -162,7 +162,9 @@ class AssetsSubscriber implements SubscriberInterface
         $contentUrls = $urls->filter(function (string $url) use ($siteHost) {
             return parse_url($url, PHP_URL_HOST) === $siteHost;
         })->filter(function (string $url) {
-            return 0 === stripos(parse_url($url, PHP_URL_PATH), $this->contentDirectoryName);
+            $path = parse_url($url, PHP_URL_PATH);
+
+            return is_string($path) && 0 === stripos($path, $this->contentDirectoryName);
         });
 
         // Point all non-uploads "/wp-content" URLs to the assets URL.
@@ -174,7 +176,9 @@ class AssetsSubscriber implements SubscriberInterface
 
         // Point all URLs to "/wp-content/uploads" to the uploads URL.
         $uploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
-            return 0 === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
+            $path = parse_url($url, PHP_URL_PATH);
+
+            return is_string($path) && 0 === stripos($path, $uploadsDirectory);
         })->mapWithKeys(function (string $url) use ($uploadsDirectory) {
             return [$url => $this->rewriteUploadsUrl(sprintf('%%https?://[^/]*%s(.*)%%', $uploadsDirectory), $url)];
         })->all();
