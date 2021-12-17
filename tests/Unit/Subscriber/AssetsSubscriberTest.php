@@ -27,6 +27,7 @@ class AssetsSubscriberTest extends TestCase
             ['replaces-with-assets-url.html'],
             ['replaces-with-uploads-url.html'],
             ['updates-assets-urls.html'],
+            ['urls-with-no-path.html'],
         ];
     }
 
