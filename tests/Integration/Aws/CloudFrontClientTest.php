@@ -31,14 +31,6 @@ class CloudFrontClientTest extends TestCase
         $this->client = new CloudFrontClient(new Client('test'), 'E2VS70WYKKG4W7', getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
     }
 
-    public function testClearAll()
-    {
-        $this->expectNotToPerformAssertions();
-
-        $this->client->clearAll();
-        $this->client->sendClearRequest();
-    }
-
     public function testClearUrl()
     {
         $this->expectNotToPerformAssertions();
