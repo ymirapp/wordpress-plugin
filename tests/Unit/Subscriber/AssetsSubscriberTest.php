@@ -136,7 +136,7 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('app', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
     }
 
-    public function testRewritePluginUrlOnlyKeepsDirectoryBelowPlugins()
+    public function testRewritePluginsUrlOnlyKeepsDirectoryBelowPlugins()
     {
         $this->assertSame('https://assets.com/assets/uuid/directory/plugins/test.php', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
     }
