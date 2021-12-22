@@ -75,6 +75,7 @@ class AssetsSubscriber implements SubscriberInterface
     {
         return [
             'content_url' => 'rewriteContentUrl',
+            'includes_url' => 'rewriteIncludesUrl',
             'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
@@ -196,6 +197,14 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewriteContentUrl(string $url): string
     {
         return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectoryName), $url);
+    }
+
+    /**
+     * Rewrite the wp-includes URL to point it to the assets URL.
+     */
+    public function rewriteIncludesUrl(string $url): string
+    {
+        return $this->rewriteAssetsUrl('%https?://[^/]*((/[^/]*)?/wp-includes.*)%', $url);
     }
 
     /**

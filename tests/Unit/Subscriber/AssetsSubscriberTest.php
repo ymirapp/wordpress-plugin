@@ -61,6 +61,7 @@ class AssetsSubscriberTest extends TestCase
 
         $subscribedEvents = [
             'content_url' => 'rewriteContentUrl',
+            'includes_url' => 'rewriteIncludesUrl',
             'plugins_url' => 'rewritePluginsUrl',
             'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
             'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
@@ -134,6 +135,16 @@ class AssetsSubscriberTest extends TestCase
     public function testRewriteContentUrlUsesContentDirConstant()
     {
         $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('app', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
+    }
+
+    public function testRewriteIncludesUrlWithBedrockIncludesDirectory()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/wp/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock'))->rewriteIncludesUrl('https://foo.com/wp/wp-includes/js/script.min.js'));
+    }
+
+    public function testRewriteIncludesUrlWithStandardIncludesDirectory()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteIncludesUrl('https://foo.com/wp-includes/js/script.min.js'));
     }
 
     public function testRewritePluginsUrlOnlyKeepsDirectoryBelowPlugins()
