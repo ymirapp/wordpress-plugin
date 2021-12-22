@@ -191,7 +191,7 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
-     * Rewrite the wp-content URL so it points to the assets URL.
+     * Rewrite the wp-content URL to point it to the assets URL.
      */
     public function rewriteContentUrl(string $url): string
     {
@@ -199,7 +199,7 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
-     * Rewrite the plugins URL so it points to the assets URL.
+     * Rewrite the plugins URL to point it to the assets URL.
      */
     public function rewritePluginsUrl(string $url): string
     {
