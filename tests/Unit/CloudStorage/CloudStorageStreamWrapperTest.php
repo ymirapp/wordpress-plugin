@@ -646,9 +646,9 @@ class CloudStorageStreamWrapperTest extends TestCase
     public function testStreamOpenWithInvalidMode()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('"r+" mode isn\'t supported. Must be "r", "w", "a", "x"');
+        $this->expectExceptionMessage('"e" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"');
 
-        (new CloudStorageStreamWrapper())->stream_open('cloudstorage:///foo.txt', 'r+');
+        (new CloudStorageStreamWrapper())->stream_open('cloudstorage:///foo.txt', 'e');
     }
 
     public function testStreamOpenWithModeA()
@@ -671,6 +671,28 @@ class CloudStorageStreamWrapperTest extends TestCase
         CloudStorageStreamWrapper::register($client, new \ArrayObject());
 
         (new CloudStorageStreamWrapper())->stream_open('cloudstorage:///foo.txt', 'a');
+    }
+
+    public function testStreamOpenWithModeAPlus()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $client->expects($this->once())
+               ->method('getObject')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn('foo');
+
+        $client->expects($this->once())
+               ->method('putObject')
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'));
+
+        $fwrite = $this->getFunctionMock($this->getNamespace(CloudStorageStreamWrapper::class), 'fwrite');
+        $fwrite->expects($this->once())
+               ->with($this->callback(function ($value) { return is_resource($value); }), $this->identicalTo('foo'));
+
+        CloudStorageStreamWrapper::register($client, new \ArrayObject());
+
+        (new CloudStorageStreamWrapper())->stream_open('cloudstorage:///foo.txt', 'a+');
     }
 
     public function testStreamOpenWithModeRAndFileDoesntExist()

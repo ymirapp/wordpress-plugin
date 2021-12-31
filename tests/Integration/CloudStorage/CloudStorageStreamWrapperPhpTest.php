@@ -131,7 +131,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
     public function testFopenWithUnsupportedMode()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "w", "a", "x"');
+        $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"');
 
         fopen('cloudstorage:///file.ext', 'c');
     }

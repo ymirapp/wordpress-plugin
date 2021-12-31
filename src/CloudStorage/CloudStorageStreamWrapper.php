@@ -340,7 +340,7 @@ class CloudStorageStreamWrapper
             $client = $this->getClient();
             $object = '';
 
-            if ('a' === $this->openedStreamMode) {
+            if (in_array($this->openedStreamMode, ['a', 'a+'])) {
                 try {
                     $object = $client->getObject($this->openedStreamObjectKey);
                 } catch (\Exception $exception) {
@@ -721,8 +721,8 @@ class CloudStorageStreamWrapper
         $client = $this->getClient();
         $mode = rtrim($mode, 'bt');
 
-        if (!in_array($mode, ['r', 'w', 'a', 'x'])) {
-            throw new \InvalidArgumentException(sprintf('"%s" mode isn\'t supported. Must be "r", "w", "a", "x"', $mode));
+        if (!in_array($mode, ['r', 'w', 'a', 'a+', 'x'])) {
+            throw new \InvalidArgumentException(sprintf('"%s" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"', $mode));
         } elseif ('x' === $mode && $client->objectExists($key)) {
             throw new \InvalidArgumentException('Cannot have an existing object when opening with mode "x"');
         } elseif ('r' === $mode && !$client->objectExists($key)) {
