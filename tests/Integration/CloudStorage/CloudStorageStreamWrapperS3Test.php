@@ -66,7 +66,21 @@ class CloudStorageStreamWrapperS3Test extends TestCase
         $this->assertSame("bar\n", file_get_contents($filePath));
     }
 
-    public function testFileExists()
+    public function testFileExistsAfterCreatingEmptyFile()
+    {
+        $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
+        $s3FilePath = 'cloudstorage://'.$relativePath;
+
+        $this->assertFalse(file_exists($s3FilePath));
+
+        file_put_contents($s3FilePath, '');
+
+        $this->assertTrue(file_exists($s3FilePath));
+
+        $this->client->deleteObject($relativePath);
+    }
+
+    public function testFileExistsWithExistingFile()
     {
         $this->assertTrue(file_exists('cloudstorage:///foo.txt'));
     }

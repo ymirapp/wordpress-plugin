@@ -352,6 +352,11 @@ class CloudStorageStreamWrapper
             if ('r' !== $this->openedStreamMode) {
                 // Test that we can save the file that we're opening
                 $client->putObject($this->openedStreamObjectKey, $object);
+
+                // Remove the cache value in case we interacted with the file before using something
+                // like "file_exists". If we don't write to the file, there won't be any cache busting
+                // so this is the only opportunity to do so.
+                $this->removeCacheValue(self::PROTOCOL.'://'.$this->openedStreamObjectKey);
             }
 
             $this->openedStreamObjectResource = fopen('php://temp', 'r+');
