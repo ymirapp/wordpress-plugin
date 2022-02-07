@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Subscriber;
 
-use Ymir\Plugin\EventManagement\SubscriberInterface;
+use Ymir\Plugin\EventManagement\AbstractEventManagerAwareSubscriber;
 use Ymir\Plugin\PageCache\ContentDeliveryNetworkPageCacheClientInterface;
 use Ymir\Plugin\Support\Collection;
 
 /**
  * Subscriber that handles interaction with the content delivery network handling page caching.
  */
-class ContentDeliveryNetworkPageCachingSubscriber implements SubscriberInterface
+class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAwareSubscriber
 {
     /**
      * Client interacting with the content delivery network handling page caching.
@@ -77,6 +77,8 @@ class ContentDeliveryNetworkPageCachingSubscriber implements SubscriberInterface
      */
     public function clearCache()
     {
+        $this->eventManager->execute('ymir_page_caching_clear_all');
+
         $this->pageCacheClient->clearAll();
     }
 
@@ -187,6 +189,12 @@ class ContentDeliveryNetworkPageCachingSubscriber implements SubscriberInterface
             $urlsToClear[] = get_post_type_archive_feed_link($post->post_type);
         }
 
+        $urlsToClear = $this->eventManager->filter('ymir_page_caching_urls_to_clear', $urlsToClear);
+
+        if (!$urlsToClear instanceof Collection) {
+            return;
+        }
+
         $urlsToClear->filter(function ($url) {
             return is_string($url) && !empty($url);
         })->each(function (string $url) {
@@ -199,6 +207,8 @@ class ContentDeliveryNetworkPageCachingSubscriber implements SubscriberInterface
      */
     public function sendClearRequest()
     {
+        $this->eventManager->execute('ymir_page_caching_send_clear_request');
+
         $this->pageCacheClient->sendClearRequest();
     }
 }
