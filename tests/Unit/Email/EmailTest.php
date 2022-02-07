@@ -131,13 +131,11 @@ class EmailTest extends TestCase
 
         $this->assertNotSame('', $phpmailer->CharSet);
         $this->assertNotSame('', $phpmailer->ContentType);
-        $this->assertNotSame('', $phpmailer->From);
 
         $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
 
         $this->assertSame('', $phpmailer->CharSet);
         $this->assertSame('', $phpmailer->ContentType);
-        $this->assertSame('', $phpmailer->From);
     }
 
     public function testContentTypeHtml()
