@@ -30,5 +30,14 @@ class AttachmentConfiguration implements ContainerConfigurationInterface
         $container['file_manager'] = $container->service(function (Container $container) {
             return new AttachmentFileManager($container['uploads_basedir']);
         });
+        $container['force_async_attachment_creation'] = $container->service(function () {
+            if (false !== getenv('YMIR_FORCE_ASYNC_ATTACHMENT_CREATION')) {
+                return (bool) getenv('YMIR_FORCE_ASYNC_ATTACHMENT_CREATION');
+            } elseif (defined('YMIR_FORCE_ASYNC_ATTACHMENT_CREATION')) {
+                return (bool) YMIR_FORCE_ASYNC_ATTACHMENT_CREATION;
+            }
+
+            return false;
+        });
     }
 }

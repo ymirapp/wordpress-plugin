@@ -36,6 +36,13 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
     private $consoleClient;
 
     /**
+     * Whether to force the creation of the attachment metadata asynchronously or not.
+     *
+     * @var bool
+     */
+    private $forceAsync;
+
+    /**
      * The path to uploads directory.
      *
      * @var string
@@ -52,10 +59,11 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
     /**
      * Constructor.
      */
-    public function __construct(CloudStorageClientInterface $cloudStorageClient, ConsoleClientInterface $consoleClient, string $uploadsDirectory, string $uploadsUrl)
+    public function __construct(CloudStorageClientInterface $cloudStorageClient, ConsoleClientInterface $consoleClient, string $uploadsDirectory, string $uploadsUrl, bool $forceAsync = false)
     {
         $this->cloudStorageClient = $cloudStorageClient;
         $this->consoleClient = $consoleClient;
+        $this->forceAsync = $forceAsync;
         $this->uploadsDirectory = $uploadsDirectory;
         $this->uploadsUrl = $uploadsUrl;
     }
@@ -122,13 +130,9 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
             return $attachmentId;
         }
 
-        $async = false;
+        $async = $this->needsAsync($details);
 
-        if (isset($details['size'], $details['type'])
-            && 0 === stripos($details['type'], 'image/')
-            && $details['size'] > wp_convert_hr_to_bytes('15MB')
-        ) {
-            $async = true;
+        if ($async) {
             wp_update_attachment_metadata($attachmentId, $this->createBaseImageMetadata($path));
         }
 
@@ -161,5 +165,17 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
         }
 
         return $metadata;
+    }
+
+    /**
+     * Determine if we need to create the attachment metadata asynchronously or not.
+     */
+    private function needsAsync(array $details): bool
+    {
+        if ($this->forceAsync) {
+            return true;
+        }
+
+        return isset($details['size'], $details['type']) && 0 === stripos($details['type'], 'image/') && $details['size'] > wp_convert_hr_to_bytes('15MB');
     }
 }

@@ -50,7 +50,129 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame('/attachments', CreateAttachmentEndpoint::getPath());
     }
 
-    public function testRespondReturnsAsyncResponseForLargeImage()
+    public function testRespondPerformsAsyncCommandIfForced()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                           ->method('getObjectDetails')
+                           ->with('uploads/2020/08/filename.jpg')
+                           ->willReturn(['size' => 1, 'type' => 'image/jpeg']);
+
+        $consoleClient = $this->getConsoleClientInterfaceMock();
+        $consoleClient->expects($this->once())
+                      ->method('createAttachmentMetadata')
+                      ->with($this->identicalTo('attachment_id'), $this->identicalTo(true));
+
+        $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
+        $get_current_user_id->expects($this->once())
+                            ->willReturn('user_id');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('path'))
+                ->willReturn('2020/08/filename.jpg');
+
+        $sanitize_text_field = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'sanitize_text_field');
+        $sanitize_text_field->expects($this->once())
+                            ->with($this->identicalTo('filename'))
+                            ->willReturn('filename');
+
+        $wp_convert_hr_to_bytes = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_convert_hr_to_bytes');
+        $wp_convert_hr_to_bytes->expects($this->never());
+
+        $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
+        $wp_insert_attachment->expects($this->once())
+                             ->with($this->identicalTo(['guid' => 'https://d1mbwobeuvop7i.cloudfront.net/uploads/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'image/jpeg', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
+                             ->willReturn('attachment_id');
+
+        $wp_prepare_attachment_for_js = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_prepare_attachment_for_js');
+        $wp_prepare_attachment_for_js->expects($this->once())
+                                     ->with($this->identicalTo('attachment_id'))
+                                     ->willReturn([]);
+
+        $wp_update_attachment_metadata = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_update_attachment_metadata');
+        $wp_update_attachment_metadata->expects($this->once())
+                                      ->with($this->identicalTo('attachment_id'), $this->identicalTo(['file' => '2020/08/filename.jpg']));
+
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads', true))->respond($request));
+    }
+
+    public function testRespondReturnsError()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                           ->method('getObjectDetails')
+                           ->with('uploads_dir/2020/08/filename.jpg')
+                           ->willReturn(['type' => 'text/plain']);
+
+        $error = $this->getWPErrorMock();
+
+        $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
+        $get_current_user_id->expects($this->once())
+                            ->willReturn('user_id');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('path'))
+                ->willReturn('2020/08/filename.jpg');
+
+        $sanitize_text_field = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'sanitize_text_field');
+        $sanitize_text_field->expects($this->once())
+                            ->with($this->identicalTo('filename'))
+                            ->willReturn('filename');
+
+        $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
+        $wp_insert_attachment->expects($this->once())
+                             ->with($this->identicalTo(['guid' => 'uploads_url/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'text/plain', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
+                             ->willReturn($error);
+
+        $this->assertSame($error, (new CreateAttachmentEndpoint($cloudStorageClient, $this->getConsoleClientInterfaceMock(), 'uploads_dir', 'uploads_url'))->respond($request));
+    }
+
+    public function testRespondReturnsResponseForMultisite()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                           ->method('getObjectDetails')
+                           ->with('uploads/sites/2/2020/08/filename.jpg')
+                           ->willReturn(['type' => 'text/plain']);
+
+        $consoleClient = $this->getConsoleClientInterfaceMock();
+        $consoleClient->expects($this->once())
+                      ->method('createAttachmentMetadata')
+                      ->with($this->identicalTo('attachment_id'), $this->identicalTo(false));
+
+        $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
+        $get_current_user_id->expects($this->once())
+                            ->willReturn('user_id');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('path'))
+                ->willReturn('2020/08/filename.jpg');
+
+        $sanitize_text_field = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'sanitize_text_field');
+        $sanitize_text_field->expects($this->once())
+                            ->with($this->identicalTo('filename'))
+                            ->willReturn('filename');
+
+        $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
+        $wp_insert_attachment->expects($this->once())
+                             ->with($this->identicalTo(['guid' => 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'text/plain', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
+                             ->willReturn('attachment_id');
+
+        $wp_prepare_attachment_for_js = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_prepare_attachment_for_js');
+        $wp_prepare_attachment_for_js->expects($this->once())
+                                     ->with($this->identicalTo('attachment_id'))
+                                     ->willReturn([]);
+
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads/sites/2', 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2'))->respond($request));
+    }
+
+    public function testRespondWithLargeImage()
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -100,46 +222,13 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
     }
 
-    public function testRespondReturnsError()
-    {
-        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
-        $cloudStorageClient->expects($this->once())
-                           ->method('getObjectDetails')
-                           ->with('uploads_dir/2020/08/filename.jpg')
-                           ->willReturn(['type' => 'text/plain']);
-
-        $error = $this->getWPErrorMock();
-
-        $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
-        $get_current_user_id->expects($this->once())
-                            ->willReturn('user_id');
-
-        $request = $this->getWPRESTRequestMock();
-        $request->expects($this->once())
-                ->method('get_param')
-                ->with($this->identicalTo('path'))
-                ->willReturn('2020/08/filename.jpg');
-
-        $sanitize_text_field = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'sanitize_text_field');
-        $sanitize_text_field->expects($this->once())
-                            ->with($this->identicalTo('filename'))
-                            ->willReturn('filename');
-
-        $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
-        $wp_insert_attachment->expects($this->once())
-                             ->with($this->identicalTo(['guid' => 'uploads_url/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'text/plain', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
-                             ->willReturn($error);
-
-        $this->assertSame($error, (new CreateAttachmentEndpoint($cloudStorageClient, $this->getConsoleClientInterfaceMock(), 'uploads_dir', 'uploads_url'))->respond($request));
-    }
-
-    public function testRespondReturnsResponse()
+    public function testRespondWithSmallImage()
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
                            ->method('getObjectDetails')
                            ->with('uploads/2020/08/filename.jpg')
-                           ->willReturn(['type' => 'text/plain']);
+                           ->willReturn(['size' => 1, 'type' => 'image/jpeg']);
 
         $consoleClient = $this->getConsoleClientInterfaceMock();
         $consoleClient->expects($this->once())
@@ -161,9 +250,14 @@ class CreateAttachmentEndpointTest extends TestCase
                             ->with($this->identicalTo('filename'))
                             ->willReturn('filename');
 
+        $wp_convert_hr_to_bytes = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_convert_hr_to_bytes');
+        $wp_convert_hr_to_bytes->expects($this->once())
+                               ->with($this->identicalTo('15MB'))
+                               ->willReturn(15);
+
         $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
         $wp_insert_attachment->expects($this->once())
-                             ->with($this->identicalTo(['guid' => 'https://d1mbwobeuvop7i.cloudfront.net/uploads/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'text/plain', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
+                             ->with($this->identicalTo(['guid' => 'https://d1mbwobeuvop7i.cloudfront.net/uploads/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'image/jpeg', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
                              ->willReturn('attachment_id');
 
         $wp_prepare_attachment_for_js = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_prepare_attachment_for_js');
@@ -172,46 +266,5 @@ class CreateAttachmentEndpointTest extends TestCase
                                      ->willReturn([]);
 
         $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
-    }
-
-    public function testRespondReturnsResponseForMultisite()
-    {
-        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
-        $cloudStorageClient->expects($this->once())
-                           ->method('getObjectDetails')
-                           ->with('uploads/sites/2/2020/08/filename.jpg')
-                           ->willReturn(['type' => 'text/plain']);
-
-        $consoleClient = $this->getConsoleClientInterfaceMock();
-        $consoleClient->expects($this->once())
-                      ->method('createAttachmentMetadata')
-                      ->with($this->identicalTo('attachment_id'), $this->identicalTo(false));
-
-        $get_current_user_id = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'get_current_user_id');
-        $get_current_user_id->expects($this->once())
-                            ->willReturn('user_id');
-
-        $request = $this->getWPRESTRequestMock();
-        $request->expects($this->once())
-                ->method('get_param')
-                ->with($this->identicalTo('path'))
-                ->willReturn('2020/08/filename.jpg');
-
-        $sanitize_text_field = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'sanitize_text_field');
-        $sanitize_text_field->expects($this->once())
-                            ->with($this->identicalTo('filename'))
-                            ->willReturn('filename');
-
-        $wp_insert_attachment = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_insert_attachment');
-        $wp_insert_attachment->expects($this->once())
-                             ->with($this->identicalTo(['guid' => 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2/2020/08/filename.jpg', 'post_author' => 'user_id', 'post_mime_type' => 'text/plain', 'post_title' => 'filename']), $this->identicalTo('2020/08/filename.jpg'), $this->identicalTo(0), $this->identicalTo(true))
-                             ->willReturn('attachment_id');
-
-        $wp_prepare_attachment_for_js = $this->getFunctionMock($this->getNamespace(CreateAttachmentEndpoint::class), 'wp_prepare_attachment_for_js');
-        $wp_prepare_attachment_for_js->expects($this->once())
-                                     ->with($this->identicalTo('attachment_id'))
-                                     ->willReturn([]);
-
-        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads/sites/2', 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2'))->respond($request));
     }
 }
