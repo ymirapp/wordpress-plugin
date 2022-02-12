@@ -638,6 +638,11 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($wrapper->stream_flush());
     }
 
+    public function testStreamLock()
+    {
+        $this->assertFalse(($this->getStreamWrapperObject())->stream_lock());
+    }
+
     public function testStreamMetadata()
     {
         $this->assertFalse(($this->getStreamWrapperObject())->stream_metadata());

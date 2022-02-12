@@ -318,6 +318,16 @@ abstract class AbstractCloudStorageStreamWrapper
     }
 
     /**
+     * Advisory file locking.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.stream-lock.php
+     */
+    public function stream_lock(): bool
+    {
+        return false;
+    }
+
+    /**
      * Change stream metadata.
      *
      * @see https://www.php.net/manual/en/streamwrapper.stream-metadata.php
