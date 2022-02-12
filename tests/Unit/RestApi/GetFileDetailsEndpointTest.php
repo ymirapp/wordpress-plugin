@@ -72,14 +72,14 @@ class GetFileDetailsEndpointTest extends TestCase
 
         $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
         $wp_unique_filename->expects($this->once())
-                           ->with($this->identicalTo('cloudstorage:///uploads/2020/08'), $this->identicalTo('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
+                           ->with($this->identicalTo('ymir-public:///uploads/2020/08'), $this->identicalTo('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf'))
                            ->willReturn('Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf');
 
         $this->assertSame([
             'filename' => 'Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
             'path' => '2020/08/Revenu+Qu%C3%A9bec+-+Inscription+d%27une+entreprise+en+d%C3%A9marrage.pdf',
             'upload_url' => 'cloudstorage_put_request_url',
-        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'cloudstorage:///uploads/2020/08', '/2020/08'))->respond($request));
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/2020/08', '/2020/08'))->respond($request));
     }
 
     public function testRespondWithMultisiteUploadsPath()
@@ -108,14 +108,14 @@ class GetFileDetailsEndpointTest extends TestCase
 
         $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
         $wp_unique_filename->expects($this->once())
-                           ->with($this->identicalTo('cloudstorage:///uploads/sites/2/2020/08'), $this->identicalTo('test.txt'))
+                           ->with($this->identicalTo('ymir-public:///uploads/sites/2/2020/08'), $this->identicalTo('test.txt'))
                            ->willReturn('test.txt');
 
         $this->assertSame([
             'filename' => 'test.txt',
             'path' => '2020/08/test.txt',
             'upload_url' => 'cloudstorage_put_request_url',
-        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'cloudstorage:///uploads/sites/2/2020/08', '/2020/08'))->respond($request));
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/sites/2/2020/08', '/2020/08'))->respond($request));
     }
 
     public function testValidateRequest()

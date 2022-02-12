@@ -30,8 +30,8 @@ class RestApiConfiguration implements ContainerConfigurationInterface
         $container['rest_namespace'] = 'ymir/v1';
         $container['rest_endpoints'] = $container->service(function (Container $container) {
             return [
-                new RestApi\CreateAttachmentEndpoint($container['cloud_storage_client'], $container['console_client'], $container['uploads_basedir'], $container['uploads_baseurl'], $container['force_async_attachment_creation']),
-                new RestApi\GetFileDetailsEndpoint($container['cloud_storage_client'], $container['uploads_path'], $container['uploads_subdir']),
+                new RestApi\CreateAttachmentEndpoint($container['public_cloud_storage_client'], $container['console_client'], $container['uploads_basedir'], $container['uploads_baseurl'], $container['force_async_attachment_creation']),
+                new RestApi\GetFileDetailsEndpoint($container['public_cloud_storage_client'], $container['uploads_path'], $container['uploads_subdir']),
             ];
         });
     }

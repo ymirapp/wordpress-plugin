@@ -95,7 +95,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $wp_update_attachment_metadata->expects($this->once())
                                       ->with($this->identicalTo('attachment_id'), $this->identicalTo(['file' => '2020/08/filename.jpg']));
 
-        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads', true))->respond($request));
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads', true))->respond($request));
     }
 
     public function testRespondReturnsError()
@@ -169,7 +169,7 @@ class CreateAttachmentEndpointTest extends TestCase
                                      ->with($this->identicalTo('attachment_id'))
                                      ->willReturn([]);
 
-        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads/sites/2', 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2'))->respond($request));
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads/sites/2', 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2'))->respond($request));
     }
 
     public function testRespondWithLargeImage()
@@ -219,7 +219,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $wp_update_attachment_metadata->expects($this->once())
                                       ->with($this->identicalTo('attachment_id'), $this->identicalTo(['file' => '2020/08/filename.jpg']));
 
-        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
     }
 
     public function testRespondWithSmallImage()
@@ -265,6 +265,6 @@ class CreateAttachmentEndpointTest extends TestCase
                                      ->with($this->identicalTo('attachment_id'))
                                      ->willReturn([]);
 
-        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'cloudstorage:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
+        $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
     }
 }

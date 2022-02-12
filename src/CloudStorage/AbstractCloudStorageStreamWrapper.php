@@ -18,15 +18,8 @@ namespace Ymir\Plugin\CloudStorage;
  *
  * @see https://www.php.net/manual/en/class.streamwrapper.php
  */
-class CloudStorageStreamWrapper
+abstract class AbstractCloudStorageStreamWrapper
 {
-    /**
-     * Name of the protocol used by the wrapper.
-     *
-     * @var string
-     */
-    public const PROTOCOL = 'cloudstorage';
-
     /**
      * The resource handled by the stream which is set by PHP.
      *
@@ -39,69 +32,77 @@ class CloudStorageStreamWrapper
      *
      * @var \ArrayObject|null
      */
-    private $cache;
+    protected $cache;
 
     /**
      * The cloud storage objects retrieved with "dir_opendir".
      *
      * @var \ArrayIterator|null
      */
-    private $openedDirectoryObjects;
+    protected $openedDirectoryObjects;
 
     /**
      * The path when "dir_opendir" was called.
      *
      * @var string|null
      */
-    private $openedDirectoryPath;
+    protected $openedDirectoryPath;
 
     /**
      * The prefix used to get the cloud storage objects with "dir_opendir".
      *
      * @var string|null
      */
-    private $openedDirectoryPrefix;
+    protected $openedDirectoryPrefix;
 
     /**
      * Mode used when the stream was opened.
      *
      * @var string
      */
-    private $openedStreamMode;
+    protected $openedStreamMode;
 
     /**
      * The key for the cloud storage object opened by "stream_open".
      *
      * @var string
      */
-    private $openedStreamObjectKey;
+    protected $openedStreamObjectKey;
 
     /**
      * The resource containing the cloud storage object opened by "stream_open".
      *
      * @var resource|null
      */
-    private $openedStreamObjectResource;
+    protected $openedStreamObjectResource;
+
+    /**
+     * Get the protocol used by the stream wrapper.
+     */
+    public static function getProtocol(): string
+    {
+        throw new \RuntimeException('Must overrider "getProtocol" method');
+    }
 
     /**
      * Register the cloud storage stream wrapper.
      */
     public static function register(CloudStorageClientInterface $client, \ArrayObject $cache = null)
     {
-        if (in_array(self::PROTOCOL, stream_get_wrappers())) {
-            stream_wrapper_unregister(self::PROTOCOL);
+        if (in_array(static::getProtocol(), stream_get_wrappers())) {
+            stream_wrapper_unregister(static::getProtocol());
         }
 
-        stream_wrapper_register(self::PROTOCOL, self::class, STREAM_IS_URL);
+        stream_wrapper_register(static::getProtocol(), static::class, STREAM_IS_URL);
 
         $defaultOptions = stream_context_get_options(stream_context_get_default());
 
-        $defaultOptions[self::PROTOCOL]['client'] = $client;
+        $defaultOptions[static::getProtocol()]['client'] = $client;
 
         if ($cache instanceof \ArrayObject) {
-            $defaultOptions[self::PROTOCOL]['cache'] = $cache;
-        } elseif (!isset($defaultOptions[self::PROTOCOL]['cache'])) {
-            $defaultOptions[self::PROTOCOL]['cache'] = new \ArrayObject();
+            $defaultOptions[static::getProtocol()]['cache'] = $cache;
+        } elseif (!isset($defaultOptions[static::getProtocol()]['cache'])) {
+            $defaultOptions[static::getProtocol()]['cache'] = new \ArrayObject();
         }
 
         stream_context_set_default($defaultOptions);
@@ -312,7 +313,7 @@ class CloudStorageStreamWrapper
 
             $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
 
-            $this->removeCacheValue(self::PROTOCOL.'://'.$this->openedStreamObjectKey);
+            $this->removeCacheValue(static::getProtocol().'://'.$this->openedStreamObjectKey);
         });
     }
 
@@ -356,7 +357,7 @@ class CloudStorageStreamWrapper
                 // Remove the cache value in case we interacted with the file before using something
                 // like "file_exists". If we don't write to the file, there won't be any cache busting
                 // so this is the only opportunity to do so.
-                $this->removeCacheValue(self::PROTOCOL.'://'.$this->openedStreamObjectKey);
+                $this->removeCacheValue(static::getProtocol().'://'.$this->openedStreamObjectKey);
             }
 
             $this->openedStreamObjectResource = fopen('php://temp', 'r+');
@@ -649,8 +650,8 @@ class CloudStorageStreamWrapper
             $context = stream_context_get_options($this->context);
         }
 
-        $context = $context[self::PROTOCOL] ?? [];
-        $default = $default[self::PROTOCOL] ?? [];
+        $context = $context[static::getProtocol()] ?? [];
+        $default = $default[static::getProtocol()] ?? [];
 
         return $context + $default;
     }
@@ -737,7 +738,7 @@ class CloudStorageStreamWrapper
      */
     private function parsePath(string $path): string
     {
-        $protocol = self::PROTOCOL.'://';
+        $protocol = static::getProtocol().'://';
 
         if (0 !== strpos($path, $protocol)) {
             throw new \InvalidArgumentException(sprintf('Invalid protocol for "%s"', $path));

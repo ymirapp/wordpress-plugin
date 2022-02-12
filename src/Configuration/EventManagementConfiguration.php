@@ -37,7 +37,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
         $container['priority_subscribers'] = $container->service(function (Container $container) {
             return [
                 new Subscriber\BedrockSubscriber($container['ymir_project_type']),
-                new Subscriber\UploadsSubscriber($container['content_directory'], $container['content_url'], $container['cloud_storage_protocol'], $container['upload_url'], $container['upload_limit']),
+                new Subscriber\UploadsSubscriber($container['content_directory'], $container['content_url'], $container['public_cloud_storage_protocol'], $container['upload_url'], $container['upload_limit']),
             ];
         });
 

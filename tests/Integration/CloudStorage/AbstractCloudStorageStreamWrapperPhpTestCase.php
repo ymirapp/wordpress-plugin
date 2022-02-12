@@ -17,26 +17,26 @@ use PHPUnit\Framework\Constraint\FileExists;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 
 /**
- * @covers \Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper
+ * @coversNothing
  */
-class CloudStorageStreamWrapperPhpTest extends TestCase
+abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 {
     use CloudStorageClientInterfaceMockTrait;
 
     /**
      * @var MockObject
      */
-    private $client;
+    protected $client;
 
     protected function setUp(): void
     {
         $this->client = $this->getCloudStorageClientInterfaceMock();
 
-        CloudStorageStreamWrapper::register($this->client, new \ArrayObject());
+        $this->getStreamWrapper()::register($this->client, new \ArrayObject());
     }
 
     public function testAppendsToExistingFile()
@@ -53,7 +53,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          [$this->identicalTo('/file.ext'), $this->identicalTo('testing'), $this->identicalTo('')]
                      );
 
-        $file = fopen('cloudstorage:///file.ext', 'a');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
 
         $this->assertEquals(4, ftell($file));
         $this->assertEquals(3, fwrite($file, 'ing'));
@@ -71,7 +71,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('putObject')
                      ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        $file = fopen('cloudstorage:///file.ext', 'a');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
 
         $this->assertEquals(0, ftell($file));
         $this->assertTrue(fclose($file));
@@ -85,7 +85,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
         // Fix compatibility between PHPUnit 8.5 and 9.5
-        $this->assertThat('cloudstorage:///file.ext', new LogicalNot(new FileExists()));
+        $this->assertThat("{$this->getProtocol()}:///file.ext", new LogicalNot(new FileExists()));
     }
 
     public function testDoesNotErrorOnIsLink()
@@ -95,7 +95,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
-        $this->assertFalse(is_link('cloudstorage:///file.ext'));
+        $this->assertFalse(is_link("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testFileType()
@@ -111,8 +111,8 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          ['size' => 0]
                      );
 
-        $this->assertSame('file', filetype('cloudstorage:///file.ext'));
-        $this->assertSame('dir', filetype('cloudstorage:///directory/'));
+        $this->assertSame('file', filetype("{$this->getProtocol()}:///file.ext"));
+        $this->assertSame('dir', filetype("{$this->getProtocol()}:///directory/"));
     }
 
     public function testFopenWhenFileDoesntExist()
@@ -125,7 +125,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn(false);
 
-        fopen('cloudstorage:///file.ext', 'r');
+        fopen("{$this->getProtocol()}:///file.ext", 'r');
     }
 
     public function testFopenWithUnsupportedMode()
@@ -133,7 +133,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectWarning();
         $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"');
 
-        fopen('cloudstorage:///file.ext', 'c');
+        fopen("{$this->getProtocol()}:///file.ext", 'c');
     }
 
     public function testFopenWithXMode()
@@ -147,7 +147,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('putObject')
                      ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        fopen('cloudstorage:///file.ext', 'x');
+        fopen("{$this->getProtocol()}:///file.ext", 'x');
     }
 
     public function testFopenWithXModeAndExistingFile()
@@ -160,7 +160,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn(true);
 
-        fopen('cloudstorage:///file.ext', 'x');
+        fopen("{$this->getProtocol()}:///file.ext", 'x');
     }
 
     public function testGuessContentType()
@@ -172,7 +172,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          [$this->identicalTo('/file.xml'), $this->identicalTo('test'), $this->identicalTo('application/xml')]
                      );
 
-        file_put_contents('cloudstorage:///file.xml', 'test');
+        file_put_contents("{$this->getProtocol()}:///file.xml", 'test');
     }
 
     public function testMkdirCreatesObject()
@@ -186,20 +186,20 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('putObject')
                      ->with($this->identicalTo('/directory/'), $this->identicalTo(''));
 
-        $this->assertTrue(mkdir('cloudstorage:///directory'));
+        $this->assertTrue(mkdir("{$this->getProtocol()}:///directory"));
     }
 
     public function testMkdirWithExistingDirectory()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('Directory "cloudstorage:///directory" already exists');
+        $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///directory\" already exists");
 
         $this->client->expects($this->once())
                      ->method('objectExists')
                      ->with($this->identicalTo('/directory/'))
                      ->willReturn(true);
 
-        $this->assertFalse(mkdir('cloudstorage:///directory'));
+        $this->assertFalse(mkdir("{$this->getProtocol()}:///directory"));
     }
 
     public function testReaddirCachesStatValue()
@@ -212,7 +212,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          ['Key' => 'directory/bar.ext', 'Size' => 2],
                      ]);
 
-        $directory = 'cloudstorage:///directory';
+        $directory = "{$this->getProtocol()}:///directory";
         $opendir = opendir($directory);
 
         $this->assertIsResource($opendir);
@@ -243,7 +243,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          ['Key' => 'directory/g.ext', 'Size' => 7],
                      ]);
 
-        $directory = 'cloudstorage:///directory';
+        $directory = "{$this->getProtocol()}:///directory";
         $opendir = opendir($directory);
 
         $this->assertIsResource($opendir);
@@ -274,7 +274,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn('testing 123');
 
-        $file = fopen('cloudstorage:///file.ext', 'r');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'r');
 
         $this->assertEquals(0, ftell($file));
         $this->assertFalse(feof($file));
@@ -288,11 +288,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
 
     public function testRegistersStreamWrapperOnlyOnce()
     {
-        $this->assertContains(CloudStorageStreamWrapper::PROTOCOL, stream_get_wrappers());
+        $this->assertContains(PublicCloudStorageStreamWrapper::getProtocol(), stream_get_wrappers());
 
-        CloudStorageStreamWrapper::register($this->client);
+        PublicCloudStorageStreamWrapper::register($this->client);
 
-        $this->assertContains(CloudStorageStreamWrapper::PROTOCOL, stream_get_wrappers());
+        $this->assertContains(PublicCloudStorageStreamWrapper::getProtocol(), stream_get_wrappers());
     }
 
     public function testRenameSuccessful()
@@ -305,7 +305,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('deleteObject')
                      ->with($this->identicalTo('/file.ext'));
 
-        $this->assertTrue(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
+        $this->assertTrue(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
     public function testRenameWhenCopyObjectThrowsException()
@@ -318,7 +318,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'), $this->identicalTo('/newfile.txt'))
                      ->willThrowException(new \RuntimeException('Could not copy object "/file"'));
 
-        $this->assertFalse(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
+        $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
     public function testRenameWhenDeleteObjectThrowsException()
@@ -335,7 +335,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                     ->willThrowException(new \RuntimeException('Unable to delete object "/file"'));
 
-        $this->assertFalse(rename('cloudstorage:///file.ext', 'cloudstorage:///newfile.txt'));
+        $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
     public function testRenameWithDifferentProtocols()
@@ -343,7 +343,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectWarning();
         $this->expectExceptionMessage('rename(): Cannot rename a file across wrapper types');
 
-        $this->assertFalse(rename('cloudstorage:///file.ext', 'php://temp'));
+        $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", 'php://temp'));
     }
 
     public function testReturnsStreamSizeFromHeaders()
@@ -363,7 +363,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 5]);
 
-        $resource = fopen('cloudstorage:///file.ext', 'r');
+        $resource = fopen("{$this->getProtocol()}:///file.ext", 'r');
 
         $this->assertEquals(5, fstat($resource)['size']);
     }
@@ -379,7 +379,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('deleteObject')
                      ->with($this->identicalTo('/directory/subdirectory/'));
 
-        $this->assertTrue(rmdir('cloudstorage:///directory/subdirectory'));
+        $this->assertTrue(rmdir("{$this->getProtocol()}:///directory/subdirectory"));
     }
 
     public function testRmdirWhenDeleteObjectThrowsException()
@@ -397,13 +397,13 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/directory/'))
                      ->willThrowException(new \RuntimeException('Unable to delete object "/directory/"'));
 
-        $this->assertFalse(rmdir('cloudstorage:///directory'));
+        $this->assertFalse(rmdir("{$this->getProtocol()}:///directory"));
     }
 
     public function testRmdirWhenGetObjectsReturnsMoreThanOneObject()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('Directory "cloudstorage:///directory" isn\'t empty');
+        $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///directory\" isn't empty");
 
         $this->client->expects($this->once())
                      ->method('getObjects')
@@ -413,7 +413,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->client->expects($this->never())
                      ->method('deleteObject');
 
-        $this->assertFalse(rmdir('cloudstorage:///directory'));
+        $this->assertFalse(rmdir("{$this->getProtocol()}:///directory"));
     }
 
     public function testRmdirWithNothing()
@@ -421,7 +421,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectWarning();
         $this->expectExceptionMessage('Cannot delete root directory');
 
-        $this->assertFalse(rmdir('cloudstorage://'));
+        $this->assertFalse(rmdir("{$this->getProtocol()}://"));
     }
 
     public function testScandirWithRegularDirectory()
@@ -434,7 +434,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                 ['Key' => 'directory/bar'],
             ]);
 
-        $this->assertSame(['bar', 'foo'], scandir('cloudstorage:///directory'));
+        $this->assertSame(['bar', 'foo'], scandir("{$this->getProtocol()}:///directory"));
     }
 
     public function testScandirWithWildcard()
@@ -447,13 +447,13 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          ['Key' => 'directory/subdirectory/foo-1'],
                      ]);
 
-        $this->assertSame(['foo', 'foo-1'], scandir('cloudstorage:///directory/subdirectory/file*'));
+        $this->assertSame(['foo', 'foo-1'], scandir("{$this->getProtocol()}:///directory/subdirectory/file*"));
     }
 
     public function testStatWithProtocol()
     {
-        clearstatcache(false, 'cloudstorage://');
-        $stat = stat('cloudstorage://');
+        clearstatcache(false, "{$this->getProtocol()}://");
+        $stat = stat("{$this->getProtocol()}://");
 
         $this->assertEquals(0040777, $stat['mode']);
     }
@@ -481,7 +481,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn('testing 123');
 
-        $read = [fopen('cloudstorage:///file.ext', 'r')];
+        $read = [fopen("{$this->getProtocol()}:///file.ext", 'r')];
         $write = $except = null;
 
         stream_select($read, $write, $except, 0);
@@ -492,8 +492,8 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->expectWarning();
         $this->expectExceptionMessage('No cloud storage client found in the stream context');
 
-        fopen('cloudstorage:///file.ext', 'r', false, stream_context_create([
-            'cloudstorage' => ['client' => null],
+        fopen("{$this->getProtocol()}:///file.ext", 'r', false, stream_context_create([
+            $this->getProtocol() => ['client' => null],
         ]));
     }
 
@@ -503,7 +503,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('deleteObject')
                      ->with($this->identicalTo('/file.ext'));
 
-        $this->assertTrue(unlink('cloudstorage:///file.ext'));
+        $this->assertTrue(unlink("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testUnlinkWhenDeleteObjectThrowsException()
@@ -516,7 +516,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Unable to delete object "/file"'));
 
-        $this->assertFalse(unlink('cloudstorage:///file.ext'));
+        $this->assertFalse(unlink("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testUrlStatDataClearedOnWrite()
@@ -533,11 +533,11 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
                      );
 
-        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
+        $this->assertEquals(124, filesize("{$this->getProtocol()}:///file.ext"));
 
-        file_put_contents('cloudstorage:///file.ext', 'test');
+        file_put_contents("{$this->getProtocol()}:///file.ext", 'test');
 
-        $this->assertEquals(125, filesize('cloudstorage:///file.ext'));
+        $this->assertEquals(125, filesize("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testUrlStatMakesNoApiCallsForDirectories()
@@ -545,8 +545,8 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
         $this->client->expects($this->never())
                      ->method('getObjectDetails');
 
-        clearstatcache(false, 'cloudstorage:///directory');
-        $stat = stat('cloudstorage:///directory');
+        clearstatcache(false, "{$this->getProtocol()}:///directory");
+        $stat = stat("{$this->getProtocol()}:///directory");
 
         $this->assertEquals(0040777, $stat['mode']);
         $this->assertEquals(0, $stat['size']);
@@ -563,8 +563,8 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 5, 'last-modified' => gmdate('r', $time)]);
 
-        clearstatcache(false, 'cloudstorage:///file.ext');
-        $stat = stat('cloudstorage:///file.ext');
+        clearstatcache(false, "{$this->getProtocol()}:///file.ext");
+        $stat = stat("{$this->getProtocol()}:///file.ext");
 
         $this->assertEquals(0100777, $stat['mode']);
         $this->assertEquals(5, $stat['size']);
@@ -579,21 +579,21 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->with($this->identicalTo('/file.ext'))
                      ->willReturn(['size' => 124]);
 
-        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
-        $this->assertEquals(124, filesize('cloudstorage:///file.ext'));
+        $this->assertEquals(124, filesize("{$this->getProtocol()}:///file.ext"));
+        $this->assertEquals(124, filesize("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testUrlStatWhenGetObjectDetailsThrowsException()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('filesize(): stat failed for cloudstorage:///file.ext');
+        $this->expectExceptionMessage("filesize(): stat failed for {$this->getProtocol()}:///file.ext");
 
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
                      ->with($this->identicalTo('/file.ext'))
                      ->willThrowException(new \RuntimeException('Object "/file" not found'));
 
-        $this->assertFalse(filesize('cloudstorage:///file.ext'));
+        $this->assertFalse(filesize("{$this->getProtocol()}:///file.ext"));
     }
 
     public function testWritingEmptyFile()
@@ -602,7 +602,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      ->method('putObject')
                      ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
 
-        $file = fopen('cloudstorage:///file.ext', 'w');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'w');
 
         $this->assertEquals(0, fwrite($file, ''));
         $this->assertTrue(fclose($file));
@@ -617,7 +617,7 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                          [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
                      );
 
-        $file = fopen('cloudstorage:///file.ext', 'w');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'w');
 
         $this->assertEquals(4, fwrite($file, 'test'));
         $this->assertTrue(fclose($file));
@@ -636,9 +636,16 @@ class CloudStorageStreamWrapperPhpTest extends TestCase
                      )
                      ->willReturnOnConsecutiveCalls(null, $this->throwException(new \RuntimeException('Unable to save object "/file"')));
 
-        $file = fopen('cloudstorage:///file.ext', 'w');
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'w');
 
         fwrite($file, 'test');
         fclose($file);
+    }
+
+    abstract protected function getStreamWrapper(): string;
+
+    private function getProtocol(): string
+    {
+        return $this->getStreamWrapper()::getProtocol();
     }
 }

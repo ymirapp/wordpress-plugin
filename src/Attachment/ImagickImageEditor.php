@@ -69,7 +69,7 @@ class ImagickImageEditor extends \WP_Image_Editor_Imagick
      */
     protected function _save($image, $filename = null, $mime_type = null)
     {
-        // Imagick by default can't handle cloudstorage:// paths so have it save the file locally.
+        // Imagick by default can't handle ymir-public:// paths so have it save the file locally.
         if (is_string($filename) && $this->fileManager->isInUploadsDirectory($filename)) {
             $filename = $this->fileManager->getTempFilePath($filename);
         }

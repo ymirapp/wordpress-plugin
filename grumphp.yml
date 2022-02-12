@@ -33,7 +33,7 @@ grumphp:
         - 'pluggable.php'
         - 'src/Autoloader.php'
         - 'src/Configuration'
-        - 'src/CloudStorage/CloudStorageStreamWrapper.php'
+        - 'src/CloudStorage/AbstractCloudStorageStreamWrapper.php'
         - 'src/Email/Email.php'
         - 'src/ObjectCache/AbstractPersistentObjectCache.php'
         - 'src/Subscriber/ContentDeliveryNetworkPageCachingSubscriber.php'

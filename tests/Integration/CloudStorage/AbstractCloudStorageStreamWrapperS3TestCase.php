@@ -15,13 +15,12 @@ namespace Ymir\Plugin\Tests\Integration\CloudStorage;
 
 use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\CloudProvider\Aws\S3Client;
-use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
 use Ymir\Plugin\Http\Client;
 
 /**
- * @covers \Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper
+ * @coversNothing
  */
-class CloudStorageStreamWrapperS3Test extends TestCase
+abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
 {
     private $client;
 
@@ -29,14 +28,14 @@ class CloudStorageStreamWrapperS3Test extends TestCase
     {
         $this->client = new S3Client(new Client('test'), 'ymir-plugin-test', getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-east-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
 
-        CloudStorageStreamWrapper::register($this->client);
+        $this->getStreamWrapper()::register($this->client);
     }
 
     public function testCopyFromLocal()
     {
         $tempFilePath = tempnam(sys_get_temp_dir(), 'ymir-').'.txt';
         $relativePath = '/'.basename($tempFilePath);
-        $s3FilePath = 'cloudstorage://'.$relativePath;
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
 
         file_put_contents($tempFilePath, 'bar');
 
@@ -59,7 +58,7 @@ class CloudStorageStreamWrapperS3Test extends TestCase
 
         $this->assertFalse(file_exists($filePath));
 
-        copy('cloudstorage:///foo.txt', $filePath);
+        copy("{$this->getProtocol()}:///foo.txt", $filePath);
 
         $this->assertTrue(file_exists($filePath));
 
@@ -69,7 +68,7 @@ class CloudStorageStreamWrapperS3Test extends TestCase
     public function testFileExistsAfterCreatingEmptyFile()
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
-        $s3FilePath = 'cloudstorage://'.$relativePath;
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
 
         $this->assertFalse(file_exists($s3FilePath));
 
@@ -82,19 +81,19 @@ class CloudStorageStreamWrapperS3Test extends TestCase
 
     public function testFileExistsWithExistingFile()
     {
-        $this->assertTrue(file_exists('cloudstorage:///foo.txt'));
+        $this->assertTrue(file_exists("{$this->getProtocol()}:///foo.txt"));
     }
 
     public function testIsReadable()
     {
-        $this->assertTrue(is_readable('cloudstorage:///foo.txt'));
+        $this->assertTrue(is_readable("{$this->getProtocol()}:///foo.txt"));
     }
 
     public function testMkdirAndRmdir()
     {
         $directoryName = 'directory'.rand();
         $directoryPath = sprintf('/%s', $directoryName);
-        $directoryFullPath = 'cloudstorage://'.$directoryPath;
+        $directoryFullPath = "{$this->getProtocol()}://".$directoryPath;
 
         $this->assertFalse($this->client->objectExists($directoryPath.'/'));
 
@@ -105,5 +104,12 @@ class CloudStorageStreamWrapperS3Test extends TestCase
         rmdir($directoryFullPath);
 
         $this->assertFalse($this->client->objectExists($directoryPath.'/'));
+    }
+
+    abstract protected function getStreamWrapper(): string;
+
+    private function getProtocol(): string
+    {
+        return $this->getStreamWrapper()::getProtocol();
     }
 }

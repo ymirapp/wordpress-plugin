@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin;
 
-use Ymir\Plugin\CloudStorage\CloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\Console\CommandInterface;
 use Ymir\Plugin\DependencyInjection\Container;
 
@@ -125,7 +126,8 @@ class Plugin
         $this->container['plugin_dir_url'] = plugin_dir_url($this->filePath);
         $this->container['plugin_relative_path'] = '/'.trim(str_replace($this->container['root_directory'], '', plugin_dir_path($this->filePath)), '/');
 
-        CloudStorageStreamWrapper::register($this->container['cloud_storage_client']);
+        PrivateCloudStorageStreamWrapper::register($this->container['private_cloud_storage_client']);
+        PublicCloudStorageStreamWrapper::register($this->container['public_cloud_storage_client']);
 
         foreach ($this->container['local_commands'] as $command) {
             $this->registerCommand($command);
