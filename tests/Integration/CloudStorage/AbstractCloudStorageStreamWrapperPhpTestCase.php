@@ -17,7 +17,6 @@ use PHPUnit\Framework\Constraint\FileExists;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 
 /**
@@ -288,11 +287,11 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
     public function testRegistersStreamWrapperOnlyOnce()
     {
-        $this->assertContains(PublicCloudStorageStreamWrapper::getProtocol(), stream_get_wrappers());
+        $this->assertContains($this->getStreamWrapper()::getProtocol(), stream_get_wrappers());
 
-        PublicCloudStorageStreamWrapper::register($this->client);
+        $this->getStreamWrapper()::register($this->client);
 
-        $this->assertContains(PublicCloudStorageStreamWrapper::getProtocol(), stream_get_wrappers());
+        $this->assertContains($this->getStreamWrapper()::getProtocol(), stream_get_wrappers());
     }
 
     public function testRenameSuccessful()
