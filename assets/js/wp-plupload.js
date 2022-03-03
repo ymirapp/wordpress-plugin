@@ -234,11 +234,11 @@ window.wp = window.wp || {};
 		/**
 		 * After a file is successfully uploaded, update its model.
 		 *
-		 * @param {plupload.Uploader} up       Uploader instance.
-		 * @param {plupload.File}     file     File that was uploaded.
-		 * @param {Object}            response Object with response properties.
+		 * @param {plupload.Uploader} up   Uploader instance.
+         * @param {plupload.File}     file File that was uploaded.
+         * @param {Object}            data Object with attachment data.
 		 */
-		fileUploaded = function( up, file, response ) {
+		fileUploaded = function( up, file, data ) {
 			var complete;
 
 			// Remove the "uploading" UI elements.
@@ -246,9 +246,9 @@ window.wp = window.wp || {};
 				file.attachment.unset( key );
 			} );
 
-			file.attachment.set( _.extend( response.data, { uploading: false } ) );
+			file.attachment.set( _.extend( data, { uploading: false } ) );
 
-			wp.media.model.Attachment.get( response.data.id, file.attachment );
+			wp.media.model.Attachment.get( data.id, file.attachment );
 
 			complete = Uploader.queue.all( function( attachment ) {
 				return ! attachment.get( 'uploading' );
@@ -413,21 +413,18 @@ window.wp = window.wp || {};
 		 * @return {mixed}
 		 */
 		this.uploader.bind( 'FileUploaded', function( up, file, response ) {
-
-			try {
-				response = JSON.parse( response.response );
-			} catch ( e ) {
-				return error( pluploadL10n.default_error, e, file );
-			}
-
-			if ( ! _.isObject( response ) || _.isUndefined( response.success ) ) {
-				return error( pluploadL10n.default_error, null, file );
-			} else if ( ! response.success ) {
-				return error( response.data && response.data.message, response.data, file );
-			}
-
-			// Success. Update the UI with the new attachment.
-			fileUploaded( up, file, response );
+            wp.apiRequest({
+                async: false,
+                url: up.settings.attachments_endpoint_url,
+                data: {
+                    path: file.path
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    fileUploaded( up, file, response);
+                }
+            });
 		});
 
 		/**
