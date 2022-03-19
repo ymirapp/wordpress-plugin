@@ -432,6 +432,24 @@ abstract class AbstractCloudStorageStreamWrapper
     }
 
     /**
+     * Truncate stream.
+     *
+     * @see https://www.php.net/manual/en/streamwrapper.stream-truncate.php
+     */
+    public function stream_truncate(int $newSize): bool
+    {
+        return $this->call(function () use ($newSize) {
+            rewind($this->openedStreamObjectResource);
+
+            ftruncate($this->openedStreamObjectResource, $newSize);
+
+            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
+
+            $this->removeCacheValue(static::getProtocol().'://'.$this->openedStreamObjectKey);
+        });
+    }
+
+    /**
      * Write to cloud storage object.
      *
      * @see https://www.php.net/manual/en/streamwrapper.stream-write.php

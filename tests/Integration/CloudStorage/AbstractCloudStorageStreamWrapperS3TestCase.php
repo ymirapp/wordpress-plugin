@@ -106,6 +106,52 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->assertFalse($this->client->objectExists($directoryPath.'/'));
     }
 
+    public function testTruncateExistingFile()
+    {
+        $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
+
+        $this->assertFalse(file_exists($s3FilePath));
+
+        file_put_contents($s3FilePath, 'tests');
+
+        $this->assertSame(5, filesize($s3FilePath));
+
+        $file = fopen($s3FilePath, 'a');
+        $stat = fstat($file);
+
+        ftruncate($file, $stat['size'] - 1);
+        fclose($file);
+
+        $this->assertSame('test', file_get_contents($s3FilePath));
+        $this->assertSame(4, filesize($s3FilePath));
+
+        $this->client->deleteObject($relativePath);
+    }
+
+    public function testTruncateNewFile()
+    {
+        $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
+
+        $this->assertFalse(file_exists($s3FilePath));
+
+        $file = fopen($s3FilePath, 'w');
+
+        fwrite($file, 'tests');
+        $stat = fstat($file);
+
+        $this->assertSame(5, $stat['size']);
+
+        ftruncate($file, $stat['size'] - 1);
+        fclose($file);
+
+        $this->assertSame('test', file_get_contents($s3FilePath));
+        $this->assertSame(4, filesize($s3FilePath));
+
+        $this->client->deleteObject($relativePath);
+    }
+
     abstract protected function getStreamWrapper(): string;
 
     private function getProtocol(): string

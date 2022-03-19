@@ -496,6 +496,26 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         ]));
     }
 
+    public function testTruncatesFile()
+    {
+        $this->client->expects($this->once())
+                     ->method('getObject')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn('testing');
+
+        $this->client->expects($this->exactly(2))
+                     ->method('putObject')
+                     ->withConsecutive(
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing')],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
+                     );
+
+        $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
+
+        $this->assertTrue(ftruncate($file, 4));
+        $this->assertTrue(fclose($file));
+    }
+
     public function testUnlink()
     {
         $this->client->expects($this->once())
