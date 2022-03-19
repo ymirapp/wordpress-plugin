@@ -201,6 +201,28 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(mkdir("{$this->getProtocol()}:///directory"));
     }
 
+    public function testPrioritizesInternalStreamSizeOverSizeFromCloudStorage()
+    {
+        $this->client->expects($this->once())
+                     ->method('objectExists')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn(true);
+
+        $this->client->expects($this->once())
+                     ->method('getObject')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn('testing 123');
+
+        $this->client->expects($this->once())
+                     ->method('getObjectDetails')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn(['size' => 5]);
+
+        $resource = fopen("{$this->getProtocol()}:///file.ext", 'r');
+
+        $this->assertEquals(11, fstat($resource)['size']);
+    }
+
     public function testReaddirCachesStatValue()
     {
         $this->client->expects($this->once())
@@ -343,28 +365,6 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->expectExceptionMessage('rename(): Cannot rename a file across wrapper types');
 
         $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", 'php://temp'));
-    }
-
-    public function testReturnsStreamSizeFromHeaders()
-    {
-        $this->client->expects($this->once())
-                     ->method('objectExists')
-                     ->with($this->identicalTo('/file.ext'))
-                     ->willReturn(true);
-
-        $this->client->expects($this->once())
-                     ->method('getObject')
-                     ->with($this->identicalTo('/file.ext'))
-                     ->willReturn('testing 123');
-
-        $this->client->expects($this->once())
-                     ->method('getObjectDetails')
-                     ->with($this->identicalTo('/file.ext'))
-                     ->willReturn(['size' => 5]);
-
-        $resource = fopen("{$this->getProtocol()}:///file.ext", 'r');
-
-        $this->assertEquals(5, fstat($resource)['size']);
     }
 
     public function testRmdirCanDeleteNestedDirectory()

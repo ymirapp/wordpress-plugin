@@ -406,7 +406,19 @@ abstract class AbstractCloudStorageStreamWrapper
      */
     public function stream_stat()
     {
-        return $this->getStat($this->openedStreamObjectKey);
+        $stat = $this->getStat($this->openedStreamObjectKey);
+
+        if (!is_array($stat) || !is_resource($this->openedStreamObjectResource)) {
+            return $stat;
+        }
+
+        $fstat = fstat($this->openedStreamObjectResource);
+
+        if (isset($fstat['size'])) {
+            $stat[7] = $stat['size'] = $fstat['size'];
+        }
+
+        return $stat;
     }
 
     /**
