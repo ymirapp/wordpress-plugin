@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ymir\Plugin\Subscriber;
+namespace Ymir\Plugin\Subscriber\Compatibility;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 

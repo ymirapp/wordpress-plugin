@@ -43,6 +43,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
 
         $container['subscribers'] = $container->service(function (Container $container) {
             $subscribers = [
+                // Ymir subscribers
                 new Subscriber\AssetsSubscriber($container['content_directory_name'], $container['site_url'], $container['assets_url'], $container['ymir_project_type'], $container['uploads_baseurl']),
                 new Subscriber\ContentDeliveryNetworkPageCachingSubscriber($container['cloudfront_client'], $container['rest_url'], $container['is_page_caching_disabled']),
                 new Subscriber\DisallowIndexingSubscriber($container['ymir_using_vanity_domain']),
@@ -52,13 +53,14 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\RestApiSubscriber($container['rest_namespace'], $container['rest_endpoints']),
                 new Subscriber\SecurityHeadersSubscriber(),
                 new Subscriber\WordPressSubscriber($container['server_software'], $container['site_url']),
+
+                // Plugin compatibility subscribers
+                new Subscriber\Compatibility\WooCommerceSubscriber(),
+                new Subscriber\Compatibility\WpMigrateDbSubscriber(),
             ];
 
             if ($container['query_monitor_active']) {
                 $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/resources/views/query-monitor');
-            }
-            if (is_plugin_active('woocommerce/woocommerce.php')) {
-                $subscribers[] = new Subscriber\WooCommerceSubscriber();
             }
 
             return $subscribers;
