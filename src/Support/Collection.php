@@ -234,6 +234,20 @@ class Collection implements \ArrayAccess
     }
 
     /**
+     * Reduce the collection to a single value.
+     */
+    public function reduce(callable $callback, $initial = null)
+    {
+        $result = $initial;
+
+        foreach ($this->items as $key => $value) {
+            $result = $callback($result, $value, $key);
+        }
+
+        return $result;
+    }
+
+    /**
      * Search the collection for a given value and return the corresponding key if successful.
      */
     public function search($value, $strict = false)

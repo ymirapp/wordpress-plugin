@@ -14,6 +14,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml">
         <exclude name="CyclomaticComplexity" />
+        <exclude name="ExcessiveClassComplexity" />
         <exclude name="NPathComplexity" />
         <exclude name="TooManyPublicMethods" />
     </rule>
@@ -39,7 +40,7 @@
           externalInfoUrl="https://phpmd.org/rules/codesize.html#cyclomaticcomplexity">
         <priority>3</priority>
         <properties>
-            <property name="reportLevel" description="The Cyclomatic Complexity reporting threshold"  value="11"/>
+            <property name="reportLevel" description="The Cyclomatic Complexity reporting threshold" value="13"/>
             <property name="showClassesComplexity"
                       description="Indicate if class average violation should be added to the report"
                       value="true"/>

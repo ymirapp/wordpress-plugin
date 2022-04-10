@@ -62,6 +62,9 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
             if ($container['query_monitor_active']) {
                 $subscribers[] = new Subscriber\QueryMonitorSubscriber($container['query_monitor_collectors'], $container['query_monitor_panels'], $container['plugin_dir_path'].'/resources/views/query-monitor');
             }
+            if ($container['ymir_cdn_image_processing_enabled']) {
+                $subscribers[] = new Subscriber\ContentDeliveryNetworkImageProcessingSubscriber($container['image_sizes'], $container['is_multisite'], $container['uploads_baseurl'], $container['content_width']);
+            }
 
             return $subscribers;
         });

@@ -27,6 +27,15 @@ class YmirConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
+        $container['ymir_cdn_image_processing_enabled'] = $container->service(function () {
+            if (defined('YMIR_CDN_IMAGE_PROCESSING_ENABLED')) {
+                return (bool) YMIR_CDN_IMAGE_PROCESSING_ENABLED;
+            } elseif (false !== getenv('YMIR_CDN_IMAGE_PROCESSING_ENABLED')) {
+                return (bool) getenv('YMIR_CDN_IMAGE_PROCESSING_ENABLED');
+            }
+
+            return false;
+        });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
         $container['ymir_http_client'] = $container->service(function (Container $container) {
             return new Client($container['ymir_plugin_version']);

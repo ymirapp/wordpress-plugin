@@ -32,6 +32,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         $container['content_directory'] = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '';
         $container['content_directory_name'] = defined('CONTENT_DIR') ? CONTENT_DIR : 'wp-content';
         $container['content_url'] = defined('WP_CONTENT_URL') ? WP_CONTENT_URL : '';
+        $container['content_width'] = $container->service(function () {
+            return isset($GLOBALS['content_width']) && is_numeric($GLOBALS['content_width']) ? (int) $GLOBALS['content_width'] : null;
+        });
         $container['current_user'] = $container->service(function () {
             return wp_get_current_user();
         });
@@ -51,6 +54,40 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             }
 
             return new \WP_Filesystem_Direct(false);
+        });
+        $container['image_sizes'] = $container->service(function () {
+            $sizes = [
+                'thumb' => [
+                    'width' => (int) get_option('thumbnail_size_w'),
+                    'height' => (int) get_option('thumbnail_size_h'),
+                    'crop' => (bool) get_option('thumbnail_crop'),
+                ],
+                'medium' => [
+                    'width' => (int) get_option('medium_size_w'),
+                    'height' => (int) get_option('medium_size_h'),
+                    'crop' => false,
+                ],
+                'medium_large' => [
+                    'width' => (int) get_option('medium_large_size_w'),
+                    'height' => (int) get_option('medium_large_size_h'),
+                    'crop' => false,
+                ],
+                'large' => [
+                    'width' => (int) get_option('large_size_w'),
+                    'height' => (int) get_option('large_size_h'),
+                    'crop' => false,
+                ],
+                'full' => [
+                    'width' => null,
+                    'height' => null,
+                    'crop' => false,
+                ],
+            ];
+
+            // Compatibility mapping as found in wp-includes/media.php.
+            $sizes['thumbnail'] = $sizes['thumb'];
+
+            return array_merge($sizes, wp_get_additional_image_sizes());
         });
         $container['is_multisite'] = is_multisite();
         $container['phpmailer'] = function () {
