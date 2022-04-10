@@ -63,48 +63,13 @@ class AssetsSubscriberTest extends TestCase
             'content_url' => 'rewriteContentUrl',
             'includes_url' => 'rewriteIncludesUrl',
             'plugins_url' => 'rewritePluginsUrl',
-            'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
-            'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'script_loader_src' => 'rewriteEnqueuedUrl',
+            'style_loader_src' => 'rewriteEnqueuedUrl',
             'the_content' => ['replaceUrlsInContent', 99999],
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithAppUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/app/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/wp/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlWithEmptyAssetsUrl()
-    {
-        $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlWithSourceDifferentFromSiteUrl()
-    {
-        $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->replaceSiteUrlWithAssetsUrl('https://bar.com/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsSiteUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->replaceSiteUrlWithAssetsUrl('https://foo.com/asset.css'));
-    }
-
-    public function testReplaceSiteUrlWithAssetsUrlWithSourceSameAsUploadUrl()
-    {
-        $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->replaceSiteUrlWithAssetsUrl('https://foo.com/uploads/asset.css'));
     }
 
     /**
@@ -135,6 +100,51 @@ class AssetsSubscriberTest extends TestCase
     public function testRewriteContentUrlUsesContentDirConstant()
     {
         $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('app', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
+    }
+
+    public function testRewriteEnqueuedUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlDoesntAddWpWithBedrockProjectWithAppUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/app/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/wp/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithSiteUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://foo.com//asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithUploadUrl()
+    {
+        $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('https://foo.com//uploads//asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlWithEmptyAssetsUrl()
+    {
+        $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlWithSourceDifferentFromSiteUrl()
+    {
+        $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://bar.com/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlWithSourceSameAsSiteUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlWithSourceSameAsUploadUrl()
+    {
+        $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/uploads/asset.css'));
     }
 
     public function testRewriteIncludesUrlWithBedrockIncludesDirectory()

@@ -77,8 +77,8 @@ class AssetsSubscriber implements SubscriberInterface
             'content_url' => 'rewriteContentUrl',
             'includes_url' => 'rewriteIncludesUrl',
             'plugins_url' => 'rewritePluginsUrl',
-            'script_loader_src' => 'replaceSiteUrlWithAssetsUrl',
-            'style_loader_src' => 'replaceSiteUrlWithAssetsUrl',
+            'script_loader_src' => 'rewriteEnqueuedUrl',
+            'style_loader_src' => 'rewriteEnqueuedUrl',
             'the_content' => ['replaceUrlsInContent', 99999], // Make the priority high, but less than 999999 which is the Jetpack Photon hook priority
             'wp_resource_hints' => ['addAssetsUrlToDnsPrefetch', 10, 2],
         ];
@@ -95,27 +95,6 @@ class AssetsSubscriber implements SubscriberInterface
         }
 
         return $urls;
-    }
-
-    /**
-     * Replace the site URL with the assets URL.
-     */
-    public function replaceSiteUrlWithAssetsUrl(string $url): string
-    {
-        if (!$this->doesUrlNeedRewrite($url)) {
-            return $url;
-        }
-
-        $url = str_ireplace($this->siteUrl, '', $url);
-
-        // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
-        // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
-        // need to handle it programmatically instead.
-        if ('bedrock' === $this->projectType && '/wp/' !== substr($url, 0, 4) && '/app/' !== substr($url, 0, 5)) {
-            $url = '/wp'.$url;
-        }
-
-        return $this->assetsUrl.$url;
     }
 
     /**
@@ -197,6 +176,30 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewriteContentUrl(string $url): string
     {
         return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectoryName), $url);
+    }
+
+    /**
+     * Rewrite the enqueued URLs done via "wp_enqueue_script" and "wp_enqueue_style".
+     */
+    public function rewriteEnqueuedUrl(string $url): string
+    {
+        // Some plugins enqueue scripts and styles with two slashes which breaks CloudFront and S3.
+        $url = preg_replace('%(?<!http:|https:)//%i', '/', $url);
+
+        if (!$this->doesUrlNeedRewrite($url)) {
+            return $url;
+        }
+
+        $uri = str_ireplace($this->siteUrl, '', $url);
+
+        // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
+        // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
+        // need to handle it programmatically instead.
+        if ('bedrock' === $this->projectType && '/wp/' !== substr($uri, 0, 4) && '/app/' !== substr($uri, 0, 5)) {
+            $uri = '/wp'.$uri;
+        }
+
+        return $this->assetsUrl.'/'.ltrim($uri, '/');
     }
 
     /**
