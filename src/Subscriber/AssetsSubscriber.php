@@ -151,7 +151,7 @@ class AssetsSubscriber implements SubscriberInterface
         $nonUploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
             return false === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
         })->mapWithKeys(function (string $url) {
-            return [$url => $this->rewriteAssetsUrl(sprintf('%%https?://[^/]*(%s.*)%%', $this->contentDirectoryName), $url)];
+            return [$url => $this->rewriteAssetsUrl(sprintf('#https?://[^/]*(%s.*)#', $this->contentDirectoryName), $url)];
         })->all();
 
         // Point all URLs to "/wp-content/uploads" to the uploads URL.
@@ -160,7 +160,7 @@ class AssetsSubscriber implements SubscriberInterface
 
             return is_string($path) && 0 === stripos($path, $uploadsDirectory);
         })->mapWithKeys(function (string $url) use ($uploadsDirectory) {
-            return [$url => $this->rewriteUploadsUrl(sprintf('%%https?://[^/]*%s(.*)%%', $uploadsDirectory), $url)];
+            return [$url => $this->rewriteUploadsUrl(sprintf('#https?://[^/]*%s(.*)#', $uploadsDirectory), $url)];
         })->all();
 
         foreach (array_merge($assetsUrls, $nonUploadsUrls, $uploadsUrls) as $originalUrl => $newUrl) {
@@ -175,7 +175,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteContentUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl(sprintf('%%https?://.*(%s.*)%%', $this->contentDirectoryName), $url);
+        return $this->rewriteAssetsUrl(sprintf('#https?://.*(%s.*)#', $this->contentDirectoryName), $url);
     }
 
     /**
@@ -184,7 +184,7 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewriteEnqueuedUrl(string $url): string
     {
         // Some plugins enqueue scripts and styles with two slashes which breaks CloudFront and S3.
-        $url = preg_replace('%(?<!http:|https:)//%i', '/', $url);
+        $url = preg_replace('#(?<!http:|https:)//#i', '/', $url);
 
         if (!$this->doesUrlNeedRewrite($url)) {
             return $url;
@@ -207,7 +207,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteIncludesUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl('%https?://[^/]*((/[^/]*)?/wp-includes.*)%', $url);
+        return $this->rewriteAssetsUrl('#https?://[^/]*((/[^/]*)?/wp-includes.*)#', $url);
     }
 
     /**
@@ -215,7 +215,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewritePluginsUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl('%https?://.*(/[^/]*/plugins.*)%', $url);
+        return $this->rewriteAssetsUrl('#https?://.*(/[^/]*/plugins.*)#', $url);
     }
 
     /**
