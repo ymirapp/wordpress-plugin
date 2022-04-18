@@ -184,7 +184,7 @@ class AssetsSubscriber implements SubscriberInterface
     public function rewriteEnqueuedUrl(string $url): string
     {
         // Some plugins enqueue scripts and styles with two slashes which breaks CloudFront and S3.
-        $url = preg_replace('#(?<!http:|https:)//#i', '/', $url);
+        $url = preg_replace('#(?<!^|http:|https:)//#i', '/', $url);
 
         if (!$this->doesUrlNeedRewrite($url)) {
             return $url;

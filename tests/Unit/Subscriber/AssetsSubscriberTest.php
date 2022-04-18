@@ -117,6 +117,11 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/wp/asset.css'));
     }
 
+    public function testRewriteEnqueuedUrlDoesntRemoveDoubleSlashesWhenUrlStartsWithDoubleSlash()
+    {
+        $this->assertSame('//uploads.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('//uploads.com//asset.css'));
+    }
+
     public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithSiteUrl()
     {
         $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://foo.com//asset.css'));
