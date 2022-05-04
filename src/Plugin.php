@@ -95,6 +95,14 @@ class Plugin
     }
 
     /**
+     * Checks if the plugin is active.
+     */
+    public function isActive(): bool
+    {
+        return is_plugin_active($this->container['plugin_basename']) || preg_match('#mu-plugins/[^/]*/ymir\.php$#i', $this->filePath);
+    }
+
+    /**
      * Checks if the plugin is loaded.
      */
     public function isLoaded(): bool
