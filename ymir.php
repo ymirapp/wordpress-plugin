@@ -33,7 +33,8 @@ if (!function_exists('is_plugin_active')) {
 // Add load plugin action
 $ymir->load();
 
-// Load Ymir pluggable functions if the plugin is active
-if (is_plugin_active(plugin_basename(__FILE__))) {
+// Load Ymir pluggable functions if the plugin is active. Check if the plugin is in mu-plugins if not active.
+if (is_plugin_active(plugin_basename(__FILE__)) || str_contains(__DIR__, 'mu-plugins')) {
     require_once __DIR__.'/pluggable.php';
 }
+
