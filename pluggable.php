@@ -21,7 +21,9 @@ use Ymir\Plugin\Plugin;
 global $pagenow, $ymir;
 
 if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
-    exit('"wp_mail" function already overridden by another plugin');
+    add_action('admin_notices', function () {
+        echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Sending emails using SES is disabled because the "wp_mail" function was already overridden by another plugin.</p></div>';
+    });
 } elseif ($ymir->isSesEnabled() && !function_exists('wp_mail')) {
     /**
      * Send email using the cloud provider email client.
