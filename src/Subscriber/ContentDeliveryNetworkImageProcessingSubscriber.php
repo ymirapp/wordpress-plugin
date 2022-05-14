@@ -301,6 +301,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function generateImageUrl(string $imageUrl, ?int $height, ?int $width, bool $cropped = false): string
     {
+        $imageUrl = strtok($imageUrl, '?');
         $queryParameters = new Collection();
 
         if ($height) {
@@ -447,10 +448,10 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         $matches = [];
         $width = null;
 
-        if (preg_match('#height=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
+        if (preg_match('#\sheight=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
             $height = (int) $matches[1];
         }
-        if (preg_match('#width=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
+        if (preg_match('#\swidth=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
             $width = (int) $matches[1];
         }
 

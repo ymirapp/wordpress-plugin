@@ -85,6 +85,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
                 '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg" alt="" height="150" />',
                 '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=150" alt="" />',
             ],
+            [
+                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=300&width=300" alt="" height="150" />',
+                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=150" alt="" />',
+            ],
         ];
     }
 
@@ -668,6 +672,23 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $wp_get_attachment_url->expects($this->never());
 
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, null));
+    }
+
+    public function testRewriteImageSrcsetWhenGetAttachmentUrlReturnsUrlWithQueryString()
+    {
+        $actualSources = [
+            ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x150.jpg'],
+        ];
+        $expectedSources = [
+            ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image.jpg?height=150&width=150'],
+        ];
+
+        $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
+        $wp_get_attachment_url->expects($this->once())
+                              ->with($this->identicalTo(42))
+                              ->willReturn('https://assets.com/uploads/image.jpg?height=300&width=300');
+
+        $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
     public function testRewriteImageSrcsetWithSourceMissingDescriptorAttribute()
