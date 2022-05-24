@@ -37,6 +37,8 @@ class UploadsConfiguration implements ContainerConfigurationInterface
 
             return $uploadUrl ?: '';
         });
-        $container['upload_limit'] = defined('YMIR_UPLOAD_LIMIT') ? YMIR_UPLOAD_LIMIT : '15MB';
+        $container['upload_limit'] = $container->service(function () {
+            return getenv('YMIR_UPLOAD_LIMIT') ?: (defined('YMIR_UPLOAD_LIMIT') ? YMIR_UPLOAD_LIMIT : '15MB');
+        });
     }
 }
