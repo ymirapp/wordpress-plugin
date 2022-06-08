@@ -19,7 +19,7 @@ namespace Ymir\Plugin;
 class Autoloader
 {
     /**
-     * Handles autoloading of Password Evolved plugin classes.
+     * Handles autoloading of Ymir plugin classes.
      */
     public static function autoload(string $class)
     {
