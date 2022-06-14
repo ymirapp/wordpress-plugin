@@ -36,6 +36,9 @@ class YmirConfiguration implements ContainerConfigurationInterface
 
             return false;
         });
+        $container['ymir_domain_names'] = $container->service(function () {
+            return explode(',', (string) getenv('YMIR_DOMAIN_NAMES'));
+        });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
         $container['ymir_http_client'] = $container->service(function (Container $container) {
             return new Client($container['ymir_plugin_version']);

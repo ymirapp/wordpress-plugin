@@ -37,7 +37,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false, 'bedrock'))->redirect();
+        (new RedirectSubscriber(false, 'domain_name', [], 'bedrock'))->redirect();
     }
 
     /**
@@ -53,7 +53,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false, 'bedrock'))->redirect();
+        (new RedirectSubscriber(false, 'domain_name', [], 'bedrock'))->redirect();
     }
 
     /**
@@ -69,7 +69,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirect();
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
     }
 
     /**
@@ -85,7 +85,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirect();
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
     }
 
     public function testDoesntRedirectToPrimaryDomainNameWhenMultisiteEnabled()
@@ -93,7 +93,20 @@ class RedirectSubscriberTest extends TestCase
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber('domain_name', true))->redirect();
+        (new RedirectSubscriber(true, 'domain_name'))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testDoesntRedirectToPrimaryDomainNameWithHttpHostSameAsPrimaryDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'domain_name';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->never());
+
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
     }
 
     /**
@@ -107,7 +120,33 @@ class RedirectSubscriberTest extends TestCase
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber('domain_name', false))->redirect();
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testDoestRedirectToPrimaryDomainNameWhenHttpHostIsAMappedDomainNames()
+    {
+        $_SERVER['HTTP_HOST'] = 'domain_name_2';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->never());
+
+        (new RedirectSubscriber(false, 'domain_name', ['domain_name_2']))->redirect();
+    }
+
+    /**
+     * @backupGlobals enabled
+     */
+    public function testDoestRedirectToPrimaryDomainNameWhenHttpHostIsASubdomainOfAWildcardMappedDomainName()
+    {
+        $_SERVER['HTTP_HOST'] = 'test.domain_name_2';
+
+        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
+        $wp_redirect->expects($this->never());
+
+        (new RedirectSubscriber(false, 'domain_name', ['*.domain_name_2']))->redirect();
     }
 
     public function testGetSubscribedEvents()
@@ -137,7 +176,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirect();
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
     }
 
     /**
@@ -153,19 +192,6 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/uri'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber('domain_name', false))->redirect();
-    }
-
-    /**
-     * @backupGlobals enabled
-     */
-    public function testRedirectsToPrimaryDomainNameWithHttpHostSameAsPrimaryDomainName()
-    {
-        $_SERVER['HTTP_HOST'] = 'domain_name';
-
-        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
-        $wp_redirect->expects($this->never());
-
-        (new RedirectSubscriber('domain_name', false))->redirect();
+        (new RedirectSubscriber(false, 'domain_name'))->redirect();
     }
 }
