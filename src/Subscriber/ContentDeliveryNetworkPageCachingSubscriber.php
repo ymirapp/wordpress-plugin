@@ -108,7 +108,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
 
         $permalink = rtrim($permalink, '/').'/';
         $postType = get_post_type_object($postId);
-        $urlsToClear = new Collection([$permalink, $permalink.'*', rtrim(home_url(), '/').'/']);
+        $urlsToClear = new Collection([$permalink, rtrim(home_url(), '/').'/']);
 
         // Custom post archive
         if ('page' === get_site_option('show_on_front') && !empty(get_site_option('page_for_posts'))) {

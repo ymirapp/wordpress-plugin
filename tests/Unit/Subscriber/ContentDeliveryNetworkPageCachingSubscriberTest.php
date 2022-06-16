@@ -118,11 +118,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                           ->willReturn('category_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(5))
+        $pageCacheClient->expects($this->exactly(4))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')],
                             [$this->identicalTo('category_url')],
                             [$this->identicalTo('rest_url/wp/v2/categories/24/')]
@@ -195,11 +194,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
+        $pageCacheClient->expects($this->exactly(3))
             ->method('clearUrl')
             ->withConsecutive(
                 [$this->identicalTo('permalink/')],
-                [$this->identicalTo('permalink/*')],
                 [$this->identicalTo('home_url/')],
                 [$this->identicalTo('post_archive_permalink')]
             );
@@ -276,11 +274,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                                         ->willReturn('custom_post_type_archive_feed_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(5))
+        $pageCacheClient->expects($this->exactly(4))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')],
                             [$this->identicalTo('custom_post_type_archive_url')],
                             [$this->identicalTo('custom_post_type_archive_feed_url')]
@@ -375,11 +372,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                                     ->willReturn('post_commments_feed_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(12))
+        $pageCacheClient->expects($this->exactly(11))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')],
                             [$this->identicalTo('author_posts_url')],
                             [$this->identicalTo('author_feed_url')],
@@ -477,11 +473,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                           ->willReturn([$taxonomyTerm]);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(5))
+        $pageCacheClient->expects($this->exactly(4))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')],
                             [$this->identicalTo('taxonomy_url')],
                             [$this->identicalTo('rest_url/wp/v2/taxonomy/slug/')]
@@ -552,11 +547,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
+        $pageCacheClient->expects($this->exactly(3))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')],
                             [$this->identicalTo('rest_url/wp/v2/pages/42/')]
                         );
@@ -631,11 +625,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                      ->willReturn('tag_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(5))
+        $pageCacheClient->expects($this->exactly(4))
             ->method('clearUrl')
             ->withConsecutive(
                 [$this->identicalTo('permalink/')],
-                [$this->identicalTo('permalink/*')],
                 [$this->identicalTo('home_url/')],
                 [$this->identicalTo('tag_url')],
                 [$this->identicalTo('rest_url/wp/v2/tag/24/')]
@@ -783,11 +776,10 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(3))
+        $pageCacheClient->expects($this->exactly(2))
                         ->method('clearUrl')
                         ->withConsecutive(
                             [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('permalink/*')],
                             [$this->identicalTo('home_url/')]
                         );
 
