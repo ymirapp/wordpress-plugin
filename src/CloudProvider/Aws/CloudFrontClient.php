@@ -158,7 +158,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
             return $filteredWildcardPaths;
         });
 
-        $wildcardPaths = new Collection(array_intersect(...$wildcardPaths->all()));
+        $wildcardPaths = new Collection(!$wildcardPaths->isEmpty() ? array_intersect(...$wildcardPaths->all()) : []);
 
         if ($wildcardPaths->count() > 15) {
             throw new \RuntimeException('CloudFront only allows for a maximum of 15 wildcard invalidations');

@@ -150,6 +150,58 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame($expectedXml, $generateInvalidationPayloadMethod->invoke(new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret'), $paths));
     }
 
+    public function testSendClearRequestWithMultiplePathsAndASuccessfulResponse()
+    {
+        $base64_encode = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'base64_encode');
+        $base64_encode->expects($this->once())
+                      ->willReturn('0YZjRydzgMgvDbZ7');
+
+        $http = $this->getHttpClientMock();
+        $http->expects($this->once())
+             ->method('request')
+             ->with(
+                 $this->identicalTo('https://cloudfront.amazonaws.com/2020-05-31/distribution/distribution-id/invalidation'),
+                 $this->identicalTo([
+                     'headers' => [
+                         'host' => 'cloudfront.amazonaws.com',
+                         'x-amz-content-sha256' => 'fea9d8347f1e8e39183e41004cdefc1d966e99d6cf1ece1521ab0c2e1fd8abff',
+                         'x-amz-date' => '20200515T181004Z',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/cloudfront/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=6ef2dafe353ff87f034676182bd0270fcac5faf96b9b01feeffcd25911a86c56',
+                     ],
+                     'method' => 'POST',
+                     'timeout' => 300,
+                     'body' => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<InvalidationBatch xmlns=\"http://cloudfront.amazonaws.com/doc/2020-05-31/\"><CallerReference>0YZjRydzgMgvDbZ7-20200515</CallerReference><Paths><Items><Path>/path</Path><Path>/path2</Path></Items><Quantity>2</Quantity></Paths></InvalidationBatch>\n",
+                 ])
+             )
+             ->willReturn([
+                 'response' => ['code' => 201],
+             ]);
+
+        $gmdate = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'gmdate');
+        $gmdate->expects($this->exactly(5))
+               ->withConsecutive(
+                   [$this->identicalTo('Ymd\THis\Z')],
+                   [$this->identicalTo('Ymd')],
+                   [$this->identicalTo('Ymd\THis\Z')],
+                   [$this->identicalTo('Ymd')],
+                   [$this->identicalTo('Ymd')]
+               )
+               ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
+
+        $timeFunction = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'time');
+        $timeFunction->expects($this->once())
+                     ->willReturn('20200515');
+
+        $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
+        $invalidationPathsProperty->setAccessible(true);
+
+        $client = new CloudFrontClient($http, 'distribution-id', 'aws-key', 'aws-secret');
+
+        $invalidationPathsProperty->setValue($client, ['/path', '/path2']);
+
+        $client->sendClearRequest();
+    }
+
     public function testSendClearRequestWithSuccessfulResponse()
     {
         $base64_encode = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'base64_encode');
