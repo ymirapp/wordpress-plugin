@@ -95,10 +95,6 @@ class ObjectCacheConfiguration implements ContainerConfigurationInterface
 
             if ($container['ymir_relay_object_cache'] instanceof RelayObjectCache) {
                 $cache = $container['ymir_relay_object_cache'];
-            } elseif ($container['ymir_redis_object_cache'] instanceof RedisClusterObjectCache) {
-                $cache = $container['ymir_redis_object_cache'];
-            } elseif ($container['ymir_dynamodb_object_cache'] instanceof DynamoDbObjectCache) {
-                $cache = $container['ymir_dynamodb_object_cache'];
             }
 
             return $cache;
