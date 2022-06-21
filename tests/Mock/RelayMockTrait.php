@@ -19,7 +19,7 @@ use Relay\Relay;
 trait RelayMockTrait
 {
     /**
-     * Creates a mock of a RedisCluster object.
+     * Creates a mock of a Relay object.
      */
     private function getRelayMock(): MockObject
     {
