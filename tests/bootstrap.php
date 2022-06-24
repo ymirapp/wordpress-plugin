@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 use Symfony\Component\Dotenv\Dotenv;
 
-require_once __DIR__.'/../vendor/autoload.php';
+/**
+ * PHPUnit bootstrap file for Ymir WordPress plugin.
+ */
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
-$dotEnvFilePath = __DIR__.'/../.env';
+$dotEnvFilePath = dirname(__DIR__).'/.env';
 
 if (file_exists($dotEnvFilePath)) {
     (new Dotenv())->load($dotEnvFilePath);
 }
 
-/**
- * PHPUnit bootstrap file for Ymir WordPress plugin.
- */
 $_tests_dir = getenv('WP_TESTS_DIR');
 if (!$_tests_dir) {
     $_tests_dir = '/tmp/wordpress-tests-lib';
