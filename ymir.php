@@ -30,7 +30,7 @@ if (!function_exists('is_plugin_active')) {
     require_once ABSPATH.'wp-admin/includes/plugin.php';
 }
 
-// Add load plugin action
+// Load Ymir plugin
 $ymir->load();
 
 // Load Ymir pluggable functions if the plugin is active
