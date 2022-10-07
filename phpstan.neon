@@ -12,7 +12,7 @@ parameters:
         - message: '#Constant [^\s]* not found#'
           paths:
             - src/Http/Client.php
-        - message: '#invalid typehint type \\GdImage#'
+        - message: '#invalid typehint type GdImage#'
           paths:
             - src/Attachment/GDImageEditor.php
         - message: '#method RedisCluster::#'
