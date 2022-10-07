@@ -408,7 +408,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->mkdir("{$this->getProtocol()}:///foo", 0777);
+        $this->getStreamWrapperObject()->mkdir("{$this->getProtocol()}:///foo", 0777);
     }
 
     public function testMkdirWhenDirectoryExists()
@@ -425,7 +425,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->mkdir("{$this->getProtocol()}:///foo", 0777);
+        $this->getStreamWrapperObject()->mkdir("{$this->getProtocol()}:///foo", 0777);
     }
 
     /**
@@ -510,7 +510,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->rename("{$this->getProtocol()}:///foo.txt", "{$this->getProtocol()}:///bar.txt");
+        $this->getStreamWrapperObject()->rename("{$this->getProtocol()}:///foo.txt", "{$this->getProtocol()}:///bar.txt");
     }
 
     public function testRmdirWithEmptydirectory()
@@ -532,7 +532,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->rmdir("{$this->getProtocol()}:///foo", 0777);
+        $this->getStreamWrapperObject()->rmdir("{$this->getProtocol()}:///foo", 0777);
     }
 
     public function testRmdirWithNonEmptydirectory()
@@ -556,12 +556,12 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->rmdir("{$this->getProtocol()}:///foo", 0777);
+        $this->getStreamWrapperObject()->rmdir("{$this->getProtocol()}:///foo", 0777);
     }
 
     public function testStreamCast()
     {
-        $this->assertFalse(($this->getStreamWrapperObject())->stream_cast());
+        $this->assertFalse($this->getStreamWrapperObject()->stream_cast());
     }
 
     public function testStreamClose()
@@ -589,7 +589,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $feof->expects($this->once())
              ->willReturn(false);
 
-        $this->assertFalse(($this->getStreamWrapperObject())->stream_eof());
+        $this->assertFalse($this->getStreamWrapperObject()->stream_eof());
     }
 
     public function testStreamFlushWhenNotReading()
@@ -640,12 +640,12 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
     public function testStreamLock()
     {
-        $this->assertFalse(($this->getStreamWrapperObject())->stream_lock());
+        $this->assertFalse($this->getStreamWrapperObject()->stream_lock());
     }
 
     public function testStreamMetadata()
     {
-        $this->assertFalse(($this->getStreamWrapperObject())->stream_metadata());
+        $this->assertFalse($this->getStreamWrapperObject()->stream_metadata());
     }
 
     public function testStreamOpenWithInvalidMode()
@@ -653,7 +653,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->expectWarning();
         $this->expectExceptionMessage('"e" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"');
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'e');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'e');
     }
 
     public function testStreamOpenWithModeA()
@@ -678,7 +678,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'a');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'a');
     }
 
     public function testStreamOpenWithModeAPlus()
@@ -703,7 +703,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'a+');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'a+');
     }
 
     public function testStreamOpenWithModeRAndFileDoesntExist()
@@ -723,7 +723,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
     }
 
     public function testStreamOpenWithModeRAndFileExists()
@@ -750,7 +750,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
     }
 
     public function testStreamOpenWithModeRPlusAndFileDoesntExist()
@@ -770,7 +770,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
     }
 
     public function testStreamOpenWithModeRPlusAndFileExists()
@@ -797,7 +797,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
     }
 
     public function testStreamOpenWithModeW()
@@ -814,7 +814,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'w');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'w');
     }
 
     public function testStreamOpenWithModeXAndFileDoesntExist()
@@ -836,7 +836,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
     }
 
     public function testStreamOpenWithModeXAndFileExists()
@@ -853,7 +853,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
+        $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
     }
 
     public function testStreamRead()
@@ -863,7 +863,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
               ->with($this->anything(), $this->identicalTo(3))
               ->willReturn('foo');
 
-        $this->assertSame('foo', ($this->getStreamWrapperObject())->stream_read(3));
+        $this->assertSame('foo', $this->getStreamWrapperObject()->stream_read(3));
     }
 
     public function testStreamSeek()
@@ -873,7 +873,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
               ->with($this->anything(), $this->identicalTo(3), $this->identicalTo(SEEK_END))
               ->willReturn(0);
 
-        $this->assertTrue(($this->getStreamWrapperObject())->stream_seek(3, SEEK_END));
+        $this->assertTrue($this->getStreamWrapperObject()->stream_seek(3, SEEK_END));
     }
 
     public function testStreamStatWhenObjectDoesntExist()
@@ -1042,7 +1042,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
               ->with($this->anything())
               ->willReturn(42);
 
-        $this->assertSame(42, ($this->getStreamWrapperObject())->stream_tell());
+        $this->assertSame(42, $this->getStreamWrapperObject()->stream_tell());
     }
 
     public function testStreamWrite()
@@ -1052,7 +1052,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
                ->with($this->anything(), $this->identicalTo('foo'))
                ->willReturn(3);
 
-        $this->assertSame(3, ($this->getStreamWrapperObject())->stream_write('foo'));
+        $this->assertSame(3, $this->getStreamWrapperObject()->stream_write('foo'));
     }
 
     public function testUnlink()
@@ -1069,7 +1069,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
-        $this->assertTrue(($this->getStreamWrapperObject())->unlink("{$this->getProtocol()}:///foo.txt"));
+        $this->assertTrue($this->getStreamWrapperObject()->unlink("{$this->getProtocol()}:///foo.txt"));
     }
 
     public function testUrlStatWhenCached()

@@ -241,7 +241,7 @@ class AbstractPersistentObjectCacheTest extends TestCase
 
     public function testClose()
     {
-        $this->assertTrue(($this->getMockForAbstractClass(AbstractPersistentObjectCache::class, [false]))->close());
+        $this->assertTrue($this->getMockForAbstractClass(AbstractPersistentObjectCache::class, [false])->close());
     }
 
     public function testDecrementDecrementsValueFromMemoryAndDoestSaveItToPersistentCacheWhenInNonPersistentGroup()

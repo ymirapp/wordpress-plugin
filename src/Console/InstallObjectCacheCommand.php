@@ -59,7 +59,7 @@ class InstallObjectCacheCommand extends AbstractCommand
 
         if (!$force && $this->filesystem->exists($dropin)) {
             $this->error('Please use the "--force" option to overwrite an existing object-cache drop-in');
-        } elseif (!$this->filesystem->copy(rtrim($this->pluginDirectory, '/').'/stubs/object-cache.php', $dropin, $force, (fileperms(ABSPATH.'index.php') & 0777 | 0644))) {
+        } elseif (!$this->filesystem->copy(rtrim($this->pluginDirectory, '/').'/stubs/object-cache.php', $dropin, $force, fileperms(ABSPATH.'index.php') & 0777 | 0644)) {
             $this->error('Unable to copy the object cache drop-in');
         }
 
