@@ -130,7 +130,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
     public function testFopenWithUnsupportedMode()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"');
+        $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"');
 
         fopen("{$this->getProtocol()}:///file.ext", 'c');
     }

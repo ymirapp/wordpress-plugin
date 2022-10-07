@@ -356,7 +356,7 @@ abstract class AbstractCloudStorageStreamWrapper
                     $object = $client->getObject($this->openedStreamObjectKey);
                 } catch (\Exception $exception) {
                 }
-            } elseif ('r' === $this->openedStreamMode) {
+            } elseif (in_array($this->openedStreamMode, ['r', 'r+'])) {
                 $object = $client->getObject($this->openedStreamObjectKey);
             }
 
@@ -373,7 +373,7 @@ abstract class AbstractCloudStorageStreamWrapper
             $this->openedStreamObjectResource = fopen('php://temp', 'r+');
             fwrite($this->openedStreamObjectResource, $object);
 
-            if ('r' === $this->openedStreamMode) {
+            if (in_array($this->openedStreamMode, ['r', 'r+'])) {
                 rewind($this->openedStreamObjectResource);
             }
         });
@@ -762,12 +762,12 @@ abstract class AbstractCloudStorageStreamWrapper
         $client = $this->getClient();
         $mode = rtrim($mode, 'bt');
 
-        if (!in_array($mode, ['r', 'w', 'a', 'a+', 'x'])) {
-            throw new \InvalidArgumentException(sprintf('"%s" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"', $mode));
+        if (!in_array($mode, ['r', 'r+', 'w', 'a', 'a+', 'x'])) {
+            throw new \InvalidArgumentException(sprintf('"%s" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"', $mode));
         } elseif ('x' === $mode && $client->objectExists($key)) {
             throw new \InvalidArgumentException('Cannot have an existing object when opening with mode "x"');
-        } elseif ('r' === $mode && !$client->objectExists($key)) {
-            throw new \InvalidArgumentException('Must have an existing object when opening with mode "r"');
+        } elseif (in_array($mode, ['r', 'r+']) && !$client->objectExists($key)) {
+            throw new \InvalidArgumentException(sprintf('Must have an existing object when opening with mode "%s"', $mode));
         }
 
         return $mode;

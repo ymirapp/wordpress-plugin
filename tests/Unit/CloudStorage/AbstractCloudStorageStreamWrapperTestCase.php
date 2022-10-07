@@ -651,7 +651,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
     public function testStreamOpenWithInvalidMode()
     {
         $this->expectWarning();
-        $this->expectExceptionMessage('"e" mode isn\'t supported. Must be "r", "w", "a", "a+", "x"');
+        $this->expectExceptionMessage('"e" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"');
 
         ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'e');
     }
@@ -672,6 +672,9 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
                ->with($this->callback(function ($value) { return is_resource($value); }), $this->identicalTo('foo'));
+
+        $rewind = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'rewind');
+        $rewind->expects($this->never());
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
@@ -694,6 +697,9 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
                ->with($this->callback(function ($value) { return is_resource($value); }), $this->identicalTo('foo'));
+
+        $rewind = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'rewind');
+        $rewind->expects($this->never());
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
@@ -745,6 +751,53 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
         ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
+    }
+
+    public function testStreamOpenWithModeRPlusAndFileDoesntExist()
+    {
+        $this->expectWarning();
+        $this->expectExceptionMessage('Must have an existing object when opening with mode "r+"');
+
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn(false);
+
+        $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
+        $fwrite->expects($this->never());
+
+        $this->getStreamWrapperClass()::register($client, new \ArrayObject());
+
+        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
+    }
+
+    public function testStreamOpenWithModeRPlusAndFileExists()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn(true);
+
+        $client->expects($this->once())
+               ->method('getObject')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn('foo');
+
+        $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
+        $fwrite->expects($this->once())
+               ->with($this->callback(function ($value) { return is_resource($value); }), $this->identicalTo('foo'));
+
+        $rewind = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'rewind');
+        $rewind->expects($this->once())
+               ->with($this->callback(function ($value) { return is_resource($value); }));
+
+        $this->getStreamWrapperClass()::register($client, new \ArrayObject());
+
+        ($this->getStreamWrapperObject())->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
     }
 
     public function testStreamOpenWithModeW()
