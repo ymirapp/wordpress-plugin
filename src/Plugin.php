@@ -19,7 +19,7 @@ use Ymir\Plugin\Console\CommandInterface;
 use Ymir\Plugin\DependencyInjection\Container;
 
 /**
- * Ymir Cloud Storage Plugin.
+ * Ymir Plugin.
  */
 class Plugin
 {
