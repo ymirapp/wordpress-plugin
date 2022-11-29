@@ -13,13 +13,6 @@ jobs:
         with:
           php-version: '7.4'
           extensions: msgpack, igbinary
-      - name: Install Relay
-        run: |
-          curl -L "https://cachewerk.s3.amazonaws.com/relay/v0.5.0/relay-v0.5.0-php7.4-debian-x86-64.tar.gz" | tar xz
-          cd relay-v0.5.0-php7.4-debian-x86-64
-          sudo cp relay.ini $(php-config --ini-dir)
-          sudo cp relay-pkg.so $(php-config --extension-dir)/relay.so
-          sudo sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
       - name: Run code quality checks
@@ -40,14 +33,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: msgpack, igbinary
-      - name: Install Relay
-        if: 7.4 == matrix.php-versions || 8.0 == matrix.php-versions
-        run: |
-          curl -L "https://cachewerk.s3.amazonaws.com/relay/v0.5.0/relay-v0.5.0-php${{ matrix.php-versions }}-debian-x86-64.tar.gz" | tar xz
-          cd relay-v0.5.0-php${{ matrix.php-versions }}-debian-x86-64
-          sudo cp relay.ini $(php-config --ini-dir)
-          sudo cp relay-pkg.so $(php-config --extension-dir)/relay.so
-          sudo sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" $(php-config --extension-dir)/relay.so
       - name: Remove GrumPHP
         run: composer remove --dev phpro/grumphp
       - name: Install dependencies
