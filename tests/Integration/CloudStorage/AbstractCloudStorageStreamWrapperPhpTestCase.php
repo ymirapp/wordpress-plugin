@@ -464,7 +464,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
             // to "stream_cast" returning false. It seems to tell "stream_select" that the fopen resource is invalid
             // now. The AWS SDK still doesn't run its test suite in PHP 8 so unsure what the real impact is or how to
             // fix it properly.
-            $this->markTestSkipped('Test broken on PHP 8.0');
+            $this->markTestSkipped('Test broken on PHP 8.0 and higher');
         }
 
         $this->expectWarning();

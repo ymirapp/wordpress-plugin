@@ -200,7 +200,7 @@ class Collection implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return isset($this->items[$key]);
     }
@@ -208,6 +208,7 @@ class Collection implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->items[$key];
@@ -216,7 +217,7 @@ class Collection implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         if (null === $key) {
             $this->items[] = $value;
@@ -228,7 +229,7 @@ class Collection implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->items[$key]);
     }

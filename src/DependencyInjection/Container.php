@@ -65,7 +65,7 @@ class Container implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return array_key_exists($key, $this->values);
     }
@@ -73,6 +73,7 @@ class Container implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         if (!array_key_exists($key, $this->values)) {
@@ -87,7 +88,7 @@ class Container implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         if (isset($this->locked[$key])) {
             throw new \RuntimeException(sprintf('Container value "%s" is locked and cannot be modified.', $key));
@@ -99,7 +100,7 @@ class Container implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->locked[$key], $this->values[$key]);
     }
