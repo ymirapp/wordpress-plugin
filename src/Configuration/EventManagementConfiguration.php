@@ -52,7 +52,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\RedirectSubscriber($container['is_multisite'], $container['ymir_primary_domain_name'], $container['ymir_domain_names'], $container['ymir_project_type']),
                 new Subscriber\RestApiSubscriber($container['rest_namespace'], $container['rest_endpoints']),
                 new Subscriber\SecurityHeadersSubscriber(),
-                new Subscriber\WordPressSubscriber($container['server_software'], $container['site_url']),
+                new Subscriber\WordPressSubscriber($container['server_software']),
 
                 // Plugin compatibility subscribers
                 new Subscriber\Compatibility\WooCommerceSubscriber(),

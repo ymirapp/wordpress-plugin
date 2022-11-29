@@ -392,7 +392,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             return false;
         }
 
-        return (bool) $this->imageSizes[$size]['crop'] ?? false;
+        return (bool) ($this->imageSizes[$size]['crop'] ?? false);
     }
 
     /**

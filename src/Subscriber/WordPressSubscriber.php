@@ -28,19 +28,11 @@ class WordPressSubscriber implements SubscriberInterface
     private $serverSoftware;
 
     /**
-     * WordPress site URL.
-     *
-     * @var string
-     */
-    private $siteUrl;
-
-    /**
      * Constructor.
      */
-    public function __construct(string $serverSoftware, string $siteUrl)
+    public function __construct(string $serverSoftware)
     {
         $this->serverSoftware = strtolower($serverSoftware);
-        $this->siteUrl = rtrim($siteUrl, '/');
     }
 
     /**
