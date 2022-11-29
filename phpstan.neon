@@ -6,8 +6,6 @@ parameters:
         - src
     excludePaths:
         - src/Configuration
-        - src/QueryMonitor
-        - src/Subscriber\QueryMonitorSubscriber.php
     ignoreErrors:
         - message: '#Constant [^\s]* not found#'
           paths:
@@ -15,9 +13,6 @@ parameters:
         - message: '#invalid typehint type GdImage#'
           paths:
             - src/Attachment/GDImageEditor.php
-        - message: '#method RedisCluster::#'
-          paths:
-            - src/ObjectCache/RedisClusterObjectCache.php
         - message: '#unknown class PHPMailer|invalid typehint type PHPMailer#'
           paths:
             - src/Email/Email.php
