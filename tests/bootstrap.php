@@ -38,6 +38,15 @@ require_once __DIR__.'/constants.php';
 
 DG\BypassFinals::enable();
 
+// Core files
+require_once $_core_dir.'/wp-includes/formatting.php';
+require_once $_core_dir.'/wp-includes/functions.php';
+require_once $_core_dir.'/wp-includes/l10n.php';
+require_once $_core_dir.'/wp-includes/load.php';
+require_once $_core_dir.'/wp-includes/plugin.php';
+require_once $_core_dir.'/wp-includes/pomo/translations.php';
+
+// Class files
 require_once $_core_dir.'/wp-admin/includes/class-wp-filesystem-base.php';
 require_once $_core_dir.'/wp-admin/includes/class-wp-filesystem-direct.php';
 require_once $_core_dir.'/wp-admin/includes/class-wp-site-icon.php';
@@ -52,7 +61,4 @@ require_once $_core_dir.'/wp-includes/class-wp-taxonomy.php';
 require_once $_core_dir.'/wp-includes/class-wp-term.php';
 require_once $_core_dir.'/wp-includes/class.wp-dependencies.php';
 require_once $_core_dir.'/wp-includes/class.wp-scripts.php';
-require_once $_core_dir.'/wp-includes/formatting.php';
-require_once $_core_dir.'/wp-includes/functions.php';
-require_once $_core_dir.'/wp-includes/load.php';
 require_once $_core_dir.'/wp-includes/rest-api/class-wp-rest-request.php';
