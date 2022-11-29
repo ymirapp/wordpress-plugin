@@ -209,7 +209,8 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             return $image['height'] || $image['width'];
         })->mapWithKeys(function (array $image) {
             $src = $this->getOriginalImageUrl($image['image_src']);
-            $tag = str_replace($image['image_src'], esc_url($this->generateImageUrl($src, $image['height'], $image['width'], $image['cropped'])), $image['image_tag']);
+
+            $tag = preg_replace('#(src=["|\'])[^\s]+?(["|\'])#', sprintf('$1%s$2', esc_url($this->generateImageUrl($src, $image['height'], $image['width'], $image['cropped']))), $image['image_tag']);
             $tag = preg_replace('#(?<=\s)(height|width)=["|\']?[\d%]+["|\']?\s?#i', '', $tag);
 
             return [

@@ -541,6 +541,22 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
+    public function testRewriteContentImageUrlsDoesntRewriteSrcsetUrls()
+    {
+        $content = '<img width="205" height="112" src="https://assets.com/uploads/image.jpg" srcset="https://assets.com/uploads/image.jpg?width=2048 2048w, https://assets.com/uploads/image.jpg?height=164&amp;width=300 300w, https://assets.com/uploads/image.jpg?height=560&amp;width=1024 1024w, https://assets.com/uploads/image.jpg?height=420&amp;width=768 768w" />';
+        $expectedContent = '<img src="https://assets.com/uploads/image.jpg?height=112&width=205&cropped" srcset="https://assets.com/uploads/image.jpg?width=2048 2048w, https://assets.com/uploads/image.jpg?height=164&amp;width=300 300w, https://assets.com/uploads/image.jpg?height=560&amp;width=1024 1024w, https://assets.com/uploads/image.jpg?height=420&amp;width=768 768w" />';
+
+        $_prime_post_caches = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), '_prime_post_caches');
+        $_prime_post_caches->expects($this->once())
+                           ->with($this->identicalTo([]), $this->identicalTo(false));
+
+        $esc_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'esc_url');
+        $esc_url->expects($this->any())
+                ->willReturn($this->returnArgument(0));
+
+        $this->assertSame($expectedContent, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteContentImageUrls($content));
+    }
+
     public function testRewriteContentImageUrlsDoesntRewriteUrlIfUploadsUrlDoesntMatch()
     {
         $content = '<img class="alignnone size-thumbnail" src="https://domain.com/uploads/image-150x150.jpg" alt="" />';
