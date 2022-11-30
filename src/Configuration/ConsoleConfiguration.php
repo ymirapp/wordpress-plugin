@@ -42,10 +42,8 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
             return new LambdaClient($container['ymir_http_client'], $container['cloud_provider_function_name'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['site_url']);
         });
         $container['is_wp_cli'] = defined('WP_CLI') && WP_CLI;
-        $container['local_commands'] = $container->service(function (Container $container) {
-            return [
-                new Console\InstallObjectCacheCommand($container['content_directory'], $container['filesystem'], $container['plugin_dir_path']),
-            ];
+        $container['local_commands'] = $container->service(function () {
+            return [];
         });
     }
 }
