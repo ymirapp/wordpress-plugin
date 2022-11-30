@@ -4,8 +4,6 @@ parameters:
     level: 5
     paths:
         - src
-    excludePaths:
-        - src/Configuration
     ignoreErrors:
         - message: '#Strict comparison .* will always evaluate to false#'
           paths:
@@ -15,13 +13,19 @@ parameters:
             - src/Attachment/GDImageEditor.php
         - message: '#left side of \?\? always exists and is not nullable#'
           paths:
+            - src/Configuration/WordPressConfiguration.php
             - src/Console/*ImageCommand.php
-        - message: '#unknown class PHPMailer|invalid type PHPMailer#'
+        - message: '#unknown class PHPMailer|invalid type PHPMailer|class PHPMailer not found#'
           paths:
+            - src/Configuration/WordPressConfiguration.php
             - src/Email/Email.php
         - message: '#Constant WPINC not found#'
           paths:
+            - src/Configuration/WordPressConfiguration.php
             - src/Http/Client.php
+        - message: '#Constant WP_HOME not found#'
+          paths:
+            - src/Configuration/PageCacheConfiguration.php
         - message: '#unknown class CurlHandle|Class CurlHandle not found#'
           paths:
             - src/Http/Client.php
