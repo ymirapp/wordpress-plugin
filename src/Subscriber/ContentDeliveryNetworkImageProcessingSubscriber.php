@@ -238,7 +238,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * Rewrite the image URLs used by the srcset of an image.
      */
-    public function rewriteImageSrcset($sources, $size, $imageSrc, $imageMetadata, $attachmentId)
+    public function rewriteImageSrcset($sources, $size, $imageSrc, $imageMetadata, $attachmentId): array
     {
         return (new Collection($sources))->map(function (array $source) use ($attachmentId) {
             if (!isset($source['descriptor'], $source['value'], $source['url']) || 'w' !== $source['descriptor'] || !$this->isProcessableImageUrl($source['url'])) {
