@@ -247,13 +247,15 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
 
             list($width, $height) = $this->parseImageDimensionsFromFilename($source['url']);
 
+            $cropped = $height && (int) $source['value'] === $width;
+
             if (!$height && !$width) {
                 $width = $source['value'];
             }
 
             $url = is_numeric($attachmentId) ? wp_get_attachment_url($attachmentId) : $this->getOriginalImageUrl($source['url']);
 
-            $source['url'] = $this->generateImageUrl($url, $height, $width);
+            $source['url'] = $this->generateImageUrl($url, $height, $width, $cropped);
 
             return $source;
         })->all();
