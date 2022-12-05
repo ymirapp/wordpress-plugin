@@ -15,7 +15,7 @@ declare(strict_types=1);
  * Plugin Name: Ymir
  * Plugin URI: https://ymirapp.com
  * Description: Integrates WordPress with the Ymir platform.
- * Version: 1.16.1
+ * Version: 1.16.2
  * Author: Carl Alexander
  * Author URI: https://ymirapp.com
  * License: GPL3
