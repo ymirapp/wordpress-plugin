@@ -133,6 +133,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
                               ->with($this->identicalTo(42))
                               ->willReturn('https://assets.com/uploads/image.jpg');
 
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->exactly(2))
+                                      ->willReturn([]);
+
         $wp_get_attachment_metadata = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_metadata');
         $wp_get_attachment_metadata->expects($this->once())
                                    ->with($this->identicalTo(42))
@@ -156,6 +160,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
         $is_admin->expects($this->once())
                  ->willReturn(false);
+
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->exactly(2))
+                                      ->willReturn([]);
 
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
@@ -191,6 +199,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $is_admin->expects($this->once())
                  ->willReturn(false);
 
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->once())
+                                      ->willReturn([]);
+
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -214,6 +226,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $is_admin->expects($this->once())
                  ->willReturn(false);
 
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->once())
+                                      ->willReturn([]);
+
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -236,6 +252,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
         $is_admin->expects($this->once())
                  ->willReturn(false);
+
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->once())
+                                      ->willReturn([]);
 
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'missing'));
     }
@@ -632,6 +652,10 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $get_post->expects($this->once())
                  ->with($this->identicalTo('42'))
                  ->willReturn($post);
+
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->any())
+                                      ->willReturn([]);
 
         $wp_get_attachment_image_src = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_image_src');
         $wp_get_attachment_image_src->expects($this->once())

@@ -55,7 +55,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return new \WP_Filesystem_Direct(false);
         });
-        $container['image_sizes'] = $container->service(function () {
+        $container['base_image_sizes'] = $container->service(function () {
             $sizes = [
                 'thumb' => [
                     'width' => (int) get_option('thumbnail_size_w'),
@@ -87,7 +87,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             // Compatibility mapping as found in wp-includes/media.php.
             $sizes['thumbnail'] = $sizes['thumb'];
 
-            return array_merge($sizes, wp_get_additional_image_sizes());
+            return $sizes;
         });
         $container['is_multisite'] = is_multisite();
         $container['phpmailer'] = function () {

@@ -29,6 +29,13 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     private const SUPPORTED_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'webp'];
 
     /**
+     * The base WordPress image sizes.
+     *
+     * @var array
+     */
+    private $baseImageSizes;
+
+    /**
      * "content_width" global used to constrain image sizes if present.
      *
      * @see https://developer.wordpress.com/themes/content-width/
@@ -43,14 +50,6 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      * @var bool
      */
     private $imageDownsizeFilterEnabled;
-
-    /**
-     * The registered WordPress image sizes.
-     *
-     * @var array
-     */
-    private $imageSizes;
-
     /**
      * Flag whether this is a multisite installation or not.
      *
@@ -68,11 +67,11 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $imageSizes, bool $isMultisite, string $uploadsUrl, ?int $contentWidthGlobal = null)
+    public function __construct(array $baseImageSizes, bool $isMultisite, string $uploadsUrl, ?int $contentWidthGlobal = null)
     {
+        $this->baseImageSizes = $baseImageSizes;
         $this->contentWidthGlobal = $contentWidthGlobal;
         $this->imageDownsizeFilterEnabled = true;
-        $this->imageSizes = $imageSizes;
         $this->isMultisite = $isMultisite;
         $this->uploadsUrl = $uploadsUrl;
     }
@@ -108,7 +107,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             return $image;
         }
 
-        list($width, $height, $cropped) = $this->getAttachmentImageSize((int) $attachmentId, $size);
+        list($width, $height, $cropped) = $this->getImageAttachmentDimensions((int) $attachmentId, $size);
 
         return [
              $this->generateImageUrl($imageUrl, $height, $width, $cropped),
@@ -325,7 +324,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * Get the image size array of the given image attachment for the given size.
      */
-    private function getAttachmentImageSize(int $attachmentId, $size): array
+    private function getImageAttachmentDimensions(int $attachmentId, $size): array
     {
         $cropped = false;
         $fullSizeImageMetadata = wp_get_attachment_metadata($attachmentId);
@@ -378,6 +377,20 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     }
 
     /**
+     * Get the image size metadata for the given image size.
+     */
+    private function getImageSizeMetadata($size): ?array
+    {
+        if (!is_int($size) && !is_string($size)) {
+            return null;
+        }
+
+        $sizes = array_merge($this->baseImageSizes, wp_get_additional_image_sizes());
+
+        return $sizes[$size] ?? null;
+    }
+
+    /**
      * Get the original image URL from the re-dimensioned image URL.
      */
     private function getOriginalImageUrl($url)
@@ -390,11 +403,9 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function isImageSizeCropped($size): bool
     {
-        if (!is_int($size) && !is_string($size)) {
-            return false;
-        }
+        $sizeMetadata = $this->getImageSizeMetadata($size);
 
-        return (bool) ($this->imageSizes[$size]['crop'] ?? false);
+        return (bool) ($sizeMetadata['crop'] ?? false);
     }
 
     /**
@@ -422,7 +433,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function isValidImageSize($size): bool
     {
-        return is_array($size) || ((is_int($size) || is_string($size)) && array_key_exists($size, $this->imageSizes));
+        return is_array($size) || is_array($this->getImageSizeMetadata($size));
     }
 
     /**

@@ -60,7 +60,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
             ];
 
             if ($container['ymir_cdn_image_processing_enabled']) {
-                $subscribers[] = new Subscriber\ContentDeliveryNetworkImageProcessingSubscriber($container['image_sizes'], $container['is_multisite'], $container['uploads_baseurl'], $container['content_width']);
+                $subscribers[] = new Subscriber\ContentDeliveryNetworkImageProcessingSubscriber($container['base_image_sizes'], $container['is_multisite'], $container['uploads_baseurl'], $container['content_width']);
             }
 
             return $subscribers;
