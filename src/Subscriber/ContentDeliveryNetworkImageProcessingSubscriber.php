@@ -350,7 +350,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             $width = isset($resizedImageDimension[6], $resizedImageDimension[7]) ? (int) $resizedImageDimension[6] : $width;
         }
 
-        list($width, $height) = image_constrain_size_for_editor($width, $height, $size);
+        list($width, $height) = image_constrain_size_for_editor($width, $height, $size, 'display');
 
         return [$width, $height, $cropped];
     }

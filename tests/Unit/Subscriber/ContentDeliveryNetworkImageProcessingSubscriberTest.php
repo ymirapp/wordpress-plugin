@@ -147,7 +147,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
         $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
         $image_constrain_size_for_editor->expects($this->once())
-                                        ->with($this->identicalTo(null), $this->identicalTo(null), $this->identicalTo('full'))
+                                        ->with($this->identicalTo(null), $this->identicalTo(null), $this->identicalTo('full'), $this->identicalTo('display'))
                                         ->willReturn([null, null]);
 
         $this->assertSame([
@@ -185,7 +185,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
         $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
         $image_constrain_size_for_editor->expects($this->once())
-                                        ->with($this->identicalTo(150), $this->identicalTo(150), $this->identicalTo('thumbnail'))
+                                        ->with($this->identicalTo(150), $this->identicalTo(150), $this->identicalTo('thumbnail'), $this->identicalTo('display'))
                                         ->willReturn([150, 150]);
 
         $this->assertSame([
@@ -283,7 +283,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
         $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
         $image_constrain_size_for_editor->expects($this->once())
-                                        ->with($this->identicalTo(400), $this->identicalTo(300), $this->identicalTo([400, 400]))
+                                        ->with($this->identicalTo(400), $this->identicalTo(300), $this->identicalTo([400, 400]), $this->identicalTo('display'))
                                         ->willReturn([400, 300]);
 
         $this->assertSame([
@@ -312,7 +312,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
         $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
         $image_constrain_size_for_editor->expects($this->once())
-                                        ->with($this->identicalTo(400), $this->identicalTo(400), $this->identicalTo([400, 400]))
+                                        ->with($this->identicalTo(400), $this->identicalTo(400), $this->identicalTo([400, 400]), $this->identicalTo('display'))
                                         ->willReturn([400, 400]);
 
         $this->assertSame([
