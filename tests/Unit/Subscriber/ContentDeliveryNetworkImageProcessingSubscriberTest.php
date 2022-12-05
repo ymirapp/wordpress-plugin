@@ -260,6 +260,46 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'missing'));
     }
 
+    public function testGenerateScaledDownImageWillCropImageIfImageSizeIsCropped()
+    {
+        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
+        $is_admin->expects($this->once())
+                 ->willReturn(false);
+
+        $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
+        $wp_get_attachment_url->expects($this->once())
+                              ->with($this->identicalTo(42))
+                              ->willReturn('https://assets.com/uploads/image.jpg');
+
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->exactly(2))
+                                      ->willReturn([]);
+
+        $wp_get_attachment_metadata = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_metadata');
+        $wp_get_attachment_metadata->expects($this->once())
+                                   ->with($this->identicalTo(42))
+                                   ->willReturn(['width' => 1600, 'height' => 1200]);
+
+        $image_resize_dimensions = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_resize_dimensions');
+        $image_resize_dimensions->expects($this->once())
+                                ->with($this->identicalTo(1600), $this->identicalTo(1200), $this->identicalTo(150), $this->identicalTo(150), $this->identicalTo(true))
+                                ->willReturn([0, 0, 0, 0, 0, 0, 150, 150]);
+
+        $image_get_intermediate_size = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_get_intermediate_size');
+        $image_get_intermediate_size->expects($this->once())
+                                    ->with($this->identicalTo(42), $this->identicalTo('thumbnail'))
+                                    ->willReturn(['width' => 150, 'height' => 150]);
+
+        $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
+        $image_constrain_size_for_editor->expects($this->once())
+                                        ->with($this->identicalTo(150), $this->identicalTo(150), $this->identicalTo('thumbnail'), $this->identicalTo('display'))
+                                        ->willReturn([150, 150]);
+
+        $this->assertSame([
+            'https://assets.com/uploads/image.jpg?height=150&width=150&cropped', 150, 150, true,
+        ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'thumbnail'));
+    }
+
     public function testGenerateScaledDownImageWithSizeArrayAndDifferentResizedDimension()
     {
         $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
@@ -278,7 +318,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
         $image_resize_dimensions = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_resize_dimensions');
         $image_resize_dimensions->expects($this->once())
-                                ->with($this->identicalTo(1600), $this->identicalTo(1200), $this->identicalTo(400), $this->identicalTo(400))
+                                ->with($this->identicalTo(1600), $this->identicalTo(1200), $this->identicalTo(400), $this->identicalTo(400), $this->identicalTo(false))
                                 ->willReturn([0, 0, 0, 0, 0, 0, 400, 300]);
 
         $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');

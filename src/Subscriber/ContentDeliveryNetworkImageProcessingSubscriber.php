@@ -344,7 +344,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
 
         // Make sure the calculated dimensions aren't larger than the full sized image dimensions.
         if (isset($fullSizeImageMetadata['height'], $fullSizeImageMetadata['width'])) {
-            $resizedImageDimension = image_resize_dimensions($fullSizeImageMetadata['width'], $fullSizeImageMetadata['height'], $width, $height);
+            $resizedImageDimension = image_resize_dimensions($fullSizeImageMetadata['width'], $fullSizeImageMetadata['height'], $width, $height, $cropped);
 
             $height = isset($resizedImageDimension[6], $resizedImageDimension[7]) ? (int) $resizedImageDimension[7] : $height;
             $width = isset($resizedImageDimension[6], $resizedImageDimension[7]) ? (int) $resizedImageDimension[6] : $width;
