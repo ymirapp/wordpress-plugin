@@ -155,6 +155,44 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
     }
 
+    public function testGenerateScaledDownImageForThumbnailImageWillFallbackToImageSizeMetadataWhenThereIsNoIntermediateSize()
+    {
+        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
+        $is_admin->expects($this->once())
+                 ->willReturn(false);
+
+        $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
+        $wp_get_additional_image_sizes->expects($this->exactly(3))
+                                      ->willReturn([]);
+
+        $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
+        $wp_get_attachment_url->expects($this->once())
+                              ->with($this->identicalTo(42))
+                              ->willReturn('https://assets.com/uploads/image.jpg');
+
+        $wp_get_attachment_metadata = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_metadata');
+        $wp_get_attachment_metadata->expects($this->once())
+                                   ->with($this->identicalTo(42))
+                                   ->willReturn(false);
+
+        $image_resize_dimensions = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_resize_dimensions');
+        $image_resize_dimensions->expects($this->never());
+
+        $image_get_intermediate_size = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_get_intermediate_size');
+        $image_get_intermediate_size->expects($this->once())
+                                    ->with($this->identicalTo(42), $this->identicalTo('thumbnail'))
+                                    ->willReturn(false);
+
+        $image_constrain_size_for_editor = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'image_constrain_size_for_editor');
+        $image_constrain_size_for_editor->expects($this->once())
+                                        ->with($this->identicalTo(150), $this->identicalTo(150), $this->identicalTo('thumbnail'), $this->identicalTo('display'))
+                                        ->willReturn([150, 150]);
+
+        $this->assertSame([
+            'https://assets.com/uploads/image.jpg?height=150&width=150&cropped', 150, 150, true,
+        ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'thumbnail'));
+    }
+
     public function testGenerateScaledDownImageForThumbnailImageWithNoImageMetadata()
     {
         $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');

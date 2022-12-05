@@ -335,7 +335,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             $height = isset($size[1]) ? (int) $size[1] : null;
             $width = isset($size[0]) ? (int) $size[0] : null;
         } elseif (is_int($size) || is_string($size)) {
-            $imageMetadata = 'full' !== $size ? image_get_intermediate_size($attachmentId, $size) : $fullSizeImageMetadata;
+            $imageMetadata = 'full' !== $size ? $this->getImageAttachmentSizeMetadata($attachmentId, $size) : $fullSizeImageMetadata;
 
             $cropped = $this->isImageSizeCropped($size);
             $height = isset($imageMetadata['height']) ? (int) $imageMetadata['height'] : null;
@@ -353,6 +353,14 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         list($width, $height) = image_constrain_size_for_editor($width, $height, $size, 'display');
 
         return [$width, $height, $cropped];
+    }
+
+    /**
+     * Get the image attachment size metadata for the given size image size.
+     */
+    private function getImageAttachmentSizeMetadata(int $attachmentId, $size): ?array
+    {
+        return image_get_intermediate_size($attachmentId, $size) ?: $this->getImageSizeMetadata($size);
     }
 
     /**
