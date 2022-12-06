@@ -23,6 +23,13 @@ class GDImageEditor extends \WP_Image_Editor_GD
     use ServiceLocatorTrait;
 
     /**
+     * Flag whether to disable creating image subsizes or not.
+     *
+     * @var bool
+     */
+    private $disableImageSubsizes;
+
+    /**
      * The attachment file manager.
      *
      * @var AttachmentFileManager
@@ -34,6 +41,7 @@ class GDImageEditor extends \WP_Image_Editor_GD
      */
     public function __construct($file)
     {
+        $this->disableImageSubsizes = (bool) self::getService('ymir_cdn_image_processing_enabled');
         $this->fileManager = self::getService('file_manager');
 
         if (!$this->fileManager instanceof AttachmentFileManager) {
@@ -50,9 +58,22 @@ class GDImageEditor extends \WP_Image_Editor_GD
     /**
      * {@inheritdoc}
      */
-    public function save($destfilename = null, $mime_type = null)
+    public function make_subsize($size)
     {
-        $savedImage = parent::save($destfilename, $mime_type);
+        return !$this->disableImageSubsizes || !is_array($size) || (!isset($size['height']) && !isset($size['width'])) ? parent::make_subsize($size) : [
+            'file' => wp_basename($this->file),
+            'width' => $size['width'],
+            'height' => $size['height'],
+            'mime-type' => $this->mime_type,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save($destFilename = null, $mimeType = null)
+    {
+        $savedImage = parent::save($destFilename, $mimeType);
 
         // The "save" method changes the "file" property which is an issue with "multi_resize"
         // since we call the "save" method multiple times. So after the first save, the "file"
@@ -67,9 +88,9 @@ class GDImageEditor extends \WP_Image_Editor_GD
     /**
      * {@inheritdoc}
      */
-    protected function _save($image, $filename = null, $mime_type = null)
+    protected function _save($image, $filename = null, $mimeType = null)
     {
-        $savedImage = parent::_save($image, $filename, $mime_type);
+        $savedImage = parent::_save($image, $filename, $mimeType);
 
         if ($savedImage instanceof \WP_Error || empty($savedImage['path']) || !$this->fileManager->isInTempDirectory($savedImage['path'])) {
             return $savedImage;

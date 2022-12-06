@@ -82,14 +82,32 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     public static function getSubscribedEvents(): array
     {
         return [
-            'image_downsize' => ['generateScaledDownImage', 10, 3],
-            'the_content' => ['rewriteContentImageUrls', 999999],
+            'big_image_size_threshold' => 'disableScalingDownImages',
             'get_post_galleries' => ['rewriteGalleryImageUrls', 999999],
+            'image_downsize' => ['generateScaledDownImage', 10, 3],
             'rest_after_insert_attachment' => ['maybeDisableImageDownsizeFilterForInsertAttachmentRestRequest', 10, 2],
             'rest_request_after_callbacks' => 'reEnableImageDownsizeFilter',
             'rest_request_before_callbacks' => ['maybeDisableImageDownsizeFilterForRestRequest', 10, 3],
+            'the_content' => ['rewriteContentImageUrls', 999999],
             'wp_calculate_image_srcset' => ['rewriteImageSrcset', 10, 5],
+            'wp_img_tag_add_width_and_height_attr' => ['disableAddingImageWidthAndHeightAttributes', 10, 2],
         ];
+    }
+
+    /**
+     * Prevent WordPress from adding width and height attributes to images that the content delivery network will process.
+     */
+    public function disableAddingImageWidthAndHeightAttributes($value, string $image): bool
+    {
+        return preg_match('#src=["|\']([^\s]+?)["|\']#i', $image, $matches) ? !$this->isProcessableImageUrl($matches[1]) : (bool) $value;
+    }
+
+    /**
+     * Prevent WordPress from creating scaled down versions of images.
+     */
+    public function disableScalingDownImages(): bool
+    {
+        return false;
     }
 
     /**
@@ -97,7 +115,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     public function generateScaledDownImage($image, $attachmentId, $size)
     {
-        if (!$this->imageDownsizeFilterEnabled || is_admin() || !$this->isValidImageSize($size)) {
+        if (!$this->imageDownsizeFilterEnabled || !$this->isValidImageSize($size)) {
             return $image;
         }
 
@@ -368,20 +386,27 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function getImageSize(array $image): array
     {
-        $height = null;
-        $width = null;
+        /*
+         * Priority list for determining image size.
+         *
+         *  1. Parse width and height from the image source query string.
+         *  2. Parse width and height from the image tag attributes.
+         *  3. Parse width and height from the WordPress generated file name.
+         *  4. Determine width and height from the WordPress image metadata.
+         */
+        list($width, $height, $cropped) = $this->parseImageDimensionsFromImageSourceQueryString($image['image_src']);
 
-        // Start by trying to parse the dimension from the <img> tag.
-        if (isset($image['image_tag'])) {
-            list($width, $height) = $this->parseImageDimensionsFromImgTagAttributes($image['image_tag']);
+        if (!$height && !$width) {
+            list($width, $height, $cropped) = $this->parseImageDimensionsFromImageTagAttributes($image['image_tag']);
+        }
+        if (!$height && !$width) {
+            list($width, $height, $cropped) = $this->parseImageDimensionsFromFilename($image['image_src']);
+        }
+        if (!$height && !$width) {
+            list($width, $height, $cropped) = $this->determineImageSizeUsingWordPressImageSizes($image);
         }
 
-        // Next try to get the image dimensions using the filename.
-        if (isset($image['image_src']) && !$height && !$width) {
-            list($width, $height) = $this->parseImageDimensionsFromFilename($image['image_src']);
-        }
-
-        return ($height || $width) ? [$width, $height, $height && $width] : $this->determineImageSizeUsingWordPressImageSizes($image);
+        return [$width, $height, $cropped];
     }
 
     /**
@@ -449,35 +474,57 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function parseImageDimensionsFromFilename(string $filename): array
     {
+        $cropped = false;
         $height = null;
         $matches = [];
         $width = null;
 
         if (preg_match(sprintf('#-(\d+)x(\d+)\.(?:%s)$#i', implode('|', self::SUPPORTED_EXTENSIONS)), $filename, $matches)) {
+            $cropped = true;
             $height = (int) $matches[2];
             $width = (int) $matches[1];
         }
 
-        return [$width, $height];
+        return [$width, $height, $cropped];
+    }
+
+    /**
+     * Parse the dimension of an image using the query strings in the image source.
+     */
+    private function parseImageDimensionsFromImageSourceQueryString(string $imageSource): array
+    {
+        $cropped = (bool) preg_match('#\?.*cropped#i', $imageSource);
+        $height = null;
+        $matches = [];
+        $width = null;
+
+        if (preg_match('#\?.*height=(\d+)#i', $imageSource, $matches)) {
+            $height = (int) $matches[1];
+        }
+        if (preg_match('#\?.*width=(\d+)#i', $imageSource, $matches)) {
+            $width = (int) $matches[1];
+        }
+
+        return [$width, $height, $cropped];
     }
 
     /**
      * Parse the dimension of an image using the <img> tag attributes.
      */
-    private function parseImageDimensionsFromImgTagAttributes(string $tag): array
+    private function parseImageDimensionsFromImageTagAttributes(string $tag): array
     {
         $height = null;
         $matches = [];
         $width = null;
 
-        if (preg_match('#\sheight=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
+        if (preg_match('#\sheight=["|\']?(\d+)["|\']?#i', $tag, $matches)) {
             $height = (int) $matches[1];
         }
-        if (preg_match('#\swidth=["|\']?([\d]+)["|\']?#i', $tag, $matches)) {
+        if (preg_match('#\swidth=["|\']?(\d+)["|\']?#i', $tag, $matches)) {
             $width = (int) $matches[1];
         }
 
-        return [$width, $height];
+        return [$width, $height, $width && $height];
     }
 
     /**

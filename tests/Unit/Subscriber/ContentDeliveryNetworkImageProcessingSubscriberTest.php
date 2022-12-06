@@ -86,8 +86,8 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
                 '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=150" alt="" />',
             ],
             [
-                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=300&width=300" alt="" height="150" />',
-                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=150" alt="" />',
+                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=300&width=300" alt="" width="150" height="150" />',
+                '<img class="alignnone size-thumbnail" src="https://assets.com/uploads/image.jpg?height=300&width=300" alt="" />',
             ],
         ];
     }
@@ -122,12 +122,23 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ];
     }
 
+    public function testDisableAddingImageWidthAndHeightAttributesWithInvalidUrl()
+    {
+        $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://domain.com/uploads/image.jpg" alt="" />'));
+    }
+
+    public function testDisableAddingImageWidthAndHeightAttributesWithNoSrcAttribute()
+    {
+        $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img alt="" />'));
+    }
+
+    public function testDisableAddingImageWidthAndHeightAttributesWithValidUrl()
+    {
+        $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://assets.com/uploads/image.jpg" alt="" />'));
+    }
+
     public function testGenerateScaledDownImageForFullSizeImageWithNoImageMetadata()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -157,10 +168,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageForThumbnailImageWillFallbackToImageSizeMetadataWhenThereIsNoIntermediateSize()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->exactly(3))
                                       ->willReturn([]);
@@ -195,10 +202,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageForThumbnailImageWithNoImageMetadata()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->exactly(2))
                                       ->willReturn([]);
@@ -233,10 +236,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageWhenAttachmentUrlIsntProcessable()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
                                       ->willReturn([]);
@@ -249,21 +248,8 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
     }
 
-    public function testGenerateScaledDownImageWhenIsAdminIsTrue()
-    {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(true);
-
-        $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
-    }
-
     public function testGenerateScaledDownImageWhenNoAttachmentUrlFound()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
                                       ->willReturn([]);
@@ -278,19 +264,11 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageWhenSizeIsInvalidType()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, null));
     }
 
     public function testGenerateScaledDownImageWhenSizeIsntInImageSizeArray()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
                                       ->willReturn([]);
@@ -300,10 +278,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageWillCropImageIfImageSizeIsCropped()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -340,10 +314,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageWithSizeArrayAndDifferentResizedDimension()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -371,10 +341,6 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testGenerateScaledDownImageWithSizeArrayAndNoFullSizeImageMetadata()
     {
-        $is_admin = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'is_admin');
-        $is_admin->expects($this->once())
-                 ->willReturn(false);
-
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
                               ->with($this->identicalTo(42))
@@ -407,13 +373,15 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
-            'image_downsize' => ['generateScaledDownImage', 10, 3],
-            'the_content' => ['rewriteContentImageUrls', 999999],
+            'big_image_size_threshold' => 'disableScalingDownImages',
             'get_post_galleries' => ['rewriteGalleryImageUrls', 999999],
+            'image_downsize' => ['generateScaledDownImage', 10, 3],
             'rest_after_insert_attachment' => ['maybeDisableImageDownsizeFilterForInsertAttachmentRestRequest', 10, 2],
             'rest_request_after_callbacks' => 'reEnableImageDownsizeFilter',
             'rest_request_before_callbacks' => ['maybeDisableImageDownsizeFilterForRestRequest', 10, 3],
+            'the_content' => ['rewriteContentImageUrls', 999999],
             'wp_calculate_image_srcset' => ['rewriteImageSrcset', 10, 5],
+            'wp_img_tag_add_width_and_height_attr' => ['disableAddingImageWidthAndHeightAttributes', 10, 2],
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
