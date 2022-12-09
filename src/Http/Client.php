@@ -139,7 +139,6 @@ class Client
         }
 
         $headers = (new Collection(explode("\n", preg_replace('/\n[ \t]/', ' ', str_replace("\r\n", "\n", $rawHeaders)))))->filter();
-        $matches = [];
 
         // Remove HTTP Continue header if present
         if (preg_match('#^HTTP/1\.\d[ \t]+100[ \t]+Continue#i', $headers[0])) {

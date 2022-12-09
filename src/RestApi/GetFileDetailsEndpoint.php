@@ -89,7 +89,6 @@ class GetFileDetailsEndpoint extends AbstractEndpoint
     {
         $filename = wp_unique_filename($this->uploadsPath, urlencode(wp_basename(sanitize_file_name(htmlspecialchars_decode($request->get_param('filename'), ENT_QUOTES)))));
         $path = $this->uploadsSubdirectory.$filename;
-        $matches = [];
 
         // Need to extract the "sites/{blog_id}" for multisite
         preg_match('/(uploads.*)/', substr($this->uploadsPath, 0, -strlen($this->uploadsSubdirectory)), $matches);

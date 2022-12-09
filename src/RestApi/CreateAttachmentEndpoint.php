@@ -105,7 +105,6 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
     public function respond(\WP_REST_Request $request)
     {
         $path = ltrim($request->get_param('path'), '/');
-        $matches = [];
 
         // Need to extract the "sites/{blog_id}" for multisite
         preg_match('/(uploads.*)/', $this->uploadsDirectory, $matches);

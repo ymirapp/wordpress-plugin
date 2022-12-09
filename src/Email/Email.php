@@ -241,8 +241,6 @@ class Email
      */
     private function parseAddress(string $address, string $name = ''): array
     {
-        $matches = [];
-
         if (false === preg_match('/(.*)<(.+)>/', $address, $matches)) {
             throw new \RuntimeException('Unable to parse the given "address"');
         } elseif (3 === count($matches)) {

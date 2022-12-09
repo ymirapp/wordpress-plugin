@@ -114,8 +114,6 @@ class AssetsSubscriber implements SubscriberInterface
         $urls = new Collection();
 
         foreach ($patterns as $pattern) {
-            $matches = [];
-
             preg_match_all($pattern, $content, $matches);
 
             $urls = $urls->merge($matches['url'] ?? []);
@@ -233,14 +231,9 @@ class AssetsSubscriber implements SubscriberInterface
      */
     private function rewriteAssetsUrl(string $pattern, string $url): string
     {
-        $matches = [];
         preg_match($pattern, $url, $matches);
 
-        if (empty($matches[1])) {
-            return $url;
-        }
-
-        return $this->assetsUrl.'/'.ltrim($matches[1], '/');
+        return empty($matches[1]) ? $url : $this->assetsUrl.'/'.ltrim($matches[1], '/');
     }
 
     /**
@@ -248,13 +241,8 @@ class AssetsSubscriber implements SubscriberInterface
      */
     private function rewriteUploadsUrl(string $pattern, string $url): string
     {
-        $matches = [];
         preg_match($pattern, $url, $matches);
 
-        if (empty($matches[1])) {
-            return $url;
-        }
-
-        return $this->uploadsUrl.'/'.ltrim($matches[1], '/');
+        return empty($matches[1]) ? $url : $this->uploadsUrl.'/'.ltrim($matches[1], '/');
     }
 }

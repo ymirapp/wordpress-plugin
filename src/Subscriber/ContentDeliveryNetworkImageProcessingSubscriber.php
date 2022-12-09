@@ -180,8 +180,6 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
 
         // Parse the attachment ID and add it to image array.
         $images = $images->map(function (array $image) {
-            $matches = [];
-
             preg_match('#class=["|\']?[^"\']*wp-image-([\d]+)[^"\']*["|\']?#i', $image['image_tag'], $matches);
 
             if (!empty($matches[1]) && is_numeric($matches[1])) {
@@ -293,13 +291,8 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             return [null, null, false];
         }
 
-        $matches = [];
-        $size = 'full';
-
         // Get the image size using the CSS class if present.
-        if (preg_match('#class=["|\']?[^"\']*size-([^"\'\s]+)[^"\']*["|\']?#i', $image['image_tag'], $matches)) {
-            $size = $matches[1];
-        }
+        $size = preg_match('#class=["|\']?[^"\']*size-([^"\'\s]+)[^"\']*["|\']?#i', $image['image_tag'], $matches) ? $matches[1] : 'full';
 
         $attachmentImage = wp_get_attachment_image_src($image['attachment_id'], $size);
 
@@ -476,7 +469,6 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     {
         $cropped = false;
         $height = null;
-        $matches = [];
         $width = null;
 
         if (preg_match(sprintf('#-(\d+)x(\d+)\.(?:%s)$#i', implode('|', self::SUPPORTED_EXTENSIONS)), $filename, $matches)) {
@@ -493,19 +485,11 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function parseImageDimensionsFromImageSourceQueryString(string $imageSource): array
     {
-        $cropped = (bool) preg_match('#\?.*cropped#i', $imageSource);
-        $height = null;
-        $matches = [];
-        $width = null;
-
-        if (preg_match('#\?.*height=(\d+)#i', $imageSource, $matches)) {
-            $height = (int) $matches[1];
-        }
-        if (preg_match('#\?.*width=(\d+)#i', $imageSource, $matches)) {
-            $width = (int) $matches[1];
-        }
-
-        return [$width, $height, $cropped];
+        return [
+            preg_match('#\?.*width=(\d+)#i', $imageSource, $matches) ? (int) $matches[1] : null,
+            preg_match('#\?.*height=(\d+)#i', $imageSource, $matches) ? (int) $matches[1] : null,
+            (bool) preg_match('#\?.*cropped#i', $imageSource),
+        ];
     }
 
     /**
@@ -513,16 +497,8 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function parseImageDimensionsFromImageTagAttributes(string $tag): array
     {
-        $height = null;
-        $matches = [];
-        $width = null;
-
-        if (preg_match('#\sheight=["|\']?(\d+)["|\']?#i', $tag, $matches)) {
-            $height = (int) $matches[1];
-        }
-        if (preg_match('#\swidth=["|\']?(\d+)["|\']?#i', $tag, $matches)) {
-            $width = (int) $matches[1];
-        }
+        $height = preg_match('#\sheight=["|\']?(\d+)["|\']?#i', $tag, $matches) ? (int) $matches[1] : null;
+        $width = preg_match('#\swidth=["|\']?(\d+)["|\']?#i', $tag, $matches) ? (int) $matches[1] : null;
 
         return [$width, $height, $width && $height];
     }
