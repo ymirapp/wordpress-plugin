@@ -124,7 +124,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 
     public function testDisableAddingImageWidthAndHeightAttributesWithInvalidUrl()
     {
-        $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://domain.com/uploads/image.jpg" alt="" />'));
+        $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), false, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://domain.com/uploads/image.jpg" alt="" />'));
     }
 
     public function testDisableAddingImageWidthAndHeightAttributesWithNoSrcAttribute()
