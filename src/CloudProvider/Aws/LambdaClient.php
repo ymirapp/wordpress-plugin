@@ -111,6 +111,14 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
+    public function runActionScheduler(string $siteUrl)
+    {
+        $this->runWpCliCommand('wp action-scheduler run', true, $siteUrl);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function runCron(string $siteUrl)
     {
         $this->runWpCliCommand('cron event run --due-now --quiet', true, $siteUrl);

@@ -39,6 +39,11 @@ interface ConsoleClientInterface
     public function resizeAttachmentImage($attachment, int $width, int $height);
 
     /**
+     * Run the Action Scheduler for the given site URL.
+     */
+    public function runActionScheduler(string $siteUrl);
+
+    /**
      * Run the WordPress cron for the given site URL.
      */
     public function runCron(string $siteUrl);

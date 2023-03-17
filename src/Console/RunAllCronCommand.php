@@ -49,6 +49,9 @@ class RunAllCronCommand extends AbstractCommand
         foreach ($this->getSiteUrls() as $siteUrl) {
             $this->info(sprintf('Running "wp cron event run" on "%s"', $siteUrl));
             $this->consoleClient->runCron($siteUrl);
+
+            // Run the Action Scheduler for the site if it's installed.
+            $this->maybeRunActionCheduler($siteUrl);
         }
         $this->success('All cron commands run successfully');
     }
@@ -90,5 +93,13 @@ class RunAllCronCommand extends AbstractCommand
         return array_filter(array_map(function (int $blogId) {
             return get_site_url($blogId);
         }, $blogIds));
+    }
+
+    private function maybeRunActionCheduler(string $siteUrl)
+    {
+        if (class_exists('\\ActionScheduler')) {
+            $this->info(sprintf('Running "wp action-scheduler run" on "%s"', $siteUrl));
+            $this->consoleClient->runActionScheduler($siteUrl);
+        }
     }
 }
