@@ -31,9 +31,9 @@ class CreateSiteIconCommand extends AbstractCropAttachmentImageCommand
     /**
      * Constructor.
      */
-    public function __construct(AttachmentFileManager $fileManager, EventManager $eventManager, \WP_Site_Icon $siteIcon)
+    public function __construct(AttachmentFileManager $fileManager, EventManager $eventManager, \WP_Site_Icon $siteIcon, WpCli $wpCli)
     {
-        parent::__construct($fileManager, $eventManager);
+        parent::__construct($fileManager, $eventManager, $wpCli);
 
         $this->siteIcon = $siteIcon;
     }

@@ -35,8 +35,10 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * Constructor.
      */
-    public function __construct(ConsoleClientInterface $consoleClient, ?\WP_Site_Query $siteQuery = null)
+    public function __construct(ConsoleClientInterface $consoleClient, WpCli $wpCli, ?\WP_Site_Query $siteQuery = null)
     {
+        parent::__construct($wpCli);
+
         $this->consoleClient = $consoleClient;
         $this->siteQuery = $siteQuery;
     }
@@ -47,10 +49,10 @@ class RunAllCronCommand extends AbstractCommand
     public function __invoke(array $arguments, array $options)
     {
         foreach ($this->getSiteUrls() as $siteUrl) {
-            $this->info(sprintf('Running "wp cron event run" on "%s"', $siteUrl));
+            $this->wpCli->info(sprintf('Running "wp cron event run" on "%s"', $siteUrl));
             $this->consoleClient->runCron($siteUrl);
         }
-        $this->success('All cron commands run successfully');
+        $this->wpCli->success('All cron commands run successfully');
     }
 
     /**

@@ -17,6 +17,7 @@ use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Ymir\Plugin\Console\EditAttachmentImageCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPImageEditorMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -28,6 +29,7 @@ class EditAttachmentImageCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;
     use FunctionMockTrait;
+    use WpCliMockTrait;
     use WPImageEditorMockTrait;
     use WPPostMockTrait;
 
@@ -140,6 +142,6 @@ class EditAttachmentImageCommandTest extends TestCase
         $wp_update_attachment_metadata->expects($this->once())
                                       ->with($this->identicalTo(4), $this->identicalTo(['sizes' => [], 'file' => 'relative/attached/file/path.jpg', 'width' => 24, 'height' => 42]));
 
-        (new EditAttachmentImageCommand($fileManager))($arguments, $options);
+        (new EditAttachmentImageCommand($fileManager, $this->getWpCliMock()))($arguments, $options);
     }
 }

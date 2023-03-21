@@ -31,9 +31,9 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
     /**
      * Constructor.
      */
-    public function __construct(AttachmentFileManager $fileManager, EventManager $eventManager)
+    public function __construct(AttachmentFileManager $fileManager, EventManager $eventManager, WpCli $wpCli)
     {
-        parent::__construct($fileManager);
+        parent::__construct($fileManager, $wpCli);
 
         $this->eventManager = $eventManager;
     }
@@ -48,12 +48,12 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
         $croppedImage = wp_crop_image($attachment->ID, $options['x'], $options['y'], $options['width'], $options['height'], $options['image_width'] ?? null, $options['image_height'] ?? null);
 
         if ($croppedImage instanceof \WP_Error) {
-            $this->error($croppedImage->get_error_message());
+            $this->wpCli->error($croppedImage->get_error_message());
         } elseif (empty($croppedImage) || !is_string($croppedImage)) {
-            $this->error('Unable to crop attachment image');
+            $this->wpCli->error('Unable to crop attachment image');
         }
 
-        $this->success(sprintf('%s with ID %s', $this->getSuccessMessage(), $this->createCroppedImageAttachment($attachment, $context, $croppedImage)));
+        $this->wpCli->success(sprintf('%s with ID %s', $this->getSuccessMessage(), $this->createCroppedImageAttachment($attachment, $context, $croppedImage)));
     }
 
     /**

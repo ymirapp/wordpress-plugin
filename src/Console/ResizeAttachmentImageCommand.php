@@ -29,16 +29,16 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
         $width = (int) $options['width'];
 
         if ($height <= 0) {
-            $this->error('"height" must be greater than 0');
+            $this->wpCli->error('"height" must be greater than 0');
         } elseif ($width <= 0) {
-            $this->error('"width" must be greater than 0');
+            $this->wpCli->error('"width" must be greater than 0');
         }
 
         $filePath = $this->getFilePath($attachment);
         $image = $this->getImageEditor($filePath);
 
         if ($image->resize($width, $height) instanceof \WP_Error) {
-            $this->error(sprintf('Error trying to resize attachment "%s"', $attachment->ID));
+            $this->wpCli->error(sprintf('Error trying to resize attachment "%s"', $attachment->ID));
         }
 
         $suffix = '';
@@ -49,7 +49,7 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
         }
 
         if (!wp_save_image_file($filePath, $image, $attachment->post_mime_type, $attachment->ID)) {
-            $this->error(sprintf('Unable to save image "%s"', $filePath));
+            $this->wpCli->error(sprintf('Unable to save image "%s"', $filePath));
         }
 
         if (!empty($suffix)) {
@@ -64,7 +64,7 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
 
         wp_update_attachment_metadata($attachment->ID, $imageMetadata);
 
-        $this->success(sprintf('Resized attachment "%s" to %sx%s', $attachment->ID, $imageMetadata['width'], $imageMetadata['height']));
+        $this->wpCli->success(sprintf('Resized attachment "%s" to %sx%s', $attachment->ID, $imageMetadata['width'], $imageMetadata['height']));
     }
 
     /**

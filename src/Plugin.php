@@ -15,7 +15,6 @@ namespace Ymir\Plugin;
 
 use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
 use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
-use Ymir\Plugin\Console\CommandInterface;
 use Ymir\Plugin\DependencyInjection\Container;
 
 /**
@@ -136,7 +135,7 @@ class Plugin
         PublicCloudStorageStreamWrapper::register($this->container['public_cloud_storage_client']);
 
         foreach ($this->container['local_commands'] as $command) {
-            $this->registerCommand($command);
+            $this->container['wp_cli']->registerCommand($command);
         }
 
         if ($this->isLocal()) {
@@ -152,7 +151,7 @@ class Plugin
         }
 
         foreach ($this->container['commands'] as $command) {
-            $this->registerCommand($command);
+            $this->container['wp_cli']->registerCommand($command);
         }
 
         $this->loaded = true;
@@ -164,20 +163,5 @@ class Plugin
     private function isLocal(): bool
     {
         return empty($this->container['ymir_environment']);
-    }
-
-    /**
-     * Register the given command with WP-CLI.
-     */
-    private function registerCommand(CommandInterface $command)
-    {
-        if (!$this->container['is_wp_cli'] || !class_exists('\WP_CLI')) {
-            return;
-        }
-
-        \WP_CLI::add_command($command::getName(), $command, [
-            'shortdesc' => $command::getDescription(),
-            'synopsis' => $command::getSynopsis(),
-        ]);
     }
 }

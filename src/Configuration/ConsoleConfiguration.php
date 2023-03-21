@@ -30,18 +30,20 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
     {
         $container['commands'] = $container->service(function (Container $container) {
             return [
-                new Console\CreateAttachmentMetadataCommand($container['file_manager']),
-                new Console\CreateCroppedImageCommand($container['file_manager'], $container['event_manager']),
-                new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon']),
-                new Console\EditAttachmentImageCommand($container['file_manager']),
-                new Console\ResizeAttachmentImageCommand($container['file_manager']),
-                new Console\RunAllCronCommand($container['console_client'], $container['site_query']),
+                new Console\CreateAttachmentMetadataCommand($container['file_manager'], $container['wp_cli']),
+                new Console\CreateCroppedImageCommand($container['file_manager'], $container['event_manager'], $container['wp_cli']),
+                new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon'], $container['wp_cli']),
+                new Console\EditAttachmentImageCommand($container['file_manager'], $container['wp_cli']),
+                new Console\ResizeAttachmentImageCommand($container['file_manager'], $container['wp_cli']),
+                new Console\RunAllCronCommand($container['console_client'], $container['wp_cli'], $container['site_query']),
             ];
         });
         $container['console_client'] = $container->service(function (Container $container) {
             return new LambdaClient($container['ymir_http_client'], $container['cloud_provider_function_name'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['site_url']);
         });
-        $container['is_wp_cli'] = defined('WP_CLI') && WP_CLI;
+        $container['wp_cli'] = $container->service(function () {
+            return new Console\WpCli();
+        });
         $container['local_commands'] = $container->service(function () {
             return [];
         });

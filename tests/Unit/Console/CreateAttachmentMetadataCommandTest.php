@@ -17,6 +17,7 @@ use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Ymir\Plugin\Console\CreateAttachmentMetadataCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
@@ -27,6 +28,7 @@ class CreateAttachmentMetadataCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;
     use FunctionMockTrait;
+    use WpCliMockTrait;
     use WPPostMockTrait;
 
     public function testGetName()
@@ -88,6 +90,6 @@ class CreateAttachmentMetadataCommandTest extends TestCase
         $wp_update_attachment_metadata->expects($this->once())
                                       ->with($this->identicalTo(4), $this->identicalTo(['meta' => 'data']));
 
-        (new CreateAttachmentMetadataCommand($fileManager))($arguments, []);
+        (new CreateAttachmentMetadataCommand($fileManager, $this->getWpCliMock()))($arguments, []);
     }
 }

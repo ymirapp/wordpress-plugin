@@ -30,8 +30,10 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
     /**
      * Constructor.
      */
-    public function __construct(AttachmentFileManager $fileManager)
+    public function __construct(AttachmentFileManager $fileManager, WpCli $wpCli)
     {
+        parent::__construct($wpCli);
+
         if (defined('ABSPATH')) {
             require_once ABSPATH.'wp-admin/includes/image.php';
             require_once ABSPATH.'wp-admin/includes/image-edit.php';
@@ -112,15 +114,15 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
     protected function getAttachment($attachmentId): \WP_Post
     {
         if (!is_numeric($attachmentId)) {
-            $this->error(sprintf('Attachment ID "%s" isn\'t numeric', $attachmentId));
+            $this->wpCli->error(sprintf('Attachment ID "%s" isn\'t numeric', $attachmentId));
         }
 
         $attachment = get_post($attachmentId);
 
         if (!$attachment instanceof \WP_Post) {
-            $this->error(sprintf('No attachment found for ID "%s"', $attachmentId));
+            $this->wpCli->error(sprintf('No attachment found for ID "%s"', $attachmentId));
         } elseif ('attachment' !== $attachment->post_type) {
-            $this->error(sprintf('Post "%s" isn\'t an attachment', $attachment->ID));
+            $this->wpCli->error(sprintf('Post "%s" isn\'t an attachment', $attachment->ID));
         }
 
         return $attachment;
@@ -134,7 +136,7 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
         $metadata = wp_get_attachment_metadata($attachment->ID);
 
         if (!is_array($metadata)) {
-            $this->error(sprintf('Attachment "%s" has no metadata', $attachment->ID));
+            $this->wpCli->error(sprintf('Attachment "%s" has no metadata', $attachment->ID));
         }
 
         return $metadata;
@@ -162,11 +164,11 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
         $filePath = get_attached_file($attachment->ID);
 
         if (false === $filePath) {
-            $this->error(sprintf('Attachment "%s" has no attached file', $attachment->ID));
+            $this->wpCli->error(sprintf('Attachment "%s" has no attached file', $attachment->ID));
         } elseif (!file_exists($filePath)) {
-            $this->error(sprintf('Attachment file "%s" doesn\'t exist', $filePath));
+            $this->wpCli->error(sprintf('Attachment file "%s" doesn\'t exist', $filePath));
         } elseif (!is_readable($filePath)) {
-            $this->error(sprintf('Attachment file "%s" isn\'t readable', $filePath));
+            $this->wpCli->error(sprintf('Attachment file "%s" isn\'t readable', $filePath));
         } elseif ($this->fileManager->isInUploadsDirectory($filePath)) {
             $filePath = $this->fileManager->copyToTempDirectory($filePath);
         }
@@ -182,7 +184,7 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
         $imageEditor = wp_get_image_editor($filePath);
 
         if (!$imageEditor instanceof \WP_Image_Editor) {
-            $this->error(sprintf('Couldn\'t find a compatible image editor for "%s"', $filePath));
+            $this->wpCli->error(sprintf('Couldn\'t find a compatible image editor for "%s"', $filePath));
         }
 
         return $imageEditor;

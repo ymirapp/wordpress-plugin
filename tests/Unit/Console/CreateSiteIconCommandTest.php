@@ -18,6 +18,7 @@ use Ymir\Plugin\Console\CreateSiteIconCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteIconMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -30,6 +31,7 @@ class CreateSiteIconCommandTest extends TestCase
     use AttachmentFileManagerMockTrait;
     use EventManagerMockTrait;
     use FunctionMockTrait;
+    use WpCliMockTrait;
     use WPPostMockTrait;
     use WPSiteIconMockTrait;
 
@@ -117,6 +119,6 @@ class CreateSiteIconCommandTest extends TestCase
                       ->with($this->identicalTo(4), $this->identicalTo('14'), $this->identicalTo('21'), $this->identicalTo('24'), $this->identicalTo('42'), $this->identicalTo('240'), $this->identicalTo('420'))
                       ->willReturn('file/path/cropped.jpg');
 
-        (new CreateSiteIconCommand($this->getAttachmentFileManagerMock(), $eventManager, $siteIcon))($arguments, $options);
+        (new CreateSiteIconCommand($this->getAttachmentFileManagerMock(), $eventManager, $siteIcon, $this->getWpCliMock()))($arguments, $options);
     }
 }

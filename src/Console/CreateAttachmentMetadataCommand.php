@@ -27,7 +27,7 @@ class CreateAttachmentMetadataCommand extends AbstractAttachmentCommand
 
         wp_update_attachment_metadata($attachment->ID, wp_generate_attachment_metadata($attachment->ID, $this->getFilePath($attachment)));
 
-        $this->success(sprintf('Created metadata for attachment "%s"', $attachment->ID));
+        $this->wpCli->success(sprintf('Created metadata for attachment "%s"', $attachment->ID));
     }
 
     /**

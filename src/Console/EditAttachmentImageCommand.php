@@ -28,7 +28,7 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
         $changes = json_decode($arguments[1]);
 
         if (!is_array($changes)) {
-            $this->error('Unable to decode the "changes" argument');
+            $this->wpCli->error('Unable to decode the "changes" argument');
         }
 
         $apply = strtolower($options['apply']);
@@ -44,7 +44,7 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
         }
 
         if (!wp_save_image_file($filePath, $image, $attachment->post_mime_type, $attachment->ID)) {
-            $this->error(sprintf('Unable to save image "%s"', $filePath));
+            $this->wpCli->error(sprintf('Unable to save image "%s"', $filePath));
         }
 
         if ($this->isImageCleanupActive() && !empty($imageMetadata['sizes'])) {
@@ -71,7 +71,7 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
 
         wp_update_attachment_metadata($attachment->ID, $imageMetadata);
 
-        $this->success(sprintf('Edited attachment "%s"', $attachment->ID));
+        $this->wpCli->success(sprintf('Edited attachment "%s"', $attachment->ID));
     }
 
     /**

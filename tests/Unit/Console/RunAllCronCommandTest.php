@@ -16,6 +16,7 @@ namespace Ymir\Plugin\Tests\Unit\Console;
 use Ymir\Plugin\Console\RunAllCronCommand;
 use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteQueryMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -27,6 +28,7 @@ class RunAllCronCommandTest extends TestCase
 {
     use ConsoleClientInterfaceMockTrait;
     use FunctionMockTrait;
+    use WpCliMockTrait;
     use WPSiteMockTrait;
     use WPSiteQueryMockTrait;
 
@@ -53,7 +55,7 @@ class RunAllCronCommandTest extends TestCase
                      ->with($this->identicalTo(0))
                      ->willReturn('current_site_url');
 
-        (new RunAllCronCommand($consoleClient, null))([], []);
+        (new RunAllCronCommand($consoleClient, $this->getWpCliMock(), null))([], []);
     }
 
     public function testInvokeQueriesForSiteUrlsWhenThereIsAWPSiteQueryObject()
@@ -92,6 +94,6 @@ class RunAllCronCommandTest extends TestCase
                     ]))
                     ->willReturn([$wpSite1, $wpSite2]);
 
-        (new RunAllCronCommand($consoleClient, $wpSiteQuery))([], []);
+        (new RunAllCronCommand($consoleClient, $this->getWpCliMock(), $wpSiteQuery))([], []);
     }
 }

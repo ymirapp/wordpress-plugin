@@ -18,6 +18,7 @@ use Ymir\Plugin\Console\CreateCroppedImageCommand;
 use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteIconMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -30,6 +31,7 @@ class CreateCroppedImageCommandTest extends TestCase
     use AttachmentFileManagerMockTrait;
     use EventManagerMockTrait;
     use FunctionMockTrait;
+    use WpCliMockTrait;
     use WPPostMockTrait;
     use WPSiteIconMockTrait;
 
@@ -142,6 +144,6 @@ class CreateCroppedImageCommandTest extends TestCase
         $wp_update_attachment_metadata->expects($this->once())
                                       ->with($this->identicalTo(5), $this->identicalTo(['filtered_meta' => 'filtered_data']));
 
-        (new CreateCroppedImageCommand($this->getAttachmentFileManagerMock(), $eventManager))($arguments, $options);
+        (new CreateCroppedImageCommand($this->getAttachmentFileManagerMock(), $eventManager, $this->getWpCliMock()))($arguments, $options);
     }
 }

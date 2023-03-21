@@ -56,7 +56,7 @@ class CreateCroppedImageCommand extends AbstractCropAttachmentImageCommand
     protected function createCroppedImageAttachment(\WP_Post $originalAttachment, string $context, string $croppedImage): int
     {
         if ('site-icon' === $context) {
-            $this->error(sprintf('Please use the "%s" command to create a site icon', CreateSiteIconCommand::getName()));
+            $this->wpCli->error(sprintf('Please use the "%s" command to create a site icon', CreateSiteIconCommand::getName()));
         }
 
         $this->eventManager->execute('wp_ajax_crop_image_pre_save', $context, $originalAttachment->ID, $croppedImage);
