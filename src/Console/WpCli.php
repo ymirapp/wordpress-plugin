@@ -35,6 +35,14 @@ class WpCli
     }
 
     /**
+     * Check if the given WP-CLI command is registered.
+     */
+    public function isCommandRegistered(string $command): bool
+    {
+        return is_array(\WP_CLI::get_runner()->find_command_to_run($command));
+    }
+
+    /**
      * Register the given command with WP-CLI.
      */
     public function registerCommand(CommandInterface $command)

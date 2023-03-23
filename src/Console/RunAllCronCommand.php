@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Console;
 
+use Ymir\Plugin\EventManagement\EventManager;
+use Ymir\Plugin\Support\Collection;
+
 /**
- * Command that runs the "wp cron event run" command on all WordPress sites.
+ * Command that runs all the scheduled cron commands on all WordPress sites.
  */
 class RunAllCronCommand extends AbstractCommand
 {
@@ -26,6 +29,13 @@ class RunAllCronCommand extends AbstractCommand
     private $consoleClient;
 
     /**
+     * The plugin event manager.
+     *
+     * @var EventManager
+     */
+    private $eventManager;
+
+    /**
      * Class used for querying the WordPress sites.
      *
      * @var \WP_Site_Query
@@ -35,11 +45,12 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * Constructor.
      */
-    public function __construct(ConsoleClientInterface $consoleClient, WpCli $wpCli, ?\WP_Site_Query $siteQuery = null)
+    public function __construct(ConsoleClientInterface $consoleClient, EventManager $eventManager, WpCli $wpCli, ?\WP_Site_Query $siteQuery = null)
     {
         parent::__construct($wpCli);
 
         $this->consoleClient = $consoleClient;
+        $this->eventManager = $eventManager;
         $this->siteQuery = $siteQuery;
     }
 
@@ -48,11 +59,27 @@ class RunAllCronCommand extends AbstractCommand
      */
     public function __invoke(array $arguments, array $options)
     {
-        foreach ($this->getSiteUrls() as $siteUrl) {
-            $this->wpCli->info(sprintf('Running "wp cron event run" on "%s"', $siteUrl));
-            $this->consoleClient->runCron($siteUrl);
-        }
-        $this->wpCli->success('All cron commands run successfully');
+        $this->wpCli->info('Beginning to run all scheduled cron commands');
+
+        $this->getSiteUrls()->each(function (string $siteUrl) {
+            $commands = (new Collection($this->eventManager->filter('ymir_scheduled_site_cron_commands', ['cron event run --due-now --quiet'], $siteUrl)));
+
+            $commands->map(function (string $command) {
+                if (0 === strpos($command, 'wp ')) {
+                    $command = substr($command, 3);
+                }
+
+                return $command;
+            })->filter(function (string $command) {
+                return $this->wpCli->isCommandRegistered($command);
+            })->each(function (string $command) use ($siteUrl) {
+                $this->wpCli->info(sprintf('Running "wp %s" on "%s"', $command, $siteUrl));
+
+                $this->consoleClient->runWpCliCommand($command, true, $siteUrl);
+            });
+        });
+
+        $this->wpCli->success('All scheduled cron commands run successfully');
     }
 
     /**
@@ -60,7 +87,7 @@ class RunAllCronCommand extends AbstractCommand
      */
     public static function getDescription(): string
     {
-        return 'Runs the "wp cron event run" command on all WordPress sites';
+        return 'Runs all the scheduled cron commands on all WordPress sites';
     }
 
     /**
@@ -74,7 +101,7 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * Get all the site URLs for this WordPress installation.
      */
-    private function getSiteUrls(): array
+    private function getSiteUrls(): Collection
     {
         $blogIds = [0];
 
@@ -89,8 +116,8 @@ class RunAllCronCommand extends AbstractCommand
             ]));
         }
 
-        return array_filter(array_map(function (int $blogId) {
+        return (new Collection($blogIds))->map(function (int $blogId) {
             return get_site_url($blogId);
-        }, $blogIds));
+        })->filter()->values();
     }
 }

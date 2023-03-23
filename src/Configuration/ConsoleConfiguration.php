@@ -35,7 +35,7 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
                 new Console\CreateSiteIconCommand($container['file_manager'], $container['event_manager'], $container['site_icon'], $container['wp_cli']),
                 new Console\EditAttachmentImageCommand($container['file_manager'], $container['wp_cli']),
                 new Console\ResizeAttachmentImageCommand($container['file_manager'], $container['wp_cli']),
-                new Console\RunAllCronCommand($container['console_client'], $container['wp_cli'], $container['site_query']),
+                new Console\RunAllCronCommand($container['console_client'], $container['event_manager'], $container['wp_cli'], $container['site_query']),
             ];
         });
         $container['console_client'] = $container->service(function (Container $container) {

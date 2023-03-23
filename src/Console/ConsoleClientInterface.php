@@ -39,7 +39,7 @@ interface ConsoleClientInterface
     public function resizeAttachmentImage($attachment, int $width, int $height);
 
     /**
-     * Run the WordPress cron for the given site URL.
+     * Run the given WP-CLI command.
      */
-    public function runCron(string $siteUrl);
+    public function runWpCliCommand(string $command, bool $async = false, string $siteUrl = '');
 }

@@ -15,6 +15,7 @@ namespace Ymir\Plugin\Tests\Unit\Console;
 
 use Ymir\Plugin\Console\RunAllCronCommand;
 use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
+use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteMockTrait;
@@ -27,6 +28,7 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 class RunAllCronCommandTest extends TestCase
 {
     use ConsoleClientInterfaceMockTrait;
+    use EventManagerMockTrait;
     use FunctionMockTrait;
     use WpCliMockTrait;
     use WPSiteMockTrait;
@@ -45,33 +47,55 @@ class RunAllCronCommandTest extends TestCase
     public function testInvokeGetsCurrentSiteUrlWhenThereIsNoWPSiteQueryObject()
     {
         $consoleClient = $this->getConsoleClientInterfaceMock();
+        $eventManager = $this->getEventManagerMock();
         $get_site_url = $this->getFunctionMock($this->getNamespace(RunAllCronCommand::class), 'get_site_url');
+        $wpCli = $this->getWpCliMock();
 
         $consoleClient->expects($this->once())
-                      ->method('runCron')
-                      ->with($this->identicalTo('current_site_url'));
+                      ->method('runWpCliCommand')
+                      ->with($this->identicalTo('cron event run --due-now --quiet'), $this->identicalTo(true), $this->identicalTo('current_site_url'));
+
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_scheduled_site_cron_commands'), $this->identicalTo(['cron event run --due-now --quiet']), $this->identicalTo('current_site_url'))
+                     ->willReturnArgument(1);
 
         $get_site_url->expects($this->once())
                      ->with($this->identicalTo(0))
                      ->willReturn('current_site_url');
 
-        (new RunAllCronCommand($consoleClient, $this->getWpCliMock(), null))([], []);
+        $wpCli->expects($this->once())
+               ->method('isCommandRegistered')
+               ->with($this->identicalTo('cron event run --due-now --quiet'))
+               ->willReturn(true);
+
+        (new RunAllCronCommand($consoleClient, $eventManager, $wpCli, null))([], []);
     }
 
     public function testInvokeQueriesForSiteUrlsWhenThereIsAWPSiteQueryObject()
     {
         $consoleClient = $this->getConsoleClientInterfaceMock();
+        $eventManager = $this->getEventManagerMock();
         $get_site_url = $this->getFunctionMock($this->getNamespace(RunAllCronCommand::class), 'get_site_url');
+        $wpCli = $this->getWpCliMock();
         $wpSite1 = $this->getWPSiteMock();
         $wpSite2 = $this->getWPSiteMock();
         $wpSiteQuery = $this->getWPSiteQueryMock();
 
         $consoleClient->expects($this->exactly(2))
-                      ->method('runCron')
+                      ->method('runWpCliCommand')
                       ->withConsecutive(
-                          [$this->identicalTo('site_url_1')],
-                          [$this->identicalTo('site_url_2')]
+                          [$this->identicalTo('cron event run --due-now --quiet'), $this->identicalTo(true), $this->identicalTo('site_url_1')],
+                          [$this->identicalTo('cron event run --due-now --quiet'), $this->identicalTo(true), $this->identicalTo('site_url_2')]
                       );
+
+        $eventManager->expects($this->exactly(2))
+                     ->method('filter')
+                     ->withConsecutive(
+                         [$this->identicalTo('ymir_scheduled_site_cron_commands'), $this->identicalTo(['cron event run --due-now --quiet']), $this->identicalTo('site_url_1')],
+                         [$this->identicalTo('ymir_scheduled_site_cron_commands'), $this->identicalTo(['cron event run --due-now --quiet']), $this->identicalTo('site_url_2')]
+                     )
+                     ->willReturnArgument(1);
 
         $get_site_url->expects($this->exactly(2))
                      ->withConsecutive(
@@ -79,6 +103,14 @@ class RunAllCronCommandTest extends TestCase
                          [$this->identicalTo(2)]
                      )
                      ->willReturnOnConsecutiveCalls('site_url_1', 'site_url_2');
+
+        $wpCli->expects($this->exactly(2))
+              ->method('isCommandRegistered')
+              ->withConsecutive(
+                  [$this->identicalTo('cron event run --due-now --quiet')],
+                  [$this->identicalTo('cron event run --due-now --quiet')]
+              )
+              ->willReturn(true);
 
         $wpSite1->blog_id = 1;
 
@@ -94,6 +126,6 @@ class RunAllCronCommandTest extends TestCase
                     ]))
                     ->willReturn([$wpSite1, $wpSite2]);
 
-        (new RunAllCronCommand($consoleClient, $this->getWpCliMock(), $wpSiteQuery))([], []);
+        (new RunAllCronCommand($consoleClient, $eventManager, $wpCli, $wpSiteQuery))([], []);
     }
 }

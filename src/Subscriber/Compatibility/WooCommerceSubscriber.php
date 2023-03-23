@@ -26,9 +26,23 @@ class WooCommerceSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            'init' => 'configureActionScheduler',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
+            'ymir_scheduled_site_cron_commands' => 'scheduleActionSchedulerCommand',
         ];
+    }
+
+    /**
+     * Configure Action Scheduler to run on the cloud provider.
+     */
+    public function configureActionScheduler()
+    {
+        if (!class_exists(\ActionScheduler::class)) {
+            return;
+        }
+
+        remove_action('action_scheduler_run_queue', [\ActionScheduler::runner(), 'run']);
     }
 
     /**
@@ -37,5 +51,15 @@ class WooCommerceSubscriber implements SubscriberInterface
     public function disableCheckImportFilePath(): bool
     {
         return false;
+    }
+
+    /**
+     * Schedule the action scheduler command to run during the cron process.
+     */
+    public function scheduleActionSchedulerCommand(array $commands): array
+    {
+        $commands[] = 'action-scheduler run';
+
+        return $commands;
     }
 }

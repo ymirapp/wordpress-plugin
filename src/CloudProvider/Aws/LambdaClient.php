@@ -111,9 +111,46 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function runCron(string $siteUrl)
+    public function runWpCliCommand(string $command, bool $async = false, string $siteUrl = ''): string
     {
-        $this->runWpCliCommand('cron event run --due-now --quiet', true, $siteUrl);
+        if (empty($siteUrl)) {
+            $siteUrl = $this->siteUrl;
+        }
+
+        if (0 === strpos($command, 'wp ')) {
+            $command = substr($command, 3);
+        }
+
+        $response = $this->invoke([
+            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $siteUrl),
+        ], $async);
+
+        if ($async) {
+            return '';
+        } elseif (!isset($response['body'])) {
+            throw new \RuntimeException('Lambda did not return a response body');
+        }
+
+        $response = json_decode($response['body'], true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException('Unable to parse the Lambda response body');
+        }
+
+        if (1 === preg_match('/.*Success:[^\s]*\s(.*)/', $response['output'], $matches)) {
+            return $matches[1];
+        }
+
+        $message = sprintf('Lambda was unable to run the "%s" WP-CLI command', $command);
+
+        if (!empty($response['errorMessage'])) {
+            preg_match('/^.*Error:[^\s]*\s(.*)$/m', $response['errorMessage'], $matches);
+        }
+        if (!empty($matches[1])) {
+            $message = $matches[1];
+        }
+
+        throw new \RuntimeException($message);
     }
 
     /**
@@ -161,46 +198,5 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
             'content-type' => 'application/json',
             'x-amz-invocation-type' => $async ? 'Event' : 'RequestResponse',
         ]);
-    }
-
-    /**
-     * Run the given WP-CLI command.
-     */
-    private function runWpCliCommand(string $command, bool $async = false, string $siteUrl = ''): string
-    {
-        if (empty($siteUrl)) {
-            $siteUrl = $this->siteUrl;
-        }
-
-        $response = $this->invoke([
-            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $siteUrl),
-        ], $async);
-
-        if ($async) {
-            return '';
-        } elseif (!isset($response['body'])) {
-            throw new \RuntimeException('Lambda did not return a response body');
-        }
-
-        $response = json_decode($response['body'], true);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \RuntimeException('Unable to parse the Lambda response body');
-        }
-
-        if (1 === preg_match('/.*Success:[^\s]*\s(.*)/', $response['output'], $matches)) {
-            return $matches[1];
-        }
-
-        $message = sprintf('Lambda was unable to run the "%s" WP-CLI command', $command);
-
-        if (!empty($response['errorMessage'])) {
-            preg_match('/^.*Error:[^\s]*\s(.*)$/m', $response['errorMessage'], $matches);
-        }
-        if (!empty($matches[1])) {
-            $message = $matches[1];
-        }
-
-        throw new \RuntimeException($message);
     }
 }
