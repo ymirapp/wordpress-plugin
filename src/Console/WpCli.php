@@ -39,7 +39,7 @@ class WpCli
      */
     public function isCommandRegistered(string $command): bool
     {
-        return is_array(\WP_CLI::get_runner()->find_command_to_run($command));
+        return is_array(\WP_CLI::get_runner()->find_command_to_run(explode(' ', $command)));
     }
 
     /**
