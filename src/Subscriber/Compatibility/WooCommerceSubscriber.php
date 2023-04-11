@@ -58,7 +58,7 @@ class WooCommerceSubscriber extends AbstractEventManagerAwareSubscriber
      */
     public function scheduleActionSchedulerCommand(array $commands): array
     {
-        $commands[] = 'action-scheduler run';
+        $commands[] = $this->eventManager->filter('ymir_woocommerce_action_scheduler_command', 'action-scheduler run --batches=1');
 
         return $commands;
     }

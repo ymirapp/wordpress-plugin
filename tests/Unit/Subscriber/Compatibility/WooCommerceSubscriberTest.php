@@ -66,4 +66,19 @@ class WooCommerceSubscriberTest extends TestCase
 
         $this->assertSame($subscribedEvents, $callbacks);
     }
+
+    public function testScheduleActionSchedulerCommand()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_woocommerce_action_scheduler_command'), $this->identicalTo('action-scheduler run --batches=1'))
+                     ->willReturnArgument(1);
+
+        $subscriber = new WooCommerceSubscriber();
+
+        $subscriber->setEventManager($eventManager);
+
+        $this->assertSame(['action-scheduler run --batches=1'], $subscriber->scheduleActionSchedulerCommand([]));
+    }
 }
