@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Subscriber\Compatibility;
 
-use Ymir\Plugin\EventManagement\SubscriberInterface;
+use Ymir\Plugin\EventManagement\AbstractEventManagerAwareSubscriber;
 
 /**
  * Subscriber that handles WooCommerce compatibility.
  */
-class WooCommerceSubscriber implements SubscriberInterface
+class WooCommerceSubscriber extends AbstractEventManagerAwareSubscriber
 {
     /**
      * {@inheritdoc}
@@ -42,7 +42,7 @@ class WooCommerceSubscriber implements SubscriberInterface
             return;
         }
 
-        remove_action('action_scheduler_run_queue', [\ActionScheduler::runner(), 'run']);
+        $this->eventManager->removeCallback('action_scheduler_run_queue', [\ActionScheduler::runner(), 'run']);
     }
 
     /**
