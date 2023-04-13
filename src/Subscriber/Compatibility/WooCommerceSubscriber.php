@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Subscriber\Compatibility;
 
-use Ymir\Plugin\EventManagement\AbstractEventManagerAwareSubscriber;
+use Ymir\Plugin\EventManagement\SubscriberInterface;
 
 /**
  * Subscriber that handles WooCommerce compatibility.
  */
-class WooCommerceSubscriber extends AbstractEventManagerAwareSubscriber
+class WooCommerceSubscriber implements SubscriberInterface
 {
     /**
      * {@inheritdoc}
@@ -26,23 +26,9 @@ class WooCommerceSubscriber extends AbstractEventManagerAwareSubscriber
     public static function getSubscribedEvents(): array
     {
         return [
-            'init' => 'configureActionScheduler',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
-            'ymir_scheduled_site_cron_commands' => 'scheduleActionSchedulerCommand',
         ];
-    }
-
-    /**
-     * Configure Action Scheduler to run on the cloud provider.
-     */
-    public function configureActionScheduler()
-    {
-        if (!class_exists(\ActionScheduler::class)) {
-            return;
-        }
-
-        $this->eventManager->removeCallback('action_scheduler_run_queue', [\ActionScheduler::runner(), 'run']);
     }
 
     /**
@@ -51,15 +37,5 @@ class WooCommerceSubscriber extends AbstractEventManagerAwareSubscriber
     public function disableCheckImportFilePath(): bool
     {
         return false;
-    }
-
-    /**
-     * Schedule the action scheduler command to run during the cron process.
-     */
-    public function scheduleActionSchedulerCommand(array $commands): array
-    {
-        $commands[] = $this->eventManager->filter('ymir_woocommerce_action_scheduler_command', 'action-scheduler run --batches=1');
-
-        return $commands;
     }
 }

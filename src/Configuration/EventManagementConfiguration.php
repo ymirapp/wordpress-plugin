@@ -55,6 +55,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\WordPressSubscriber($container['server_software']),
 
                 // Plugin compatibility subscribers
+                new Subscriber\Compatibility\ActionSchedulerSubscriber(),
                 new Subscriber\Compatibility\WooCommerceSubscriber(),
                 new Subscriber\Compatibility\WpMigrateDbSubscriber(),
             ];

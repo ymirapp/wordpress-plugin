@@ -26,24 +26,6 @@ class WooCommerceSubscriberTest extends TestCase
     use EventManagerMockTrait;
     use FunctionMockTrait;
 
-    public function testConfigureActionSchedulerWhenActionSchedulerClassDoesntExist()
-    {
-        $class_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'class_exists');
-        $class_exists->expects($this->once())
-                     ->with($this->identicalTo('ActionScheduler'))
-                     ->willReturn(false);
-
-        $eventManager = $this->getEventManagerMock();
-        $eventManager->expects($this->never())
-                     ->method('removeCallback');
-
-        $subscriber = new WooCommerceSubscriber();
-
-        $subscriber->setEventManager($eventManager);
-
-        $subscriber->configureActionScheduler();
-    }
-
     public function testDisableCheckImportFilePath()
     {
         $this->assertFalse((new WooCommerceSubscriber())->disableCheckImportFilePath());
@@ -58,27 +40,10 @@ class WooCommerceSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
-            'init' => 'configureActionScheduler',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
-            'ymir_scheduled_site_cron_commands' => 'scheduleActionSchedulerCommand',
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);
-    }
-
-    public function testScheduleActionSchedulerCommand()
-    {
-        $eventManager = $this->getEventManagerMock();
-        $eventManager->expects($this->once())
-                     ->method('filter')
-                     ->with($this->identicalTo('ymir_woocommerce_action_scheduler_command'), $this->identicalTo('action-scheduler run --batches=1'))
-                     ->willReturnArgument(1);
-
-        $subscriber = new WooCommerceSubscriber();
-
-        $subscriber->setEventManager($eventManager);
-
-        $this->assertSame(['action-scheduler run --batches=1'], $subscriber->scheduleActionSchedulerCommand([]));
     }
 }
