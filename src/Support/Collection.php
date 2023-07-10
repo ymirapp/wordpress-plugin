@@ -283,7 +283,7 @@ class Collection implements \ArrayAccess
     /**
      * Extract a slice of the collection.
      */
-    public function slice(int $offset, ?int $length = null): self
+    public function slice(int $offset, int $length = null): self
     {
         return new self(array_slice($this->items, $offset, $length, true));
     }

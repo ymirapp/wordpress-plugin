@@ -45,7 +45,7 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * Constructor.
      */
-    public function __construct(ConsoleClientInterface $consoleClient, EventManager $eventManager, WpCli $wpCli, ?\WP_Site_Query $siteQuery = null)
+    public function __construct(ConsoleClientInterface $consoleClient, EventManager $eventManager, WpCli $wpCli, \WP_Site_Query $siteQuery = null)
     {
         parent::__construct($wpCli);
 
@@ -65,7 +65,7 @@ class RunAllCronCommand extends AbstractCommand
             $commands = (new Collection($this->eventManager->filter('ymir_scheduled_site_cron_commands', ['cron event run --due-now --quiet'], $siteUrl)));
 
             $commands->map(function (string $command) {
-                if (0 === strpos($command, 'wp ')) {
+                if (str_starts_with($command, 'wp ')) {
                     $command = substr($command, 3);
                 }
 

@@ -109,7 +109,7 @@ class AttachmentFileManager
      */
     public function isInTempDirectory(string $file): bool
     {
-        return 0 === strpos($file, $this->tempDirectory);
+        return str_starts_with($file, $this->tempDirectory);
     }
 
     /**
@@ -117,7 +117,7 @@ class AttachmentFileManager
      */
     public function isInUploadsDirectory(string $file): bool
     {
-        return 0 === strpos($file, $this->uploadsDirectory);
+        return str_starts_with($file, $this->uploadsDirectory);
     }
 
     /**
@@ -125,7 +125,7 @@ class AttachmentFileManager
      */
     private function copy(string $file, string $sourceDirectory, string $destinationDirectory): string
     {
-        if (0 !== strpos($file, $sourceDirectory)) {
+        if (!str_starts_with($file, $sourceDirectory)) {
             throw new \InvalidArgumentException(sprintf('The "%s" file isn\'t in the "%s" directory', $file, $sourceDirectory));
         } elseif (!file_exists($file)) {
             throw new \InvalidArgumentException(sprintf('The "%s" file doesn\'t exist', $file));

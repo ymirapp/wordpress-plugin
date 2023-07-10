@@ -23,7 +23,7 @@ class Autoloader
      */
     public static function autoload(string $class)
     {
-        if (0 !== strpos($class, __NAMESPACE__)) {
+        if (!str_starts_with($class, __NAMESPACE__)) {
             return;
         }
 

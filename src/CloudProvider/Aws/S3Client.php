@@ -227,7 +227,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * Makes a request to the AWS S3 API for the given object key.
      */
-    protected function request(string $method, string $key, ?string $body = null, array $headers = []): array
+    protected function request(string $method, string $key, string $body = null, array $headers = []): array
     {
         return parent::request($method, $this->createRequestUri($key), $body, $headers);
     }

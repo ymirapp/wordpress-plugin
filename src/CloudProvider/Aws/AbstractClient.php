@@ -134,7 +134,7 @@ abstract class AbstractClient
     /**
      * Makes a request to the AWS API for the given URI.
      */
-    protected function request(string $method, string $uri, ?string $body = null, array $headers = []): array
+    protected function request(string $method, string $uri, string $body = null, array $headers = []): array
     {
         $arguments = [
             'headers' => $this->mergeHeaders($this->createBaseHeaders($body), $headers),

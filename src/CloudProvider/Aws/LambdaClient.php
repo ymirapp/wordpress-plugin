@@ -117,7 +117,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
             $siteUrl = $this->siteUrl;
         }
 
-        if (0 === strpos($command, 'wp ')) {
+        if (str_starts_with($command, 'wp ')) {
             $command = substr($command, 3);
         }
 

@@ -67,7 +67,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $baseImageSizes, bool $isMultisite, string $uploadsUrl, ?int $contentWidthGlobal = null)
+    public function __construct(array $baseImageSizes, bool $isMultisite, string $uploadsUrl, int $contentWidthGlobal = null)
     {
         $this->baseImageSizes = $baseImageSizes;
         $this->contentWidthGlobal = $contentWidthGlobal;
@@ -304,7 +304,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
      */
     private function disableImageDownsizeFilterForEditMediaRestRequest(\WP_REST_Request $request)
     {
-        if (false !== strpos($request->get_route(), 'wp/v2/media') && 'edit' === $request->get_param('context')) {
+        if (str_contains($request->get_route(), 'wp/v2/media') && 'edit' === $request->get_param('context')) {
             $this->imageDownsizeFilterEnabled = false;
         }
     }
@@ -451,7 +451,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             $uploadsUrl = preg_replace('#/sites/[\d]+#', '', $uploadsUrl);
         }
 
-        return 0 === strpos($imageUrl, $uploadsUrl);
+        return str_starts_with($imageUrl, $uploadsUrl);
     }
 
     /**

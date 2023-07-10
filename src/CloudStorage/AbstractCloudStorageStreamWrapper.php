@@ -780,7 +780,7 @@ abstract class AbstractCloudStorageStreamWrapper
     {
         $protocol = static::getProtocol().'://';
 
-        if (0 !== strpos($path, $protocol)) {
+        if (!str_starts_with($path, $protocol)) {
             throw new \InvalidArgumentException(sprintf('Invalid protocol for "%s"', $path));
         }
 
