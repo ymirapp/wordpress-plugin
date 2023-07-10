@@ -94,7 +94,7 @@ class GetFileDetailsEndpoint extends AbstractEndpoint
         preg_match('/(uploads.*)/', substr($this->uploadsPath, 0, -strlen($this->uploadsSubdirectory)), $matches);
 
         if (empty($matches[1])) {
-            throw new \RuntimeException('Unable to parse uploads path');
+            throw new \RuntimeException(sprintf('Unable to parse "%s" uploads path', $this->uploadsPath));
         }
 
         return [
