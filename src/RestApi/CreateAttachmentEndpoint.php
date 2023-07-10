@@ -158,7 +158,7 @@ class CreateAttachmentEndpoint extends AbstractEndpoint
         ];
         $size = @getimagesize($this->uploadsDirectory.'/'.$path);
 
-        if (is_array($size) && isset($size[0], $size[1])) {
+        if (is_array($size)) {
             $metadata['height'] = $size[1];
             $metadata['width'] = $size[0];
         }
