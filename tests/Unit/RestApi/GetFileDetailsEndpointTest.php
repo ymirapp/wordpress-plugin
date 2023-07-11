@@ -118,6 +118,78 @@ class GetFileDetailsEndpointTest extends TestCase
         ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/sites/2/2020/08', '/2020/08'))->respond($request));
     }
 
+    public function testRespondWithYearMonthFoldersDisabled()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                           ->method('createPutObjectRequest')
+                           ->with($this->identicalTo('uploads/test.txt'))
+                           ->willReturn('cloudstorage_put_request_url');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('filename'))
+                ->willReturn('test.txt');
+
+        $sanitize_file_name = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'sanitize_file_name');
+        $sanitize_file_name->expects($this->once())
+                           ->with($this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $wp_basename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_basename');
+        $wp_basename->expects($this->once())
+                    ->with($this->identicalTo('test.txt'))
+                    ->willReturn('test.txt');
+
+        $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
+        $wp_unique_filename->expects($this->once())
+                           ->with($this->identicalTo('ymir-public:///uploads'), $this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $this->assertSame([
+            'filename' => 'test.txt',
+            'path' => 'test.txt',
+            'upload_url' => 'cloudstorage_put_request_url',
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads', ''))->respond($request));
+    }
+
+    public function testRespondWithYearMonthFoldersEnabled()
+    {
+        $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
+        $cloudStorageClient->expects($this->once())
+                            ->method('createPutObjectRequest')
+                            ->with($this->identicalTo('uploads/2020/08/test.txt'))
+                            ->willReturn('cloudstorage_put_request_url');
+
+        $request = $this->getWPRESTRequestMock();
+        $request->expects($this->once())
+                ->method('get_param')
+                ->with($this->identicalTo('filename'))
+                ->willReturn('test.txt');
+
+        $sanitize_file_name = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'sanitize_file_name');
+        $sanitize_file_name->expects($this->once())
+                           ->with($this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $wp_basename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_basename');
+        $wp_basename->expects($this->once())
+                    ->with($this->identicalTo('test.txt'))
+                    ->willReturn('test.txt');
+
+        $wp_unique_filename = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'wp_unique_filename');
+        $wp_unique_filename->expects($this->once())
+                           ->with($this->identicalTo('ymir-public:///uploads/2020/08'), $this->identicalTo('test.txt'))
+                           ->willReturn('test.txt');
+
+        $this->assertSame([
+            'filename' => 'test.txt',
+            'path' => '2020/08/test.txt',
+            'upload_url' => 'cloudstorage_put_request_url',
+        ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/2020/08', '/2020/08'))->respond($request));
+    }
+
     public function testValidateRequest()
     {
         $current_user_can = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'current_user_can');

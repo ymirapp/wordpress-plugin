@@ -48,7 +48,7 @@ class GetFileDetailsEndpoint extends AbstractEndpoint
     {
         $this->client = $client;
         $this->uploadsPath = $uploadsPath;
-        $this->uploadsSubdirectory = trim($uploadsSubdirectory, '/').'/';
+        $this->uploadsSubdirectory = !empty($uploadsSubdirectory) ? trim($uploadsSubdirectory, '/').'/' : '';
     }
 
     /**
@@ -90,11 +90,11 @@ class GetFileDetailsEndpoint extends AbstractEndpoint
         $filename = wp_unique_filename($this->uploadsPath, urlencode(wp_basename(sanitize_file_name(htmlspecialchars_decode($request->get_param('filename'), ENT_QUOTES)))));
         $path = $this->uploadsSubdirectory.$filename;
 
-        // Need to extract the "sites/{blog_id}" for multisite
-        preg_match('/(uploads.*)/', substr($this->uploadsPath, 0, -strlen($this->uploadsSubdirectory)), $matches);
+        // Need to extract the "sites/{blog_id}" for multisite uploads
+        preg_match('/(uploads.*)/', !empty($this->uploadsSubdirectory) ? substr($this->uploadsPath, 0, -strlen($this->uploadsSubdirectory)) : $this->uploadsPath, $matches);
 
         if (empty($matches[1])) {
-            throw new \RuntimeException(sprintf('Unable to parse "%s" uploads path', $this->uploadsPath));
+            throw new \RuntimeException(sprintf('Unable to parse the "%s" uploads path and "%s" uploads subdirectory', $this->uploadsPath, $this->uploadsSubdirectory));
         }
 
         return [
