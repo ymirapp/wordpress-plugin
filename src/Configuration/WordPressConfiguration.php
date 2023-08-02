@@ -91,7 +91,13 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         });
         $container['is_multisite'] = is_multisite();
         $container['phpmailer'] = function () {
-            if (!class_exists(\PHPMailer::class)) {
+            if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class) && file_exists(ABSPATH.WPINC.'/PHPMailer/PHPMailer.php')) {
+                require_once ABSPATH.WPINC.'/PHPMailer/PHPMailer.php';
+                require_once ABSPATH.WPINC.'/PHPMailer/Exception.php';
+
+                class_alias(\PHPMailer\PHPMailer\PHPMailer::class, 'PHPMailer');
+                class_alias(\PHPMailer\PHPMailer\Exception::class, 'phpmailerException');
+            } elseif (!class_exists(\PHPMailer::class)) {
                 require_once ABSPATH.WPINC.'/class-phpmailer.php';
             }
 
