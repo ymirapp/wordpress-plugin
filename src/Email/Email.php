@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Email;
 
+use Ymir\Plugin\Attachment\AttachmentFileManager;
 use Ymir\Plugin\EventManagement\EventManager;
+use Ymir\Plugin\Support\Collection;
 
 class Email
 {
@@ -46,6 +48,13 @@ class Email
     private $eventManager;
 
     /**
+     * The attachment file manager.
+     *
+     * @var AttachmentFileManager
+     */
+    private $fileManager;
+
+    /**
      * WordPress PHPMailer object.
      *
      * @var \PHPMailer
@@ -55,12 +64,13 @@ class Email
     /**
      * Constructor.
      */
-    public function __construct(EventManager $eventManager, string $defaultFromAddress, \PHPMailer $mailer, string $defaultCharset = 'UTF-8', string $defaultContentType = 'text/plain')
+    public function __construct(EventManager $eventManager, string $defaultFromAddress, AttachmentFileManager $fileManager, \PHPMailer $mailer, string $defaultCharset = 'UTF-8', string $defaultContentType = 'text/plain')
     {
         $this->defaultCharset = $defaultCharset;
         $this->defaultContentType = $defaultContentType;
         $this->defaultFromAddress = $defaultFromAddress;
         $this->eventManager = $eventManager;
+        $this->fileManager = $fileManager;
         $this->mailer = $mailer;
 
         // Remove some of the default values so we can check if they were set and passed through the WordPress filters
@@ -80,9 +90,15 @@ class Email
             throw new \InvalidArgumentException('"attachments" argument must be an array or a string');
         }
 
-        foreach ($attachments as $attachment) {
+        (new Collection($attachments))->map(function (string $attachment) {
+            if ($this->fileManager->isInUploadsDirectory($attachment)) {
+                $attachment = $this->fileManager->copyToTempDirectory($attachment);
+            }
+
+            return $attachment;
+        })->each(function (string $attachment) {
             $this->mailer->addAttachment($attachment);
-        }
+        });
     }
 
     /**

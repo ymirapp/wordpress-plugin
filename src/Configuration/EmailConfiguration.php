@@ -32,7 +32,7 @@ class EmailConfiguration implements ContainerConfigurationInterface
             return new SesClient($container['ymir_http_client'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret']);
         });
         $container['email'] = function (Container $container) {
-            return new Email($container['event_manager'], $container['default_email_from'], $container['phpmailer'], $container['blog_charset']);
+            return new Email($container['event_manager'], $container['default_email_from'], $container['file_manager'], $container['phpmailer'], $container['blog_charset']);
         };
     }
 }

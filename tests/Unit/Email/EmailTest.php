@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Unit\Email;
 
 use Ymir\Plugin\Email\Email;
+use Ymir\Plugin\Tests\Mock\AttachmentFileManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\PHPMailerMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -23,8 +24,39 @@ use Ymir\Plugin\Tests\Unit\TestCase;
  */
 class EmailTest extends TestCase
 {
+    use AttachmentFileManagerMockTrait;
     use EventManagerMockTrait;
     use PHPMailerMockTrait;
+
+    public function testAttachmentsCopiesUploadFilesToTmpDirectory()
+    {
+        $fileManager = $this->getAttachmentFileManagerMock();
+        $phpmailer = $this->getPHPMailerMock();
+
+        $fileManager->expects($this->exactly(2))
+                    ->method('isInUploadsDirectory')
+                    ->withConsecutive(
+                        [$this->identicalTo('attachment1')],
+                        [$this->identicalTo('attachment2')]
+                    )
+                    ->willReturnOnConsecutiveCalls(false, true);
+
+        $fileManager->expects($this->once())
+                    ->method('copyToTempDirectory')
+                    ->with($this->identicalTo('attachment2'))
+                    ->willReturn('/tmp/attachment2');
+
+        $phpmailer->expects($this->exactly(2))
+                  ->method('addAttachment')
+                  ->withConsecutive(
+                      [$this->identicalTo('attachment1')],
+                      [$this->identicalTo('/tmp/attachment2')]
+                  );
+
+        $email = new Email($this->getEventManagerMock(), 'from_address', $fileManager, $phpmailer);
+
+        $email->attachments(['attachment1', 'attachment2']);
+    }
 
     public function testAttachmentsWithArray()
     {
@@ -37,7 +69,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('attachment2')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->attachments(['attachment1', 'attachment2']);
     }
@@ -47,7 +79,7 @@ class EmailTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"attachments" argument must be an array or a string');
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getPHPMailerMock());
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $this->getPHPMailerMock());
 
         $email->attachments(new \stdClass());
     }
@@ -63,7 +95,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('attachment2')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->attachments("attachment1\r\nattachment2");
     }
@@ -79,7 +111,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->bcc(['test@test.com', 'Foo <foo@bar.com>']);
     }
@@ -89,7 +121,7 @@ class EmailTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"addresses" argument must be an array or a string');
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getPHPMailerMock());
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $this->getPHPMailerMock());
 
         $email->bcc(new \stdClass());
     }
@@ -105,7 +137,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->bcc('test@test.com, Foo <foo@bar.com>');
     }
@@ -120,7 +152,7 @@ class EmailTest extends TestCase
                      ->with($this->identicalTo('wp_mail_charset'), $this->identicalTo('UTF-8'))
                      ->willReturn('filtered_UTF-8');
 
-        (new Email($eventManager, 'from_address', $phpmailer))->charset('UTF-8');
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->charset('UTF-8');
 
         $this->assertSame('filtered_UTF-8', $phpmailer->CharSet);
     }
@@ -132,7 +164,7 @@ class EmailTest extends TestCase
         $this->assertNotSame('', $phpmailer->CharSet);
         $this->assertNotSame('', $phpmailer->ContentType);
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $this->assertSame('', $phpmailer->CharSet);
         $this->assertSame('', $phpmailer->ContentType);
@@ -152,7 +184,7 @@ class EmailTest extends TestCase
                      ->with($this->identicalTo('wp_mail_content_type'), $this->identicalTo('text/html'))
                      ->willReturn('text/html');
 
-        (new Email($eventManager, 'from_address', $phpmailer))->contentType('text/html');
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->contentType('text/html');
 
         $this->assertSame('text/html', $phpmailer->ContentType);
     }
@@ -171,7 +203,7 @@ class EmailTest extends TestCase
                      ->with($this->identicalTo('wp_mail_content_type'), $this->identicalTo('content_type'))
                      ->willReturn('filtered_content_type');
 
-        (new Email($eventManager, 'from_address', $phpmailer))->contentType('content_type');
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->contentType('content_type');
 
         $this->assertSame('filtered_content_type', $phpmailer->ContentType);
     }
@@ -193,7 +225,7 @@ class EmailTest extends TestCase
                   ->method('setFrom')
                   ->with($this->identicalTo('filtered_foo@bar.com'), $this->identicalTo('filtered_WordPress'), $this->identicalTo(false));
 
-        (new Email($eventManager, 'from_address', $phpmailer))->from('foo@bar.com');
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->from('foo@bar.com');
     }
 
     public function testHeadersWithArray()
@@ -222,7 +254,7 @@ class EmailTest extends TestCase
                   ->method('isHtml')
                   ->with($this->identicalTo(false));
 
-        (new Email($eventManager, 'from_address', $phpmailer))->headers([
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->headers([
             'From: test@test.com',
             'Cc: Foo <foo@bar.com>',
             'Content-Type: content_type',
@@ -248,7 +280,7 @@ class EmailTest extends TestCase
                   ->method('isHtml')
                   ->with($this->identicalTo(false));
 
-        (new Email($eventManager, 'from_address', $phpmailer))->headers([
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->headers([
             'Content-Type: content_type;charset=foo_charset',
         ]);
     }
@@ -258,7 +290,7 @@ class EmailTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"headers" argument must be an array or a string');
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getPHPMailerMock());
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $this->getPHPMailerMock());
 
         $email->headers(new \stdClass());
     }
@@ -280,7 +312,7 @@ class EmailTest extends TestCase
                    ->method('isHtml')
                    ->with($this->identicalTo(false));
 
-        (new Email($eventManager, 'from_address', $phpmailer))->headers([
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->headers([
             'Content-Type: multipart/mixed; boundary="----=_Part_4892_25692638.1192452070893"',
         ]);
     }
@@ -311,7 +343,7 @@ class EmailTest extends TestCase
                   ->method('isHtml')
                   ->with($this->identicalTo(false));
 
-        (new Email($eventManager, 'from_address', $phpmailer))->headers("From: test@test.com\r\nCc: Foo <foo@bar.com>\r\nContent-Type: content_type\r\nHeader: Value\r\nX-Mailer: foo");
+        (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->headers("From: test@test.com\r\nCc: Foo <foo@bar.com>\r\nContent-Type: content_type\r\nHeader: Value\r\nX-Mailer: foo");
     }
 
     public function testReplyToWithArray()
@@ -325,7 +357,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->replyTo(['test@test.com', 'Foo <foo@bar.com>']);
     }
@@ -335,7 +367,7 @@ class EmailTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"addresses" argument must be an array or a string');
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getPHPMailerMock());
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $this->getPHPMailerMock());
 
         $email->replyTo(new \stdClass());
     }
@@ -351,7 +383,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->replyTo('test@test.com, Foo <foo@bar.com>');
     }
@@ -360,7 +392,7 @@ class EmailTest extends TestCase
     {
         $phpmailer = $this->getPHPMailerMock();
 
-        (new Email($this->getEventManagerMock(), 'from_address', $phpmailer))->subject('Foo subject');
+        (new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->subject('Foo subject');
 
         $this->assertSame('Foo subject', $phpmailer->Subject);
     }
@@ -390,7 +422,7 @@ class EmailTest extends TestCase
                   ->method('getSentMIMEMessage')
                   ->willReturn('email');
 
-        $this->assertSame('email', (new Email($eventManager, 'from_address', $phpmailer))->toString());
+        $this->assertSame('email', (new Email($eventManager, 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer))->toString());
     }
 
     public function testToWithArray()
@@ -404,7 +436,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->to(['test@test.com', 'Foo <foo@bar.com>']);
     }
@@ -414,7 +446,7 @@ class EmailTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"addresses" argument must be an array or a string');
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getPHPMailerMock());
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $this->getPHPMailerMock());
 
         $email->to(new \stdClass());
     }
@@ -430,7 +462,7 @@ class EmailTest extends TestCase
                       [$this->identicalTo('foo@bar.com'), $this->identicalTo('Foo')]
                   );
 
-        $email = new Email($this->getEventManagerMock(), 'from_address', $phpmailer);
+        $email = new Email($this->getEventManagerMock(), 'from_address', $this->getAttachmentFileManagerMock(), $phpmailer);
 
         $email->to('test@test.com, Foo <foo@bar.com>');
     }
