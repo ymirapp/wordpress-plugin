@@ -38,6 +38,9 @@
             "phpro/grumphp": true
         }
     },
+    "extra": {
+        "installer-name": "ymir-wordpress-plugin"
+    },
     "autoload": {
         "psr-4": {
             "Ymir\\Plugin\\": "src/"
