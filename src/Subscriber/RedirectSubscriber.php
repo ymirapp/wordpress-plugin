@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Subscriber;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
-use Ymir\Plugin\Support\Collection;
+use Ymir\Plugin\ValueObject\MappedDomainNames;
 
 /**
  * Subscriber that manages redirects that would have been handled by the web server.
@@ -31,16 +31,9 @@ class RedirectSubscriber implements SubscriberInterface
     /**
      * All the domain names mapped to the environment.
      *
-     * @var array
+     * @var MappedDomainNames
      */
     private $mappedDomainNames;
-
-    /**
-     * The primary domain name that we want to redirect requests to.
-     *
-     * @var string
-     */
-    private $primaryDomainName;
 
     /**
      * The Ymir project type.
@@ -52,13 +45,10 @@ class RedirectSubscriber implements SubscriberInterface
     /**
      * Constructor.
      */
-    public function __construct(bool $isMultisite, string $primaryDomainName, array $domainNames = [], string $projectType = '')
+    public function __construct(bool $isMultisite, MappedDomainNames $mappedDomainNames, string $projectType = '')
     {
         $this->isMultisite = $isMultisite;
-        $this->mappedDomainNames = (new Collection($domainNames))->filter(function (string $domainName) {
-            return !preg_match('%[^.]*\.ymirsites\.com%i', $domainName);
-        })->unique()->values()->all();
-        $this->primaryDomainName = $primaryDomainName;
+        $this->mappedDomainNames = $mappedDomainNames;
         $this->projectType = $projectType;
     }
 
@@ -104,7 +94,7 @@ class RedirectSubscriber implements SubscriberInterface
             return $url.'/';
         }
 
-        $url = $this->getBaseUrl();
+        $url = $this->mappedDomainNames->getPrimaryDomainNameUrl();
 
         if ('bedrock' === $this->projectType) {
             $url .= '/wp';
@@ -114,45 +104,15 @@ class RedirectSubscriber implements SubscriberInterface
     }
 
     /**
-     * Get the base URL for the redirects.
-     */
-    private function getBaseUrl(): string
-    {
-        return 'https://'.$this->primaryDomainName;
-    }
-
-    /**
-     * Checks if the given host is in the mapped domain names.
-     */
-    private function isHostInMappedDomainNames(string $host): bool
-    {
-        if ($host === $this->primaryDomainName || in_array($host, $this->mappedDomainNames)) {
-            return true;
-        }
-
-        foreach ($this->mappedDomainNames as $domainName) {
-            if (0 !== stripos($domainName, '*.')) {
-                continue;
-            }
-
-            if (1 === preg_match(sprintf('/^[a-z0-9_][a-z0-9-_]+\.%s$/i', preg_quote(substr($domainName, 2), '/')), $host)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Redirect to the primary domain name if necessary.
      */
     private function redirectToPrimaryDomainName(string $url, string $host, string $uri): string
     {
-        if ($this->isMultisite || $this->isHostInMappedDomainNames($host)) {
+        if ($this->isMultisite || $this->mappedDomainNames->isMappedDomainName($host)) {
             return $url;
         }
 
-        $url = $this->getBaseUrl();
+        $url = $this->mappedDomainNames->getPrimaryDomainNameUrl();
 
         if (!empty($uri)) {
             $url .= $uri;

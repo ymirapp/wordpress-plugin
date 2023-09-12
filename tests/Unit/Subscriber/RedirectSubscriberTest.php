@@ -15,6 +15,7 @@ namespace Ymir\Plugin\Tests\Unit\Subscriber;
 
 use Ymir\Plugin\Subscriber\RedirectSubscriber;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\MappedDomainNamesMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
 /**
@@ -23,6 +24,7 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 class RedirectSubscriberTest extends TestCase
 {
     use FunctionMockTrait;
+    use MappedDomainNamesMockTrait;
 
     /**
      * @backupGlobals enabled
@@ -32,12 +34,21 @@ class RedirectSubscriberTest extends TestCase
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
         $_SERVER['REQUEST_URI'] = '/wp/wp-admin';
 
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('another_domain_name'))
+                          ->willReturn(false);
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name', [], 'bedrock'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames, 'bedrock'))->redirect();
     }
 
     /**
@@ -48,12 +59,21 @@ class RedirectSubscriberTest extends TestCase
         $_SERVER['HTTP_HOST'] = 'domain_name';
         $_SERVER['REQUEST_URI'] = '/wp/wp-admin';
 
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('domain_name'))
+                          ->willReturn(true);
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name', [], 'bedrock'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames, 'bedrock'))->redirect();
     }
 
     /**
@@ -64,12 +84,21 @@ class RedirectSubscriberTest extends TestCase
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
         $_SERVER['REQUEST_URI'] = '/wp-admin';
 
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('another_domain_name'))
+                          ->willReturn(false);
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 
     /**
@@ -80,33 +109,54 @@ class RedirectSubscriberTest extends TestCase
         $_SERVER['HTTP_HOST'] = 'domain_name';
         $_SERVER['REQUEST_URI'] = '/wp-admin';
 
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('domain_name'))
+                          ->willReturn(true);
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 
     public function testDoesntRedirectToPrimaryDomainNameWhenMultisiteEnabled()
     {
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->never())
+                          ->method('getPrimaryDomainNameURL');
+        $mappedDomainNames->expects($this->never())
+                          ->method('IsMappedDomainName');
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber(true, 'domain_name'))->redirect();
+        (new RedirectSubscriber(true, $mappedDomainNames))->redirect();
     }
 
     /**
      * @backupGlobals enabled
      */
-    public function testDoesntRedirectToPrimaryDomainNameWithHttpHostSameAsPrimaryDomainName()
+    public function testDoesntRedirectToPrimaryDomainNameWithHttpHostIsAMappedDomainName()
     {
         $_SERVER['HTTP_HOST'] = 'domain_name';
+
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('domain_name'))
+                          ->willReturn(true);
 
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 
     /**
@@ -117,36 +167,16 @@ class RedirectSubscriberTest extends TestCase
         $_SERVER['HTTP_HOST'] = 'domain_name';
         $_SERVER['REQUEST_URI'] = '/wp-admin/';
 
-        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
-        $wp_redirect->expects($this->never());
-
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
-    }
-
-    /**
-     * @backupGlobals enabled
-     */
-    public function testDoestRedirectToPrimaryDomainNameWhenHttpHostIsAMappedDomainNames()
-    {
-        $_SERVER['HTTP_HOST'] = 'domain_name_2';
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('domain_name'))
+                          ->willReturn(true);
 
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->never());
 
-        (new RedirectSubscriber(false, 'domain_name', ['domain_name_2']))->redirect();
-    }
-
-    /**
-     * @backupGlobals enabled
-     */
-    public function testDoestRedirectToPrimaryDomainNameWhenHttpHostIsASubdomainOfAWildcardMappedDomainName()
-    {
-        $_SERVER['HTTP_HOST'] = 'test.domain_name_2';
-
-        $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
-        $wp_redirect->expects($this->never());
-
-        (new RedirectSubscriber(false, 'domain_name', ['*.domain_name_2']))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 
     public function testGetSubscribedEvents()
@@ -171,27 +201,45 @@ class RedirectSubscriberTest extends TestCase
     {
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
 
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('another_domain_name'))
+                          ->willReturn(false);
+
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 
     /**
      * @backupGlobals enabled
      */
-    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainNameAddsRequestUri()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainNameWithRequestUri()
     {
         $_SERVER['HTTP_HOST'] = 'another_domain_name';
         $_SERVER['REQUEST_URI'] = '/uri';
+
+        $mappedDomainNames = $this->getMappedDomainNamesMock();
+        $mappedDomainNames->expects($this->once())
+                          ->method('getPrimaryDomainNameURL')
+                          ->willReturn('https://domain_name');
+        $mappedDomainNames->expects($this->once())
+                          ->method('IsMappedDomainName')
+                          ->with($this->identicalTo('another_domain_name'))
+                          ->willReturn(false);
 
         $wp_redirect = $this->getFunctionMock($this->getNamespace(RedirectSubscriber::class), 'wp_redirect');
         $wp_redirect->expects($this->once())
                     ->with($this->identicalTo('https://domain_name/uri'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber(false, 'domain_name'))->redirect();
+        (new RedirectSubscriber(false, $mappedDomainNames))->redirect();
     }
 }

@@ -16,6 +16,7 @@ namespace Ymir\Plugin\Configuration;
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
 use Ymir\Plugin\Http\Client;
+use Ymir\Plugin\ValueObject\MappedDomainNames;
 
 /**
  * Configures the dependency injection container with Ymir parameters and services.
@@ -36,14 +37,14 @@ class YmirConfiguration implements ContainerConfigurationInterface
 
             return false;
         });
-        $container['ymir_domain_names'] = $container->service(function () {
-            return explode(',', (string) getenv('YMIR_DOMAIN_NAMES'));
+        $container['ymir_mapped_domain_names'] = $container->service(function (Container $container) {
+            return new MappedDomainNames((array) explode(',', (string) getenv('YMIR_DOMAIN_NAMES')), $container['ymir_primary_domain_name']);
         });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
         $container['ymir_http_client'] = $container->service(function (Container $container) {
             return new Client($container['ymir_plugin_version']);
         });
-        $container['ymir_primary_domain_name'] = getenv('YMIR_PRIMARY_DOMAIN_NAME') ?: '';
+        $container['ymir_primary_domain_name'] = (string) getenv('YMIR_PRIMARY_DOMAIN_NAME');
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';
         $container['ymir_plugin_version'] = '1.19.3';
         $container['ymir_using_vanity_domain'] = $container->service(function (Container $container) {
