@@ -151,7 +151,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             return class_exists(\WP_Site_Query::class) ? new \WP_Site_Query() : null;
         });
         $container['site_url'] = $container->service(function () {
-            return set_url_scheme(get_home_url(), 'https');
+            return home_url('', 'https');
         });
         $container['uploads_basedir'] = $container->service(function () {
             return wp_upload_dir()['basedir'] ?? '';
