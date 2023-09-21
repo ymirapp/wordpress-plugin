@@ -15,6 +15,7 @@ namespace Ymir\Plugin\Configuration;
 
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
+use Ymir\Plugin\Support\Str;
 
 /**
  * Configures the dependency injection container with WordPress attachment services.
@@ -33,10 +34,16 @@ class AssetsConfiguration implements ContainerConfigurationInterface
             $customAssetsUrl = getenv('YMIR_CUSTOM_ASSETS_URL');
 
             if (is_string($customAssetsUrl)) {
-                $customAssetsUrl = rtrim($customAssetsUrl, '/').'/'.$container['assets_path'];
+                return rtrim($customAssetsUrl, '/').'/'.$container['assets_path'];
             }
 
-            return $customAssetsUrl ?: (getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : ''));
+            $assetsUrl = getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : '');
+
+            if (!Str::contains($assetsUrl, ['cloudfront.net', 's3.amazonaws.com']) && $container['is_multisite_subdomain'] && $container['ymir_mapped_domain_names']->isMappedDomainName($container['site_domain'])) {
+                $assetsUrl = rtrim($container['site_url'], '/').'/'.$container['assets_path'];
+            }
+
+            return $assetsUrl;
         });
     }
 }

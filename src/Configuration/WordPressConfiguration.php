@@ -90,6 +90,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             return $sizes;
         });
         $container['is_multisite'] = is_multisite();
+        $container['is_multisite_subdomain'] = $container->service(function (Container $container) {
+            return $container['is_multisite'] && function_exists('is_subdomain_install') && is_subdomain_install();
+        });
         $container['phpmailer'] = function () {
             if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class) && file_exists(ABSPATH.WPINC.'/PHPMailer/PHPMailer.php')) {
                 require_once ABSPATH.WPINC.'/PHPMailer/PHPMailer.php';
@@ -139,6 +142,9 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             }
 
             return get_rest_url();
+        });
+        $container['site_domain'] = $container->service(function (Container $container) {
+            return parse_url($container['site_url'], PHP_URL_HOST) ?: '';
         });
         $container['site_icon'] = $container->service(function () {
             if (!class_exists(\WP_Site_Icon::class)) {
