@@ -22,6 +22,13 @@ use Ymir\Plugin\ValueObject\MappedDomainNames;
 class RedirectSubscriber implements SubscriberInterface
 {
     /**
+     * The HTTP "Host" header.
+     *
+     * @var string
+     */
+    private $host;
+
+    /**
      * Flag whether this is a multisite installation or not.
      *
      * @var bool
@@ -43,13 +50,22 @@ class RedirectSubscriber implements SubscriberInterface
     private $projectType;
 
     /**
+     * The URI of the HTTP request.
+     *
+     * @var string
+     */
+    private $uri;
+
+    /**
      * Constructor.
      */
-    public function __construct(bool $isMultisite, MappedDomainNames $mappedDomainNames, string $projectType = '')
+    public function __construct(MappedDomainNames $mappedDomainNames, string $host, string $uri, bool $isMultisite = false, string $projectType = '')
     {
+        $this->host = $host;
         $this->isMultisite = $isMultisite;
         $this->mappedDomainNames = $mappedDomainNames;
         $this->projectType = $projectType;
+        $this->uri = $uri;
     }
 
     /**
@@ -67,16 +83,13 @@ class RedirectSubscriber implements SubscriberInterface
      */
     public function redirect()
     {
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $uri = $_SERVER['REQUEST_URI'] ?? '';
-        $url = '';
-
-        if (empty($host)) {
+        if (empty($this->host)) {
             return;
         }
 
-        $url = $this->redirectToPrimaryDomainName($url, $host, $uri);
-        $url = $this->addSlashToWpAdmin($url, $uri);
+        $url = '';
+        $url = $this->redirectToPrimaryDomainName($url, $this->host, $this->uri);
+        $url = $this->addSlashToWpAdmin($url, $this->uri);
 
         if (!empty($url) && wp_redirect($url, 301)) {
             exit;
