@@ -30,9 +30,12 @@ class SesClient extends AbstractClient implements EmailClientInterface
             'Action' => 'SendRawEmail',
             'RawMessage.Data' => base64_encode($email->toString()),
         ]));
+        $statusCode = $this->parseResponseStatusCode($response);
 
-        if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to send email');
+        if (400 === $statusCode) {
+            throw new \RuntimeException(sprintf('SES API request failed: %s', $this->getErrorMessage($response['body'] ?? '')));
+        } elseif (200 !== $this->parseResponseStatusCode($response)) {
+            throw new \RuntimeException(sprintf('SES API request failed with status code %d', $statusCode));
         }
     }
 
@@ -50,5 +53,19 @@ class SesClient extends AbstractClient implements EmailClientInterface
     protected function getService(): string
     {
         return 'ses';
+    }
+
+    /**
+     * Get the SES error message.
+     */
+    private function getErrorMessage($body): string
+    {
+        $body = simplexml_load_string($body);
+
+        if (!$body instanceof \SimpleXMLElement) {
+            return '[unable to parse error message]';
+        }
+
+        return (string) $body->Error->Message;
     }
 }
