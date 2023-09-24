@@ -20,7 +20,7 @@ use Ymir\Plugin\Support\Collection;
  *
  * @see https://developer.wordpress.org/plugins/http-api
  */
-class Client implements ClientInterface
+class HttpClient implements ClientInterface
 {
     /**
      * The cURL handle.
@@ -66,13 +66,14 @@ class Client implements ClientInterface
      */
     public function request(string $url, array $options = []): array
     {
+        $curlVersion = curl_version();
         $handle = $this->getHandle();
         $options = array_merge([
             'method' => 'GET',
             'timeout' => 5,
             'connect_timeout' => 10,
             'redirection' => 5,
-            'user-agent' => sprintf('ymir-plugin/%s', $this->version),
+            'user-agent' => sprintf('ymir-plugin/%s curl/%s', $this->version, !empty($curlVersion['version']) ? $curlVersion['version'] : 'unknown'),
             'headers' => [],
             'body' => null,
         ], $options);
