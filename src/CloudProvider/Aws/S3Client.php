@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\CloudProvider\Aws;
 
 use Ymir\Plugin\CloudStorage\CloudStorageClientInterface;
-use Ymir\Plugin\Http\Client;
+use Ymir\Plugin\Http\ClientInterface;
 
 /**
  * The client for AWS S3 API.
@@ -31,7 +31,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * Constructor.
      */
-    public function __construct(Client $client, string $bucket, string $key, string $region, string $secret)
+    public function __construct(ClientInterface $client, string $bucket, string $key, string $region, string $secret)
     {
         parent::__construct($client, $key, $region, $secret);
 

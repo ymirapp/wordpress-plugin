@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\CloudProvider\Aws;
 
-use Ymir\Plugin\Http\Client;
+use Ymir\Plugin\Http\ClientInterface;
 
 /**
  * Base AWS client.
@@ -23,7 +23,7 @@ abstract class AbstractClient
     /**
      * The Ymir HTTP client.
      *
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -58,7 +58,7 @@ abstract class AbstractClient
     /**
      * Constructor.
      */
-    public function __construct(Client $client, string $key, string $region, string $secret)
+    public function __construct(ClientInterface $client, string $key, string $region, string $secret)
     {
         $this->client = $client;
         $this->key = $key;

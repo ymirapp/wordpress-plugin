@@ -14,16 +14,16 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Mock;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use Ymir\Plugin\Http\Client;
+use Ymir\Plugin\Http\ClientInterface;
 
 trait HttpClientMockTrait
 {
     /**
-     * Creates a mock of a Client object.
+     * Creates a mock of a ClientInterface object.
      */
     private function getHttpClientMock(): MockObject
     {
-        return $this->getMockBuilder(Client::class)
+        return $this->getMockBuilder(ClientInterface::class)
                     ->disableOriginalConstructor()
                     ->getMock();
     }

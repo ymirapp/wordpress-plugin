@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\CloudProvider\Aws;
 
-use Ymir\Plugin\Http\Client;
+use Ymir\Plugin\Http\ClientInterface;
 use Ymir\Plugin\PageCache\ContentDeliveryNetworkPageCacheClientInterface;
 use Ymir\Plugin\Support\Collection;
 
@@ -39,7 +39,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function __construct(Client $client, string $distributionId, string $key, string $secret)
+    public function __construct(ClientInterface $client, string $distributionId, string $key, string $secret)
     {
         parent::__construct($client, $key, 'us-east-1', $secret);
 
@@ -132,6 +132,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
 
         $response = $this->request('post', "/2020-05-31/distribution/{$this->distributionId}/invalidation", $this->generateInvalidationPayload($paths));
 
+        // TODO: Need to get the error message
         if (201 !== $this->parseResponseStatusCode($response)) {
             throw new \RuntimeException('Invalidation request failed');
         }

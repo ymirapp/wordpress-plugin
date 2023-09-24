@@ -20,7 +20,7 @@ use Ymir\Plugin\Support\Collection;
  *
  * @see https://developer.wordpress.org/plugins/http-api
  */
-class Client
+class Client implements ClientInterface
 {
     /**
      * The cURL handle.
@@ -62,9 +62,7 @@ class Client
     }
 
     /**
-     * Send an HTTP request.
-     *
-     * @see WP_Http::request
+     * {@inheritdoc}
      */
     public function request(string $url, array $options = []): array
     {
