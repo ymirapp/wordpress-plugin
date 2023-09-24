@@ -25,13 +25,13 @@ parameters:
         - message: '#Constant WPINC not found#'
           paths:
             - src/Configuration/WordPressConfiguration.php
-            - src/Http/HttpClient.php
+            - src/Http/CurlClient.php
         - message: '#Constant WP_HOME not found#'
           paths:
             - src/Configuration/PageCacheConfiguration.php
         - message: '#unknown class CurlHandle|Class CurlHandle not found#'
           paths:
-            - src/Http/HttpClient.php
+            - src/Http/CurlClient.php
         - message: '#isset\(\) is not nullable#'
           paths:
             - src/Subscriber/ContentDeliveryNetworkPageCachingSubscriber.php

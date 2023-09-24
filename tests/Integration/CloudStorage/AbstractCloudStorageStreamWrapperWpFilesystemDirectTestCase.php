@@ -15,7 +15,7 @@ namespace Ymir\Plugin\Tests\Integration\CloudStorage;
 
 use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\CloudProvider\Aws\S3Client;
-use Ymir\Plugin\Http\HttpClient;
+use Ymir\Plugin\Http\CurlClient;
 
 /**
  * @coversNothing
@@ -28,7 +28,7 @@ abstract class AbstractCloudStorageStreamWrapperWpFilesystemDirectTestCase exten
 
     protected function setUp(): void
     {
-        $this->client = new S3Client(new HttpClient('test'), 'ymir-plugin-test', getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-east-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
+        $this->client = new S3Client(new CurlClient('test'), 'ymir-plugin-test', getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-east-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
         $this->filesystem = new \WP_Filesystem_Direct(null);
 
         $this->getStreamWrapper()::register($this->client);

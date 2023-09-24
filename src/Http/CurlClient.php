@@ -16,11 +16,9 @@ namespace Ymir\Plugin\Http;
 use Ymir\Plugin\Support\Collection;
 
 /**
- * Ymir HTTP client that partially mirrors the WordPress HTTP API.
- *
- * @see https://developer.wordpress.org/plugins/http-api
+ * HTTP client that uses cURL directly.
  */
-class HttpClient implements ClientInterface
+class CurlClient implements ClientInterface
 {
     /**
      * The cURL handle.

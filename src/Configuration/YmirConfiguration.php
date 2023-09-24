@@ -15,8 +15,8 @@ namespace Ymir\Plugin\Configuration;
 
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
-use Ymir\Plugin\Http\HttpClient;
-use Ymir\Plugin\Http\WordPressHttpClient;
+use Ymir\Plugin\Http\CurlClient;
+use Ymir\Plugin\Http\WordPressClient;
 use Ymir\Plugin\ValueObject\MappedDomainNames;
 
 /**
@@ -43,7 +43,7 @@ class YmirConfiguration implements ContainerConfigurationInterface
         });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
         $container['ymir_http_client'] = $container->service(function (Container $container) {
-            return function_exists('_wp_http_get_object') ? new WordPressHttpClient(_wp_http_get_object(), $container['ymir_plugin_version']) : new HttpClient($container['ymir_plugin_version']);
+            return function_exists('_wp_http_get_object') ? new WordPressClient(_wp_http_get_object(), $container['ymir_plugin_version']) : new CurlClient($container['ymir_plugin_version']);
         });
         $container['ymir_primary_domain_name'] = (string) getenv('YMIR_PRIMARY_DOMAIN_NAME');
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';

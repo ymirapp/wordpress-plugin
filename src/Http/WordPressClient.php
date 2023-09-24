@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Http;
 
-class WordPressHttpClient implements ClientInterface
+/**
+ * HTTP client that uses the WordPress HTTP API.
+ */
+class WordPressClient implements ClientInterface
 {
     /**
-     * WordPress HTTP transport used for communication.
+     * WordPress HTTP transport.
      *
      * @var \WP_Http
      */
