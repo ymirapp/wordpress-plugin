@@ -22,4 +22,12 @@ class PublicCloudStorageStreamWrapper extends AbstractCloudStorageStreamWrapper
     {
         return 'ymir-public';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAcl(): string
+    {
+        return 'public-read';
+    }
 }

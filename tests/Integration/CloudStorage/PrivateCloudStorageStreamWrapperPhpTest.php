@@ -20,6 +20,11 @@ use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
  */
 class PrivateCloudStorageStreamWrapperPhpTest extends AbstractCloudStorageStreamWrapperPhpTestCase
 {
+    protected function getAcl()
+    {
+        return 'private';
+    }
+
     protected function getStreamWrapper(): string
     {
         return PrivateCloudStorageStreamWrapper::class;

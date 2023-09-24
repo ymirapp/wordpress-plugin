@@ -20,6 +20,11 @@ use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
  */
 class PublicCloudStorageStreamWrapperTest extends AbstractCloudStorageStreamWrapperTestCase
 {
+    protected function getAcl(): string
+    {
+        return 'public-read';
+    }
+
     protected function getStreamWrapperClass(): string
     {
         return PublicCloudStorageStreamWrapper::class;

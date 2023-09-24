@@ -48,8 +48,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('test')],
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo($this->getAcl())],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing'), $this->identicalTo($this->getAcl()), $this->identicalTo('')]
                      );
 
         $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
@@ -167,8 +167,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.xml'), $this->identicalTo(''), $this->identicalTo('')],
-                         [$this->identicalTo('/file.xml'), $this->identicalTo('test'), $this->identicalTo('application/xml')]
+                         [$this->identicalTo('/file.xml'), $this->identicalTo(''), $this->identicalTo($this->getAcl()), $this->identicalTo('')],
+                         [$this->identicalTo('/file.xml'), $this->identicalTo('test'), $this->identicalTo($this->getAcl()), $this->identicalTo('application/xml')]
                      );
 
         file_put_contents("{$this->getProtocol()}:///file.xml", 'test');
@@ -506,8 +506,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing')],
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('testing'), $this->identicalTo($this->getAcl())],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo($this->getAcl()), $this->identicalTo('')]
                      );
 
         $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
@@ -548,8 +548,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo('')],
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl()), $this->identicalTo('')],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo($this->getAcl()), $this->identicalTo('')]
                      );
 
         $this->assertEquals(124, filesize("{$this->getProtocol()}:///file.ext"));
@@ -619,7 +619,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
     {
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $file = fopen("{$this->getProtocol()}:///file.ext", 'w');
 
@@ -632,8 +632,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('')],
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl())],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo($this->getAcl()), $this->identicalTo('')]
                      );
 
         $file = fopen("{$this->getProtocol()}:///file.ext", 'w');
@@ -650,8 +650,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
                      ->withConsecutive(
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('')],
-                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo('')]
+                         [$this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl())],
+                         [$this->identicalTo('/file.ext'), $this->identicalTo('test'), $this->identicalTo($this->getAcl()), $this->identicalTo('')]
                      )
                      ->willReturnOnConsecutiveCalls(null, $this->throwException(new \RuntimeException('Unable to save object "/file"')));
 
@@ -660,6 +660,8 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         fwrite($file, 'test');
         fclose($file);
     }
+
+    abstract protected function getAcl();
 
     abstract protected function getStreamWrapper(): string;
 

@@ -617,7 +617,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $client = $this->getCloudStorageClientInterfaceMock();
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'), $this->identicalTo('text/plain'));
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'), $this->identicalTo($this->getAcl()), $this->identicalTo('text/plain'));
 
         $this->getStreamWrapperClass()::register($client, new \ArrayObject());
 
@@ -1254,6 +1254,8 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame($expectedStat, $wrapper->url_stat("{$this->getProtocol()}:///foo.txt", 1));
         $this->assertSame(["{$this->getProtocol()}:///foo.txt" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
+
+    abstract protected function getAcl(): string;
 
     abstract protected function getStreamWrapperClass(): string;
 

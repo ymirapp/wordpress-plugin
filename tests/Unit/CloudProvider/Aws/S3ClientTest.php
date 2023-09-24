@@ -90,10 +90,9 @@ class S3ClientTest extends TestCase
                  $this->identicalTo([
                      'headers' => [
                          'host' => 'test-bucket.s3.us-east-1.amazonaws.com',
-                         'x-amz-acl' => 'public-read',
                          'x-amz-content-sha256' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                          'x-amz-date' => '20200515T181004Z',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=5e2a7daf50ba69c5ca92eb5fe403d78f797fb73ce2d280f4ff89db5531928e51',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=484cdadcaaf8695bd5f0b60ca83bb5538475838e96c8ae829a6603cd80fb73c3',
                      ],
                      'method' => 'DELETE',
                      'timeout' => 300,
@@ -127,10 +126,9 @@ class S3ClientTest extends TestCase
                  $this->identicalTo([
                      'headers' => [
                          'host' => 'test-bucket.s3.us-east-1.amazonaws.com',
-                         'x-amz-acl' => 'public-read',
                          'x-amz-content-sha256' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                          'x-amz-date' => '20200515T181004Z',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=25f9532f5b6604bb011d5f11882df651a3d9af271cc093693a5044dfeb212acd',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=b9be7af814b0e654ff534715122c0f412b675066f1d840db3c3830b4a4d85f2b',
                      ],
                      'method' => 'GET',
                      'timeout' => 300,
@@ -165,10 +163,9 @@ class S3ClientTest extends TestCase
                  $this->identicalTo([
                      'headers' => [
                          'host' => 'test-bucket.s3.us-east-1.amazonaws.com',
-                         'x-amz-acl' => 'public-read',
                          'x-amz-content-sha256' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                          'x-amz-date' => '20200515T181004Z',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=ed4a84ec60c1b449a0bdb7e6d58149dcd221b76270a2876c0c38aed7202390d1',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=3f6a2fb7d160488cc043dd84c670f18f1d4bc774a152b905e96a266b4f1f660f',
                      ],
                      'method' => 'HEAD',
                      'timeout' => 300,
@@ -211,10 +208,9 @@ class S3ClientTest extends TestCase
                  $this->identicalTo([
                      'headers' => [
                          'host' => 'test-bucket.s3.us-east-1.amazonaws.com',
-                         'x-amz-acl' => 'public-read',
                          'x-amz-content-sha256' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                          'x-amz-date' => '20200515T181004Z',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=23b76a9f0e119d7130143ab1ca9dd1241e62226ad05fd4723563137f2ae9218f',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=8f95d43d8a43ee965c1fcafa2766b8a4ac6784a1f83960b3eae0d8d3c179b668',
                      ],
                      'method' => 'GET',
                      'timeout' => 300,
@@ -260,10 +256,9 @@ class S3ClientTest extends TestCase
                  $this->identicalTo([
                      'headers' => [
                          'host' => 'test-bucket.s3.us-east-1.amazonaws.com',
-                         'x-amz-acl' => 'public-read',
                          'x-amz-content-sha256' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                          'x-amz-date' => '20200515T181004Z',
-                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=ed4a84ec60c1b449a0bdb7e6d58149dcd221b76270a2876c0c38aed7202390d1',
+                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=3f6a2fb7d160488cc043dd84c670f18f1d4bc774a152b905e96a266b4f1f660f',
                      ],
                      'method' => 'HEAD',
                      'timeout' => 300,
@@ -329,6 +324,6 @@ class S3ClientTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
 
-        (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->putObject('object-key', 'object', 'text/plain');
+        (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->putObject('object-key', 'object', 'public-read', 'text/plain');
     }
 }

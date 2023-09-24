@@ -214,7 +214,7 @@ abstract class AbstractCloudStorageStreamWrapper
                 throw new \RuntimeException(sprintf('Directory "%s" already exists', $path));
             }
 
-            $client->putObject($key, '');
+            $client->putObject($key, '', $this->getAcl());
         });
     }
 
@@ -311,7 +311,7 @@ abstract class AbstractCloudStorageStreamWrapper
         return $this->call(function () {
             rewind($this->openedStreamObjectResource);
 
-            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
+            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getAcl(), $this->getMimetype());
 
             $this->removeCacheValue(static::getProtocol().'://'.$this->openedStreamObjectKey);
         });
@@ -362,7 +362,7 @@ abstract class AbstractCloudStorageStreamWrapper
 
             if ('r' !== $this->openedStreamMode) {
                 // Test that we can save the file that we're opening
-                $client->putObject($this->openedStreamObjectKey, $object);
+                $client->putObject($this->openedStreamObjectKey, $object, $this->getAcl());
 
                 // Remove the cache value in case we interacted with the file before using something
                 // like "file_exists". If we don't write to the file, there won't be any cache busting
@@ -443,7 +443,7 @@ abstract class AbstractCloudStorageStreamWrapper
 
             ftruncate($this->openedStreamObjectResource, $newSize);
 
-            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getMimetype());
+            $this->getClient()->putObject($this->openedStreamObjectKey, stream_get_contents($this->openedStreamObjectResource), $this->getAcl(), $this->getMimetype());
 
             $this->removeCacheValue(static::getProtocol().'://'.$this->openedStreamObjectKey);
         });
@@ -494,6 +494,11 @@ abstract class AbstractCloudStorageStreamWrapper
 
         return $stat;
     }
+
+    /**
+     * Get the ACL to use with the cloud storage client.
+     */
+    abstract protected function getAcl(): string;
 
     /**
      * Call the given callback and catch any exception thrown and convert them as errors.

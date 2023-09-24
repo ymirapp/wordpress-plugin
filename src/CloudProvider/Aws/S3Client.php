@@ -41,9 +41,10 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function copyObject(string $sourceKey, string $targetKey)
+    public function copyObject(string $sourceKey, string $targetKey, string $acl = 'public-read')
     {
         $response = $this->request('put', $targetKey, null, [
+            'x-amz-acl' => $acl,
             'x-amz-copy-source' => '/'.$this->bucket.$this->createRequestUri($sourceKey),
         ]);
 
@@ -55,10 +56,10 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function createPutObjectRequest(string $key): string
+    public function createPutObjectRequest(string $key, string $acl = 'public-read'): string
     {
         return $this->createPresignedRequest($this->createRequestUri($key), 'put', [
-            'x-amz-acl' => 'public-read',
+            'x-amz-acl' => $acl,
         ]);
     }
 
@@ -175,9 +176,11 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function putObject(string $key, string $object, string $contentType = '')
+    public function putObject(string $key, string $object, string $acl = 'public-read', string $contentType = '')
     {
-        $headers = [];
+        $headers = [
+            'x-amz-acl' => $acl,
+        ];
 
         if (!empty($contentType)) {
             $headers['content-type'] = $contentType;
@@ -188,16 +191,6 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         if (200 !== $this->parseResponseStatusCode($response)) {
             throw new \RuntimeException(sprintf('Unable to save object "%s"', $key));
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createBaseHeaders(?string $body, string $acl = 'public-read'): array
-    {
-        return array_merge(parent::createBaseHeaders($body), [
-            'x-amz-acl' => 'public-read',
-        ]);
     }
 
     /**

@@ -21,12 +21,12 @@ interface CloudStorageClientInterface
     /**
      * Copy the object with the given source key to the given target key.
      */
-    public function copyObject(string $sourceKey, string $targetKey);
+    public function copyObject(string $sourceKey, string $targetKey, string $acl = 'public-read');
 
     /**
      * Creates a presigned "putObject" request.
      */
-    public function createPutObjectRequest(string $key): string;
+    public function createPutObjectRequest(string $key, string $acl = 'public-read'): string;
 
     /**
      * Delete an object from cloud storage.
@@ -56,5 +56,5 @@ interface CloudStorageClientInterface
     /**
      * Put an object into cloud storage.
      */
-    public function putObject(string $key, string $object, string $content_type = '');
+    public function putObject(string $key, string $object, string $acl = 'public-read', string $content_type = '');
 }

@@ -22,4 +22,12 @@ class PrivateCloudStorageStreamWrapper extends AbstractCloudStorageStreamWrapper
     {
         return 'ymir-private';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAcl(): string
+    {
+        return 'private';
+    }
 }
