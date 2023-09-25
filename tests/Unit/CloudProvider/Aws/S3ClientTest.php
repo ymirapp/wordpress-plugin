@@ -302,6 +302,7 @@ class S3ClientTest extends TestCase
                         'x-amz-content-sha256' => '2958d416d08aa5a472d7b509036cb7eafd542add84527e66a145ea64cb4cdc75',
                         'x-amz-date' => '20200515T181004Z',
                         'authorization' => 'AWS4-HMAC-SHA256 Credential=aws-key/20200515/us-east-1/s3/aws4_request,SignedHeaders=content-type;host;x-amz-acl;x-amz-content-sha256;x-amz-date,Signature=41d16e3ea59549c91fcb923e6c0c42e50bb42ef529e0b5ce8b6928fb53d09402',
+                        'content-length' => 6,
                     ],
                     'method' => 'PUT',
                     'timeout' => 300,

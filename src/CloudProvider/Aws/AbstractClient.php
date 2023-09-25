@@ -143,8 +143,9 @@ abstract class AbstractClient
         ];
         $arguments['headers']['authorization'] = $this->createAuthorizationHeader($uri, $arguments['headers'], $arguments['method']);
 
-        if (null !== $body) {
+        if (is_string($body)) {
             $arguments['body'] = $body;
+            $arguments['headers']['content-length'] = strlen($body);
         }
 
         return $this->client->request($this->createRequestUrl($uri), $arguments);
