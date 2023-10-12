@@ -188,7 +188,7 @@ class AssetsSubscriber implements SubscriberInterface
             return $url;
         }
 
-        $uri = str_ireplace($this->siteUrl, '', $url);
+        $uri = '/'.ltrim(str_ireplace($this->siteUrl, '', $url), '/');
 
         // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
         // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
@@ -197,7 +197,7 @@ class AssetsSubscriber implements SubscriberInterface
             $uri = '/wp'.$uri;
         }
 
-        return $this->assetsUrl.'/'.ltrim($uri, '/');
+        return $this->assetsUrl.$uri;
     }
 
     /**
