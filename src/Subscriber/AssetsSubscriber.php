@@ -133,7 +133,7 @@ class AssetsSubscriber implements SubscriberInterface
         $assetsUrls = $urls->filter(function (string $url) use ($assetsHost) {
             return parse_url($url, PHP_URL_HOST) === $assetsHost;
         })->mapWithKeys(function (string $url) {
-            return [$url => $this->rewriteAssetsUrl('%https?://[^/]*/assets/[^/]*(.*)%i', $url)];
+            return [$url => $this->rewriteAssetsUrl($url)];
         })->all();
 
         // Get all the URLs pointing to the "/wp-content" directory
@@ -149,7 +149,7 @@ class AssetsSubscriber implements SubscriberInterface
         $nonUploadsUrls = $contentUrls->filter(function (string $url) use ($uploadsDirectory) {
             return false === stripos(parse_url($url, PHP_URL_PATH), $uploadsDirectory);
         })->mapWithKeys(function (string $url) {
-            return [$url => $this->rewriteAssetsUrl(sprintf('#https?://[^/]*(%s.*)#', $this->contentDirectoryName), $url)];
+            return [$url => $this->rewriteUrlWithAssetsUrl(sprintf('#https?://[^/]*(%s.*)#', $this->contentDirectoryName), $url)];
         })->all();
 
         // Point all URLs to "/wp-content/uploads" to the uploads URL.
@@ -158,7 +158,7 @@ class AssetsSubscriber implements SubscriberInterface
 
             return is_string($path) && 0 === stripos($path, $uploadsDirectory);
         })->mapWithKeys(function (string $url) use ($uploadsDirectory) {
-            return [$url => $this->rewriteUploadsUrl(sprintf('#https?://[^/]*%s(.*)#', $uploadsDirectory), $url)];
+            return [$url => $this->rewriteUrlWithUploadsUrl(sprintf('#https?://[^/]*%s(.*)#', $uploadsDirectory), $url)];
         })->all();
 
         foreach (array_merge($assetsUrls, $nonUploadsUrls, $uploadsUrls) as $originalUrl => $newUrl) {
@@ -173,7 +173,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteContentUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl(sprintf('#https?://.*(%s.*)#', $this->contentDirectoryName), $url);
+        return $this->rewriteUrlWithAssetsUrl(sprintf('#https?://.*(%s.*)#', $this->contentDirectoryName), $url);
     }
 
     /**
@@ -184,11 +184,16 @@ class AssetsSubscriber implements SubscriberInterface
         // Some plugins enqueue scripts and styles with two slashes which breaks CloudFront and S3.
         $url = preg_replace('#(?<!^|http:|https:)//#i', '/', $url);
 
+        // Ensure that if we have an asset URL that it's pointing to the current assets URL.
+        $url = $this->rewriteAssetsUrl($url);
+
         if (!$this->doesUrlNeedRewrite($url)) {
             return $url;
         }
 
-        $uri = '/'.ltrim(str_ireplace($this->siteUrl, '', $url), '/');
+        // The URI should always be the path after the site URL or after the assets URL (could be an old one that was
+        // cached) if an asset URL was enqueued directly.
+        $uri = '/'.ltrim(preg_replace("#^{$this->siteUrl}(/assets/[^/]*)?#i", '', $url), '/');
 
         // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
         // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
@@ -205,7 +210,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteIncludesUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl('#https?://[^/]*((/[^/]*)?/wp-includes.*)#', $url);
+        return $this->rewriteUrlWithAssetsUrl('#https?://[^/]*((/[^/]*)?/wp-includes.*)#', $url);
     }
 
     /**
@@ -213,7 +218,8 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewritePluginsUrl(string $url): string
     {
-        return $this->rewriteAssetsUrl('#https?://.*(/[^/]*/plugins.*)#', $url);
+        // TODO: Review regex. It's a bit too permissive. Should be https?://[^/]*
+        return $this->rewriteUrlWithAssetsUrl('#https?://.*(/[^/]*/plugins.*)#', $url);
     }
 
     /**
@@ -227,9 +233,17 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
-     * Rewrite the given URL to point to the assets URL based on the given REGEX pattern.
+     * Rewrite the assets URL to point it to the current assets URL.
      */
-    private function rewriteAssetsUrl(string $pattern, string $url): string
+    private function rewriteAssetsUrl(string $url): string
+    {
+        return $this->rewriteUrlWithAssetsUrl('#https?://[^/]*/assets/[^/]*(.*)#i', $url);
+    }
+
+    /**
+     * Replaces the matched pattern in the URL with the assets URL.
+     */
+    private function rewriteUrlWithAssetsUrl(string $pattern, string $url): string
     {
         preg_match($pattern, $url, $matches);
 
@@ -237,9 +251,9 @@ class AssetsSubscriber implements SubscriberInterface
     }
 
     /**
-     * Rewrite the given URL to point to the uploads URL based on the given REGEX pattern.
+     * Replaces the matched pattern in the URL with the uploads URL.
      */
-    private function rewriteUploadsUrl(string $pattern, string $url): string
+    private function rewriteUrlWithUploadsUrl(string $pattern, string $url): string
     {
         preg_match($pattern, $url, $matches);
 

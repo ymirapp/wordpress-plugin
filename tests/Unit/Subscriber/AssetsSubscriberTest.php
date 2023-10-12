@@ -137,6 +137,16 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
 
+    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndDifferentAssetDomain()
+    {
+        $this->assertSame('https://assets.com/assets/new_uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/new_uuid'))->rewriteEnqueuedUrl('https://assets.com/assets/old_uuid/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndSameAssetDomain()
+    {
+        $this->assertSame('https://foo.com/assets/new_uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/new_uuid'))->rewriteEnqueuedUrl('https://foo.com/assets/old_uuid/asset.css'));
+    }
+
     public function testRewriteEnqueuedUrlWithSourceDifferentFromSiteUrl()
     {
         $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://bar.com/asset.css'));
