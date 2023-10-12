@@ -146,10 +146,10 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
         $paths = (new Collection($paths))->unique();
 
         $filteredPaths = $paths->filter(function (string $path) {
-            return '*' !== substr($path, -1);
+            return !str_ends_with($path, '*');
         })->all();
         $wildcardPaths = $paths->filter(function (string $path) {
-            return '*' === substr($path, -1);
+            return str_ends_with($path, '*');
         });
 
         $wildcardPaths = $wildcardPaths->map(function (string $path) use ($wildcardPaths) {

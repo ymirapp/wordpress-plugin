@@ -133,7 +133,7 @@ abstract class AbstractCloudStorageStreamWrapper
         return $this->call(function () use ($path) {
             $this->openedDirectoryPath = $path;
 
-            if ('*' === substr($path, -1)) {
+            if (str_ends_with($path, '*')) {
                 $path = ltrim($this->parsePath($path), '/');
                 $this->openedDirectoryPrefix = substr($path, 0, (strrpos($path, '/') ?: 0) + 1);
                 $this->openedDirectoryObjects = new \ArrayIterator($this->getClient()->getObjects(rtrim($path, '*')));
@@ -740,7 +740,7 @@ abstract class AbstractCloudStorageStreamWrapper
                 }
             }
 
-            if ('/' === substr($key, -1) && isset($details['size']) && 0 === $details['size']) {
+            if (str_ends_with($key, '/') && isset($details['size']) && 0 === $details['size']) {
                 return $stat;
             }
 

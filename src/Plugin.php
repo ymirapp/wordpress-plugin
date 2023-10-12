@@ -54,7 +54,7 @@ class Plugin
 
         $rootDirectory = ABSPATH;
 
-        if ('/wp/' === substr($rootDirectory, -4)) {
+        if (str_ends_with($rootDirectory, '/wp/')) {
             $rootDirectory = substr($rootDirectory, 0, -3);
         }
 

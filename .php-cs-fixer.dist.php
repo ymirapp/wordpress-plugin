@@ -34,6 +34,7 @@ $config
         'heredoc_to_nowdoc' => true,
         'list_syntax' => ['syntax' => 'long'],
         'method_chaining_indentation' => false,
+        'modernize_strpos' => true,
         'native_function_invocation' => false,
         'native_constant_invocation' => false,
         'no_extra_blank_lines' => ['tokens' => ['break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block']],

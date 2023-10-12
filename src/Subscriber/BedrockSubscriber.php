@@ -52,7 +52,7 @@ class BedrockSubscriber implements SubscriberInterface
      */
     public function ensureHomeUrlDoesntContainWp(string $homeUrl): string
     {
-        if ($this->isBedrockProject() && '/wp' === substr($homeUrl, -3)) {
+        if ($this->isBedrockProject() && str_ends_with($homeUrl, '/wp')) {
             $homeUrl = substr($homeUrl, 0, -3);
         }
 
@@ -70,7 +70,7 @@ class BedrockSubscriber implements SubscriberInterface
 
         $baseUrl = rtrim(substr($networkSiteUrl, 0, -strlen($path)), '/');
 
-        if ('/wp' !== substr($baseUrl, -3)) {
+        if (!str_ends_with($baseUrl, '/wp')) {
             $baseUrl .= '/wp';
         }
 
@@ -82,7 +82,7 @@ class BedrockSubscriber implements SubscriberInterface
      */
     public function ensureSiteUrlContainsWp(string $siteUrl): string
     {
-        if ($this->isBedrockProject() && '/wp' !== substr($siteUrl, -3) && (is_main_site() || is_subdomain_install())) {
+        if ($this->isBedrockProject() && !str_ends_with($siteUrl, '/wp') && (is_main_site() || is_subdomain_install())) {
             $siteUrl .= '/wp';
         }
 
