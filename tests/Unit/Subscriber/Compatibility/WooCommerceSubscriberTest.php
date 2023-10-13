@@ -28,7 +28,89 @@ class WooCommerceSubscriberTest extends TestCase
 
     public function testDisableCheckImportFilePath()
     {
-        $this->assertFalse((new WooCommerceSubscriber())->disableCheckImportFilePath());
+        $this->assertFalse((new WooCommerceSubscriber('https://foo.com'))->disableCheckImportFilePath());
+    }
+
+    public function testFixAssetUrlPathsInCachedScriptDataIfAssetsUrlIsEmpty()
+    {
+        $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
+        $wp_json_encode->expects($this->never());
+
+        $this->assertSame('foo', (new WooCommerceSubscriber('https://foo.com'))->fixAssetUrlPathsInCachedScriptData('foo'));
+    }
+
+    public function testFixAssetUrlPathsInCachedScriptDataIfJsonDecodeHasError()
+    {
+        $json_last_error = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'json_last_error');
+        $json_last_error->expects($this->once())
+                        ->willReturn(JSON_ERROR_SYNTAX);
+
+        $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
+        $wp_json_encode->expects($this->never());
+
+        $this->assertSame('foo', (new WooCommerceSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->fixAssetUrlPathsInCachedScriptData('foo'));
+    }
+
+    public function testFixAssetUrlPathsInCachedScriptDataIfScriptDataHasNoScriptData()
+    {
+        $json_last_error = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'json_last_error');
+        $json_last_error->expects($this->once())
+                        ->willReturn(JSON_ERROR_NONE);
+
+        $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
+        $wp_json_encode->expects($this->never());
+
+        $this->assertSame('foo', (new WooCommerceSubscriber('https://foo.com', 'https://assets.com/assets/uuid'))->fixAssetUrlPathsInCachedScriptData('foo'));
+    }
+
+    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndDifferentAssetDomain()
+    {
+        $scriptData = [
+            'script_data' => [
+                'script.js' => [
+                    'src' => 'https://assets.com/assets/old_uuid/script.js',
+                ],
+            ],
+        ];
+        $expectedScriptData = [
+            'script_data' => [
+                'script.js' => [
+                    'src' => 'https://assets.com/assets/new_uuid/script.js',
+                ],
+            ],
+        ];
+
+        $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
+        $wp_json_encode->expects($this->once())
+                       ->with($this->identicalTo($expectedScriptData))
+                        ->willReturn(json_encode($expectedScriptData));
+
+        $this->assertSame(json_encode($expectedScriptData), (new WooCommerceSubscriber('https://foo.com', 'https://assets.com/assets/new_uuid'))->fixAssetUrlPathsInCachedScriptData(json_encode($scriptData)));
+    }
+
+    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndSameAssetDomain()
+    {
+        $scriptData = [
+            'script_data' => [
+                'script.js' => [
+                    'src' => 'https://foo.com/assets/old_uuid/script.js',
+                ],
+            ],
+        ];
+        $expectedScriptData = [
+            'script_data' => [
+                'script.js' => [
+                    'src' => 'https://foo.com/assets/new_uuid/script.js',
+                ],
+            ],
+        ];
+
+        $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
+        $wp_json_encode->expects($this->once())
+            ->with($this->identicalTo($expectedScriptData))
+            ->willReturn(json_encode($expectedScriptData));
+
+        $this->assertSame(json_encode($expectedScriptData), (new WooCommerceSubscriber('https://foo.com', 'https://foo.com/assets/new_uuid'))->fixAssetUrlPathsInCachedScriptData(json_encode($scriptData)));
     }
 
     public function testGetSubscribedEvents()
@@ -40,6 +122,8 @@ class WooCommerceSubscriberTest extends TestCase
         }
 
         $subscribedEvents = [
+            'transient_woocommerce_blocks_asset_api_script_data' => 'fixAssetUrlPathsInCachedScriptData',
+            'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
         ];

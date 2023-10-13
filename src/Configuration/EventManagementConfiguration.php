@@ -56,7 +56,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
 
                 // Plugin compatibility subscribers
                 new Subscriber\Compatibility\ActionSchedulerSubscriber(),
-                new Subscriber\Compatibility\WooCommerceSubscriber(),
+                new Subscriber\Compatibility\WooCommerceSubscriber($container['site_url'], $container['assets_url']),
                 new Subscriber\Compatibility\WpMigrateDbSubscriber(),
             ];
 
