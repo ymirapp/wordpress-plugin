@@ -130,9 +130,7 @@ class AssetsSubscriber implements SubscriberInterface
 
         // If we have a hardcoded URL to an asset, we want to dynamically update it to the
         // current asset URL.
-        $assetsUrls = $urls->filter(function (string $url) use ($assetsHost) {
-            return parse_url($url, PHP_URL_HOST) === $assetsHost;
-        })->mapWithKeys(function (string $url) {
+        $assetsUrls = $urls->mapWithKeys(function (string $url) {
             return [$url => $this->rewriteAssetsUrl($url)];
         })->all();
 
@@ -237,26 +235,26 @@ class AssetsSubscriber implements SubscriberInterface
      */
     private function rewriteAssetsUrl(string $url): string
     {
-        return $this->rewriteUrlWithAssetsUrl('#https?://[^/]*/assets/[^/]*(.*)#i', $url);
+        return $this->rewriteUrlWithAssetsUrl(sprintf('#^https?://(%s|%s)/assets/[^/]*(.*)#i', parse_url($this->siteUrl, PHP_URL_HOST), parse_url($this->assetsUrl, PHP_URL_HOST)), $url, 2);
     }
 
     /**
      * Replaces the matched pattern in the URL with the assets URL.
      */
-    private function rewriteUrlWithAssetsUrl(string $pattern, string $url): string
+    private function rewriteUrlWithAssetsUrl(string $pattern, string $url, int $matchIndex = 1): string
     {
         preg_match($pattern, $url, $matches);
 
-        return empty($matches[1]) ? $url : $this->assetsUrl.'/'.ltrim($matches[1], '/');
+        return empty($matches[$matchIndex]) ? $url : $this->assetsUrl.'/'.ltrim($matches[$matchIndex], '/');
     }
 
     /**
      * Replaces the matched pattern in the URL with the uploads URL.
      */
-    private function rewriteUrlWithUploadsUrl(string $pattern, string $url): string
+    private function rewriteUrlWithUploadsUrl(string $pattern, string $url, int $matchIndex = 1): string
     {
         preg_match($pattern, $url, $matches);
 
-        return empty($matches[1]) ? $url : $this->uploadsUrl.'/'.ltrim($matches[1], '/');
+        return empty($matches[$matchIndex]) ? $url : $this->uploadsUrl.'/'.ltrim($matches[$matchIndex], '/');
     }
 }
