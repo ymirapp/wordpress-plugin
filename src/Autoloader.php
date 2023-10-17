@@ -40,6 +40,6 @@ class Autoloader
      */
     public static function register(bool $prepend = false)
     {
-        spl_autoload_register([new self(), 'autoload'], true, $prepend);
+        spl_autoload_register([static::class, 'autoload'], true, $prepend);
     }
 }
