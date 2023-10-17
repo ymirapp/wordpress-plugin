@@ -265,7 +265,7 @@ abstract class AbstractCloudStorageStreamWrapper
     }
 
     /**
-     * Retrieve the underlaying resource.
+     * Retrieve the underlying resource.
      *
      * @see https://www.php.net/manual/en/streamwrapper.stream-cast.php
      */

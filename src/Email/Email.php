@@ -189,7 +189,7 @@ class Email
     }
 
     /**
-     * Add "to" addreses to the email.
+     * Add "to" addresses to the email.
      */
     public function to($addresses)
     {

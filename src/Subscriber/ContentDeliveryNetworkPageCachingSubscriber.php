@@ -164,7 +164,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
             return get_term_link($taxonomyTerm);
         }));
         $urlsToClear = $urlsToClear->merge($taxonomyTerms->map(function (\WP_Term $taxonomyTerm) {
-            return isset($taxonomyTerm->slug, $taxonomyTerm->taxonomy) ? $this->restBaseUrl.sprintf('/%s/%s/', $taxonomyTerm->taxonomy, $taxonomyTerm->slug) : '';
+            return $this->restBaseUrl.sprintf('/%s/%s/', $taxonomyTerm->taxonomy, $taxonomyTerm->slug);
         }));
 
         // Add Post related URLs

@@ -59,8 +59,8 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
             $imageSize = $image->get_size();
 
             $imageMetadata['file'] = $this->updateAttachedFilePath($attachment, $filePath);
-            $imageMetadata['width'] = $imageSize['width'] ?? 0;
-            $imageMetadata['height'] = $imageSize['height'] ?? 0;
+            $imageMetadata['width'] = $imageSize['width'];
+            $imageMetadata['height'] = $imageSize['height'];
         }
 
         $imageMetadata['sizes'] = array_merge($imageMetadata['sizes'], $image->multi_resize($this->getImageSizeDimensions($apply)));
