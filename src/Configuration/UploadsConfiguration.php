@@ -31,7 +31,7 @@ class UploadsConfiguration implements ContainerConfigurationInterface
             $uploadUrl = (string) getenv('YMIR_UPLOAD_URL');
 
             if (!Str::contains($uploadUrl, ['cloudfront.net', 's3.amazonaws.com']) && $container['is_multisite_subdomain'] && $container['ymir_mapped_domain_names']->isMappedDomainName($container['site_domain'])) {
-                $uploadUrl = $container['site_url'];
+                $uploadUrl = rtrim($container['home_url'], '/');
             }
 
             return $uploadUrl;

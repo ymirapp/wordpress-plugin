@@ -40,7 +40,7 @@ class AssetsConfiguration implements ContainerConfigurationInterface
             $assetsUrl = getenv('YMIR_ASSETS_URL') ?: (defined('YMIR_ASSETS_URL') ? YMIR_ASSETS_URL : '');
 
             if (!Str::contains($assetsUrl, ['cloudfront.net', 's3.amazonaws.com']) && $container['is_multisite_subdomain'] && $container['ymir_mapped_domain_names']->isMappedDomainName($container['site_domain'])) {
-                $assetsUrl = rtrim($container['site_url'], '/').'/'.$container['assets_path'];
+                $assetsUrl = rtrim($container['home_url'], '/').'/'.$container['assets_path'];
             }
 
             return $assetsUrl;

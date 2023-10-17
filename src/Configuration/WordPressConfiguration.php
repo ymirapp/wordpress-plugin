@@ -89,6 +89,15 @@ class WordPressConfiguration implements ContainerConfigurationInterface
 
             return new \WP_Filesystem_Direct(false);
         });
+        $container['home_url'] = $container->service(function (Container $container) {
+            $homeUrl = $container['site_url'];
+
+            if ('bedrock' === $container['ymir_project_type']) {
+                $homeUrl = preg_replace('#wp/?$#i', '', $homeUrl);
+            }
+
+            return $homeUrl;
+        });
         $container['is_multisite'] = is_multisite();
         $container['is_multisite_subdomain'] = $container->service(function (Container $container) {
             return $container['is_multisite'] && function_exists('is_subdomain_install') && is_subdomain_install();
