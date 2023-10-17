@@ -169,16 +169,16 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             return home_url('', 'https');
         });
         $container['uploads_basedir'] = $container->service(function () {
-            return wp_upload_dir()['basedir'] ?? '';
+            return wp_upload_dir()['basedir'];
         });
         $container['uploads_baseurl'] = $container->service(function () {
-            return wp_upload_dir()['baseurl'] ?? '';
+            return wp_upload_dir()['baseurl'];
         });
         $container['uploads_path'] = $container->service(function () {
-            return wp_upload_dir()['path'] ?? '';
+            return wp_upload_dir()['path'];
         });
         $container['uploads_subdir'] = $container->service(function () {
-            return wp_upload_dir()['subdir'] ?? '';
+            return wp_upload_dir()['subdir'];
         });
         $container['wp_object_cache'] = $container->service(function () {
             global $wp_object_cache;
