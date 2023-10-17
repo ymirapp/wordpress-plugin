@@ -216,7 +216,6 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewritePluginsUrl(string $url): string
     {
-        // TODO: Review regex. It's a bit too permissive. Should be https?://[^/]*
         return $this->rewriteUrlWithAssetsUrl('#https?://.*(/[^/]*/plugins.*)#', $url);
     }
 
