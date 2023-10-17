@@ -26,35 +26,6 @@ class WordPressConfiguration implements ContainerConfigurationInterface
      */
     public function modify(Container $container)
     {
-        $container['blog_charset'] = $container->service(function () {
-            return get_bloginfo('charset');
-        });
-        $container['content_directory'] = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '';
-        $container['content_directory_name'] = defined('CONTENT_DIR') ? CONTENT_DIR : 'wp-content';
-        $container['content_url'] = defined('WP_CONTENT_URL') ? WP_CONTENT_URL : '';
-        $container['content_width'] = $container->service(function () {
-            return isset($GLOBALS['content_width']) && is_numeric($GLOBALS['content_width']) ? (int) $GLOBALS['content_width'] : null;
-        });
-        $container['current_user'] = $container->service(function () {
-            return wp_get_current_user();
-        });
-        $container['default_email_from'] = $container->service(function () {
-            $sitename = strtolower(wp_parse_url(network_home_url(), PHP_URL_HOST));
-
-            if (str_starts_with($sitename, 'www.')) {
-                $sitename = substr($sitename, 4);
-            }
-
-            return 'wordpress@'.$sitename;
-        });
-        $container['filesystem'] = $container->service(function () {
-            if (!class_exists(\WP_Filesystem_Direct::class)) {
-                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-base.php';
-                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-direct.php';
-            }
-
-            return new \WP_Filesystem_Direct(false);
-        });
         $container['base_image_sizes'] = $container->service(function () {
             $sizes = [
                 'thumb' => [
@@ -88,6 +59,35 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             $sizes['thumbnail'] = $sizes['thumb'];
 
             return $sizes;
+        });
+        $container['blog_charset'] = $container->service(function () {
+            return get_bloginfo('charset');
+        });
+        $container['content_directory'] = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '';
+        $container['content_directory_name'] = defined('CONTENT_DIR') ? CONTENT_DIR : 'wp-content';
+        $container['content_url'] = defined('WP_CONTENT_URL') ? WP_CONTENT_URL : '';
+        $container['content_width'] = $container->service(function () {
+            return isset($GLOBALS['content_width']) && is_numeric($GLOBALS['content_width']) ? (int) $GLOBALS['content_width'] : null;
+        });
+        $container['current_user'] = $container->service(function () {
+            return wp_get_current_user();
+        });
+        $container['default_email_from'] = $container->service(function () {
+            $sitename = strtolower(wp_parse_url(network_home_url(), PHP_URL_HOST));
+
+            if (str_starts_with($sitename, 'www.')) {
+                $sitename = substr($sitename, 4);
+            }
+
+            return 'wordpress@'.$sitename;
+        });
+        $container['filesystem'] = $container->service(function () {
+            if (!class_exists(\WP_Filesystem_Direct::class)) {
+                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-base.php';
+                require_once ABSPATH.'wp-admin/includes/class-wp-filesystem-direct.php';
+            }
+
+            return new \WP_Filesystem_Direct(false);
         });
         $container['is_multisite'] = is_multisite();
         $container['is_multisite_subdomain'] = $container->service(function (Container $container) {
