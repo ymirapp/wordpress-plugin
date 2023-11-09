@@ -36,5 +36,6 @@ $ymir->load();
 
 // Load Ymir pluggable functions if the plugin is active
 if ($ymir->isActive()) {
+    require_once __DIR__.'/functions.php';
     require_once __DIR__.'/pluggable.php';
 }
