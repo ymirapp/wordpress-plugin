@@ -31,6 +31,16 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertFalse((new WooCommerceSubscriber('https://foo.com'))->disableCheckImportFilePath());
     }
 
+    public function testDisableImageResizeWithImageProcessingWithImageProcessingDisabled()
+    {
+        $this->assertTrue((new WooCommerceSubscriber('https://foo.com'))->disableImageResizeWithImageProcessing(true));
+    }
+
+    public function testDisableImageResizeWithImageProcessingWithImageProcessingEnabled()
+    {
+        $this->assertFalse((new WooCommerceSubscriber('https://foo.com', 'https://assets.com/assets/uuid', true))->disableImageResizeWithImageProcessing(true));
+    }
+
     public function testFixAssetUrlPathsInCachedScriptDataIfAssetsUrlIsEmpty()
     {
         $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
@@ -126,6 +136,7 @@ class WooCommerceSubscriberTest extends TestCase
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
+            'woocommerce_resize_images' => 'disableImageResizeWithImageProcessing',
         ];
 
         $this->assertSame($subscribedEvents, $callbacks);

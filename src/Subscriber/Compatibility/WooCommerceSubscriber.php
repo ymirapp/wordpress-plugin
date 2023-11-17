@@ -29,6 +29,13 @@ class WooCommerceSubscriber implements SubscriberInterface
     private $assetsUrl;
 
     /**
+     * Flag whether image processing is enabled or not.
+     *
+     * @var bool
+     */
+    private $isImageProcessingEnabled;
+
+    /**
      * WordPress site URL.
      *
      * @var string
@@ -38,9 +45,10 @@ class WooCommerceSubscriber implements SubscriberInterface
     /**
      * Constructor.
      */
-    public function __construct(string $siteUrl, string $assetsUrl = '')
+    public function __construct(string $siteUrl, string $assetsUrl = '', bool $isImageProcessingEnabled = false)
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
+        $this->isImageProcessingEnabled = $isImageProcessingEnabled;
         $this->siteUrl = rtrim($siteUrl, '/');
     }
 
@@ -54,6 +62,7 @@ class WooCommerceSubscriber implements SubscriberInterface
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
+            'woocommerce_resize_images' => 'disableImageResizeWithImageProcessing',
         ];
     }
 
@@ -63,6 +72,14 @@ class WooCommerceSubscriber implements SubscriberInterface
     public function disableCheckImportFilePath(): bool
     {
         return false;
+    }
+
+    /**
+     * Disable image resizing when image processing is enabled.
+     */
+    public function disableImageResizeWithImageProcessing($resizeImages)
+    {
+        return $this->isImageProcessingEnabled ? false : $resizeImages;
     }
 
     /**
