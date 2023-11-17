@@ -1,8 +1,11 @@
 {
     "name": "ymirapp/wordpress-plugin",
     "description": "Ymir WordPress plugin",
-    "keywords": ["ymir", "wordpress"],
-    "type" : "wordpress-plugin",
+    "keywords": [
+        "ymir",
+        "wordpress"
+    ],
+    "type": "wordpress-plugin",
     "license": "GPL-3.0+",
     "authors": [
         {
