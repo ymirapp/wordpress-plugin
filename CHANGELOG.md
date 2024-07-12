@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.21.0...v1.21.1) (2024-07-12)
+
+
+### Bug Fixes
+
+* cast source value as int ([f7bf891](https://github.com/ymirapp/wordpress-plugin/commit/f7bf8910c16ba5ee459926bed3e2f68389ce6a8a))
+
 ## [1.21.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.20.2...v1.21.0) (2023-11-17)
 
 
