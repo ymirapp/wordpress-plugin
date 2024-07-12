@@ -67,7 +67,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $baseImageSizes, bool $isMultisite, string $uploadsUrl, int $contentWidthGlobal = null)
+    public function __construct(array $baseImageSizes, bool $isMultisite, string $uploadsUrl, ?int $contentWidthGlobal = null)
     {
         $this->baseImageSizes = $baseImageSizes;
         $this->contentWidthGlobal = $contentWidthGlobal;
@@ -128,10 +128,10 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         list($width, $height, $cropped) = $this->getImageAttachmentDimensions((int) $attachmentId, $size);
 
         return [
-             $this->generateImageUrl($imageUrl, $height, $width, $cropped),
-             $width ?? false,
-             $height ?? false,
-             'full' !== $size,
+            $this->generateImageUrl($imageUrl, $height, $width, $cropped),
+            $width ?? false,
+            $height ?? false,
+            'full' !== $size,
         ];
     }
 

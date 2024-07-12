@@ -45,7 +45,7 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * Constructor.
      */
-    public function __construct(ConsoleClientInterface $consoleClient, EventManager $eventManager, WpCli $wpCli, \WP_Site_Query $siteQuery = null)
+    public function __construct(ConsoleClientInterface $consoleClient, EventManager $eventManager, WpCli $wpCli, ?\WP_Site_Query $siteQuery = null)
     {
         parent::__construct($wpCli);
 

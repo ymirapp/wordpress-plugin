@@ -87,7 +87,7 @@ abstract class AbstractCloudStorageStreamWrapper
     /**
      * Register the cloud storage stream wrapper.
      */
-    public static function register(CloudStorageClientInterface $client, \ArrayObject $cache = null)
+    public static function register(CloudStorageClientInterface $client, ?\ArrayObject $cache = null)
     {
         if (in_array(static::getProtocol(), stream_get_wrappers())) {
             stream_wrapper_unregister(static::getProtocol());

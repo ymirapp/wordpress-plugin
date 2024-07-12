@@ -120,7 +120,7 @@ class Collection implements \ArrayAccess
     /**
      * Run a filter over each collection item.
      */
-    public function filter(callable $callback = null): self
+    public function filter(?callable $callback = null): self
     {
         $filtered = $callback ? array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH) : array_filter($this->items);
 
@@ -283,7 +283,7 @@ class Collection implements \ArrayAccess
     /**
      * Extract a slice of the collection.
      */
-    public function slice(int $offset, int $length = null): self
+    public function slice(int $offset, ?int $length = null): self
     {
         return new self(array_slice($this->items, $offset, $length, true));
     }
@@ -291,7 +291,7 @@ class Collection implements \ArrayAccess
     /**
      * Sort through each item with a callback.
      */
-    public function sort(callable $callback = null)
+    public function sort(?callable $callback = null)
     {
         $items = $this->items;
 

@@ -265,12 +265,12 @@ class S3ClientTest extends TestCase
                  ])
              )
              ->willReturn([
-                'headers' => [
-                    'content-type' => 'text/plain',
-                    'content-length' => 42,
-                    'last-modified' => '10 September 2000',
-                ],
-                'response' => ['code' => 200],
+                 'headers' => [
+                     'content-type' => 'text/plain',
+                     'content-length' => 42,
+                     'last-modified' => '10 September 2000',
+                 ],
+                 'response' => ['code' => 200],
              ]);
 
         $gmdate = $this->getFunctionMock($this->getNamespace(S3Client::class), 'gmdate');

@@ -46,7 +46,7 @@ class DynamoDbClientTest extends TestCase
                      'method' => 'POST',
                      'timeout' => 300,
                      'body' => '{"RequestItems":{"table":{"ConsistentRead":false,"Keys":[{"key":{"S":"forum"}}]}}}',
-                ])
+                 ])
              )
              ->willReturn([
                  'body' => '{"Responses": {"Forum": [{"Name":{"S":"Amazon DynamoDB"}, "Threads":{"N":"5"}, "Messages":{"N":"19"}, "Views":{"N":"35"}}]}}',
