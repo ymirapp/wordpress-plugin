@@ -265,7 +265,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
             $cropped = $height && (int) $source['value'] === $width;
 
             if (!$height && !$width) {
-                $width = $source['value'];
+                $width = (int) $source['value'];
             }
 
             $url = is_numeric($attachmentId) ? wp_get_attachment_url($attachmentId) : $this->getOriginalImageUrl($source['url']);

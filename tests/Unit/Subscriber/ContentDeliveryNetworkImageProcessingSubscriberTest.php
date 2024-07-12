@@ -711,6 +711,23 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedContent, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteContentImageUrls($content));
     }
 
+    public function testRewriteImageSrcsetFallsBackToValueAttributeAndCastsItToIntIfUnableToParseImageDimensions()
+    {
+        $actualSources = [
+            ['value' => '42', 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image.jpg'],
+        ];
+        $expectedSources = [
+            ['value' => '42', 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image.jpg?width=42'],
+        ];
+
+        $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
+        $wp_get_attachment_url->expects($this->once())
+                              ->with($this->identicalTo(42))
+                              ->willReturn('https://assets.com/uploads/image.jpg');
+
+        $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
+    }
+
     public function testRewriteImageSrcsetFallsBackToValueAttributeIfUnableToParseImageDimensions()
     {
         $actualSources = [
