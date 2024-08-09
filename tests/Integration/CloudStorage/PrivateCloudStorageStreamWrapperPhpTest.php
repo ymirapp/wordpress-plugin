@@ -25,7 +25,7 @@ class PrivateCloudStorageStreamWrapperPhpTest extends AbstractCloudStorageStream
         return 'private';
     }
 
-    protected function getStreamWrapper(): string
+    protected function getStreamWrapperClass(): string
     {
         return PrivateCloudStorageStreamWrapper::class;
     }

@@ -25,7 +25,7 @@ class PublicCloudStorageStreamWrapperPhpTest extends AbstractCloudStorageStreamW
         return 'public-read';
     }
 
-    protected function getStreamWrapper(): string
+    protected function getStreamWrapperClass(): string
     {
         return PublicCloudStorageStreamWrapper::class;
     }

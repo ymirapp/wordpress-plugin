@@ -28,7 +28,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
     {
         $this->client = new S3Client(new CurlClient('test'), 'ymir-plugin-test', getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-east-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
 
-        $this->getStreamWrapper()::register($this->client);
+        $this->getStreamWrapperClass()::register($this->client);
     }
 
     public function testCopyFromLocal()
@@ -185,10 +185,10 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    abstract protected function getStreamWrapper(): string;
+    abstract protected function getStreamWrapperClass(): string;
 
     private function getProtocol(): string
     {
-        return $this->getStreamWrapper()::getProtocol();
+        return $this->getStreamWrapperClass()::getProtocol();
     }
 }

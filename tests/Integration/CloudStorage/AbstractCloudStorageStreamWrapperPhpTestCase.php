@@ -35,7 +35,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
     {
         $this->client = $this->getCloudStorageClientInterfaceMock();
 
-        $this->getStreamWrapper()::register($this->client, new \ArrayObject());
+        $this->getStreamWrapperClass()::register($this->client, new \ArrayObject());
     }
 
     public function testAppendsToExistingFile()
@@ -309,11 +309,11 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
     public function testRegistersStreamWrapperOnlyOnce()
     {
-        $this->assertContains($this->getStreamWrapper()::getProtocol(), stream_get_wrappers());
+        $this->assertContains($this->getStreamWrapperClass()::getProtocol(), stream_get_wrappers());
 
-        $this->getStreamWrapper()::register($this->client);
+        $this->getStreamWrapperClass()::register($this->client);
 
-        $this->assertContains($this->getStreamWrapper()::getProtocol(), stream_get_wrappers());
+        $this->assertContains($this->getStreamWrapperClass()::getProtocol(), stream_get_wrappers());
     }
 
     public function testRenameSuccessful()
@@ -690,10 +690,10 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
     abstract protected function getAcl();
 
-    abstract protected function getStreamWrapper(): string;
+    abstract protected function getStreamWrapperClass(): string;
 
     private function getProtocol(): string
     {
-        return $this->getStreamWrapper()::getProtocol();
+        return $this->getStreamWrapperClass()::getProtocol();
     }
 }

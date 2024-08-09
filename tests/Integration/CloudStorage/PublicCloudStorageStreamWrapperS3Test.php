@@ -20,7 +20,7 @@ use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
  */
 class PublicCloudStorageStreamWrapperS3Test extends AbstractCloudStorageStreamWrapperS3TestCase
 {
-    protected function getStreamWrapper(): string
+    protected function getStreamWrapperClass(): string
     {
         return PublicCloudStorageStreamWrapper::class;
     }
