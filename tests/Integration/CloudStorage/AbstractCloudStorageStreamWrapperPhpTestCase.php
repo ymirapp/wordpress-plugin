@@ -68,7 +68,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $file = fopen("{$this->getProtocol()}:///file.ext", 'a');
 
@@ -144,7 +144,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         fopen("{$this->getProtocol()}:///file.ext", 'x');
     }
@@ -183,7 +183,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 
         $this->client->expects($this->once())
                      ->method('putObject')
-                     ->with($this->identicalTo('/directory/'), $this->identicalTo(''));
+                     ->with($this->identicalTo('/directory/'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $this->assertTrue(mkdir("{$this->getProtocol()}:///directory"));
     }

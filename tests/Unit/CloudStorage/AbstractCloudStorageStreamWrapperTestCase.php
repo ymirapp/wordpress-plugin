@@ -400,7 +400,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo/'), $this->identicalTo(''));
+               ->with($this->identicalTo('/foo/'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $clearstatcache = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'clearstatcache');
         $clearstatcache->expects($this->once())
@@ -667,7 +667,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'));
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'), $this->identicalTo($this->getAcl()));
 
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
@@ -692,7 +692,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'));
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo('foo'), $this->identicalTo($this->getAcl()));
 
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
@@ -806,7 +806,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo.txt'), $this->identicalTo(''));
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
@@ -828,7 +828,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 
         $client->expects($this->once())
                ->method('putObject')
-               ->with($this->identicalTo('/foo.txt'), $this->identicalTo(''));
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
 
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
