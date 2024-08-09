@@ -106,6 +106,39 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->assertFalse($this->client->objectExists($directoryPath.'/'));
     }
 
+    public function testTouchCreatesEmptyFileIfFileDoesntExist()
+    {
+        $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
+
+        $this->assertFalse(file_exists($s3FilePath));
+
+        $this->assertTrue(touch($s3FilePath));
+
+        $this->assertTrue(file_exists($s3FilePath));
+        $this->assertSame('', file_get_contents($s3FilePath));
+
+        $this->client->deleteObject($relativePath);
+    }
+
+    public function testTouchDoesNothingIfFileExists()
+    {
+        $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
+        $s3FilePath = "{$this->getProtocol()}://".$relativePath;
+
+        $this->assertFalse(file_exists($s3FilePath));
+
+        file_put_contents($s3FilePath, 'foo');
+
+        $this->assertTrue(file_exists($s3FilePath));
+
+        $this->assertTrue(touch($s3FilePath));
+
+        $this->assertSame('foo', file_get_contents($s3FilePath));
+
+        $this->client->deleteObject($relativePath);
+    }
+
     public function testTruncateExistingFile()
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');

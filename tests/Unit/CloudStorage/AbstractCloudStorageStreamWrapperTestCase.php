@@ -643,9 +643,44 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($this->getStreamWrapperObject()->stream_lock());
     }
 
-    public function testStreamMetadata()
+    public function testStreamMetadataWithNonTouchOption()
     {
-        $this->assertFalse($this->getStreamWrapperObject()->stream_metadata());
+        $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_GROUP));
+    }
+
+    public function testStreamMetadataWithTouchOptionWhenObjectDoesntExist()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn(false);
+
+        $client->expects($this->once())
+               ->method('putObject')
+               ->with($this->identicalTo('/foo.txt'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
+
+        $this->getStreamWrapperClass()::register($client, new \ArrayObject());
+
+        $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_TOUCH));
+    }
+
+    public function testStreamMetadataWithTouchOptionWhenObjectExists()
+    {
+        $client = $this->getCloudStorageClientInterfaceMock();
+
+        $client->expects($this->once())
+               ->method('objectExists')
+               ->with($this->identicalTo('/foo.txt'))
+               ->willReturn(true);
+
+        $client->expects($this->never())
+               ->method('putObject');
+
+        $this->getStreamWrapperClass()::register($client, new \ArrayObject());
+
+        $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_TOUCH));
     }
 
     public function testStreamOpenWithInvalidMode()

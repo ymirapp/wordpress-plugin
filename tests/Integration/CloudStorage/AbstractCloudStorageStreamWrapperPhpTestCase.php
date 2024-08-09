@@ -496,6 +496,33 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         ]));
     }
 
+    public function testTouchCreatesObjectIfItDoesntExist()
+    {
+        $this->client->expects($this->once())
+                     ->method('objectExists')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn(false);
+
+        $this->client->expects($this->once())
+                     ->method('putObject')
+                     ->with($this->identicalTo('/file.ext'), $this->identicalTo(''), $this->identicalTo($this->getAcl()));
+
+        $this->assertTrue(touch("{$this->getProtocol()}:///file.ext"));
+    }
+
+    public function testTouchDoesntCreateObjectIfItExists()
+    {
+        $this->client->expects($this->once())
+                     ->method('objectExists')
+                     ->with($this->identicalTo('/file.ext'))
+                     ->willReturn(false);
+
+        $this->client->expects($this->once())
+                     ->method('putObject');
+
+        $this->assertTrue(touch("{$this->getProtocol()}:///file.ext"));
+    }
+
     public function testTruncatesFile()
     {
         $this->client->expects($this->once())

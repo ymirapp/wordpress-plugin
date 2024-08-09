@@ -332,9 +332,18 @@ abstract class AbstractCloudStorageStreamWrapper
      *
      * @see https://www.php.net/manual/en/streamwrapper.stream-metadata.php
      */
-    public function stream_metadata(): bool
+    public function stream_metadata(string $path, int $option): bool
     {
-        return false;
+        return STREAM_META_TOUCH === $option ? $this->call(function () use ($path) {
+            $client = $this->getClient();
+            $key = $this->parsePath($path);
+
+            if (!$client->objectExists($key)) {
+                $client->putObject($key, '', $this->getAcl());
+            }
+
+            $this->removeCacheValue($path);
+        }) : true;
     }
 
     /**
