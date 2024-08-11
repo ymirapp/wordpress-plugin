@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Unit\Subscriber\Compatibility;
 
+use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\Subscriber\Compatibility\WooCommerceSubscriber;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
@@ -25,6 +27,25 @@ class WooCommerceSubscriberTest extends TestCase
 {
     use EventManagerMockTrait;
     use FunctionMockTrait;
+
+    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatDoesntStartWithThePublicCloudStorageProtocol()
+    {
+        $logDirectory = '/var/logs';
+
+        $this->assertSame($logDirectory, (new WooCommerceSubscriber('https://foo.com'))->changeLogDirectory($logDirectory));
+    }
+
+    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatStartsWithThePublicCloudStorageProtocol()
+    {
+        $this->assertSame(sprintf('%s:///wc-logs/', PrivateCloudStorageStreamWrapper::getProtocol()), (new WooCommerceSubscriber('https://foo.com'))->changeLogDirectory(sprintf('%s:///uploads', PublicCloudStorageStreamWrapper::getProtocol())));
+    }
+
+    public function testChangeLogDirectoryWhenLogDirectoryIsntAString()
+    {
+        $logDirectory = 42;
+
+        $this->assertSame($logDirectory, (new WooCommerceSubscriber('https://foo.com'))->changeLogDirectory($logDirectory));
+    }
 
     public function testDisableCheckImportFilePath()
     {
@@ -135,6 +156,7 @@ class WooCommerceSubscriberTest extends TestCase
             'transient_woocommerce_blocks_asset_api_script_data' => 'fixAssetUrlPathsInCachedScriptData',
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
+            'woocommerce_log_directory' => 'changeLogDirectory',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_resize_images' => 'disableImageResizeWithImageProcessing',
         ];

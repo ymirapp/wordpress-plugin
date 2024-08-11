@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Subscriber\Compatibility;
 
+use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
+use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 use Ymir\Plugin\Support\Collection;
 
@@ -61,9 +63,20 @@ class WooCommerceSubscriber implements SubscriberInterface
             'transient_woocommerce_blocks_asset_api_script_data' => 'fixAssetUrlPathsInCachedScriptData',
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
+            'woocommerce_log_directory' => 'changeLogDirectory',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_resize_images' => 'disableImageResizeWithImageProcessing',
         ];
+    }
+
+    /**
+     * Change the log directory to point to the private cloud storage.
+     */
+    public function changeLogDirectory($logDirectory)
+    {
+        return is_string($logDirectory) && str_starts_with($logDirectory, PublicCloudStorageStreamWrapper::getProtocol())
+             ? sprintf('%s:///wc-logs/', PrivateCloudStorageStreamWrapper::getProtocol())
+             : $logDirectory;
     }
 
     /**
