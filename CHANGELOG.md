@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.21.1...v1.22.0) (2024-08-11)
+
+
+### Features
+
+* add support for `stream_metadata` operations with stream wrapper ([bacc240](https://github.com/ymirapp/wordpress-plugin/commit/bacc240a90b66adc54f3858a72baef0c20a14a60))
+* move woocommerce logs directory to private cloud storage ([d9f3512](https://github.com/ymirapp/wordpress-plugin/commit/d9f3512c736d6fc15ec7521cfe661e8184277680))
+
 ## [1.21.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.21.0...v1.21.1) (2024-07-12)
 
 
