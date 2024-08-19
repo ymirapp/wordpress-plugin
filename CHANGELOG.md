@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.22.0...v1.22.1) (2024-08-16)
+
+
+### Bug Fixes
+
+* don't allow wp all import to use php ([e4e7508](https://github.com/ymirapp/wordpress-plugin/commit/e4e75080442e6dd6265647f63764533ffe2ca082))
+
 ## [1.22.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.21.1...v1.22.0) (2024-08-11)
 
 
