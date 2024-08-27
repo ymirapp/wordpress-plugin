@@ -641,7 +641,139 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostDoesNothingIfFilterDoesntReturnCollection()
+    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAnArray()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->willReturn(['*']);
+
+        $post = $this->getWPPostMock();
+        $post->post_status = 'publish';
+        $post->post_type = 'page';
+
+        $get_post = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post');
+        $get_post->expects($this->once())
+                 ->with($this->identicalTo(42))
+                 ->willReturn($post);
+
+        $get_post_type_object = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post_type_object');
+        $get_post_type_object->expects($this->once())
+                             ->with($this->identicalTo(42))
+                             ->willReturn(false);
+
+        $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
+        $get_permalink->expects($this->once())
+                      ->with($this->identicalTo(42))
+                      ->willReturnOnConsecutiveCalls('permalink');
+
+        $get_site_option = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_site_option');
+        $get_site_option->expects($this->exactly(2))
+                        ->withConsecutive(
+                            [$this->identicalTo('show_on_front')],
+                            [$this->identicalTo('tag_base')]
+                        )
+                        ->willReturnOnConsecutiveCalls(false, '/tag/');
+
+        $get_the_category = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_the_category');
+        $get_the_category->expects($this->once())
+                         ->with($this->identicalTo(42))
+                         ->willReturn([]);
+
+        $get_the_tags = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_the_tags');
+        $get_the_tags->expects($this->once())
+                     ->with($this->identicalTo(42))
+                     ->willReturn([]);
+
+        $get_post_taxonomies = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post_taxonomies');
+        $get_post_taxonomies->expects($this->once())
+                            ->with($this->identicalTo(42))
+                            ->willReturn([]);
+
+        $home_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'home_url');
+        $home_url->expects($this->once())
+                 ->willReturn('home_url');
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrl')
+                        ->with($this->identicalTo('*'));
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
+    }
+
+    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAString()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+            ->method('filter')
+            ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+            ->willReturn('*');
+
+        $post = $this->getWPPostMock();
+        $post->post_status = 'publish';
+        $post->post_type = 'page';
+
+        $get_post = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post');
+        $get_post->expects($this->once())
+                 ->with($this->identicalTo(42))
+                 ->willReturn($post);
+
+        $get_post_type_object = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post_type_object');
+        $get_post_type_object->expects($this->once())
+                             ->with($this->identicalTo(42))
+                             ->willReturn(false);
+
+        $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
+        $get_permalink->expects($this->once())
+                      ->with($this->identicalTo(42))
+                      ->willReturnOnConsecutiveCalls('permalink');
+
+        $get_site_option = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_site_option');
+        $get_site_option->expects($this->exactly(2))
+                        ->withConsecutive(
+                            [$this->identicalTo('show_on_front')],
+                            [$this->identicalTo('tag_base')]
+                        )
+                        ->willReturnOnConsecutiveCalls(false, '/tag/');
+
+        $get_the_category = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_the_category');
+        $get_the_category->expects($this->once())
+                         ->with($this->identicalTo(42))
+                         ->willReturn([]);
+
+        $get_the_tags = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_the_tags');
+        $get_the_tags->expects($this->once())
+                     ->with($this->identicalTo(42))
+                     ->willReturn([]);
+
+        $get_post_taxonomies = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post_taxonomies');
+        $get_post_taxonomies->expects($this->once())
+                            ->with($this->identicalTo(42))
+                            ->willReturn([]);
+
+        $home_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'home_url');
+        $home_url->expects($this->once())
+                 ->willReturn('home_url');
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrl')
+                        ->with($this->identicalTo('*'));
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
+    }
+
+    public function testClearPostDoesNothingIfFilterReturnsNull()
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())

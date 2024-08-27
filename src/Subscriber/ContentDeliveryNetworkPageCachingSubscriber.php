@@ -191,7 +191,9 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
 
         $urlsToClear = $this->eventManager->filter('ymir_page_caching_urls_to_clear', $urlsToClear);
 
-        if (!$urlsToClear instanceof Collection) {
+        if (is_array($urlsToClear) || is_string($urlsToClear)) {
+            $urlsToClear = new Collection($urlsToClear);
+        } elseif (!$urlsToClear instanceof Collection) {
             return;
         }
 
