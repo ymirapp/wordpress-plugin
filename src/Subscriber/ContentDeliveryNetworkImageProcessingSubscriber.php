@@ -182,7 +182,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         $images = $images->map(function (array $image) {
             preg_match('#class=["|\']?[^"\']*wp-image-([\d]+)[^"\']*["|\']?#i', $image['image_tag'], $matches);
 
-            if (!empty($matches[1]) && is_numeric($matches[1])) {
+            if (!empty($matches[1])) {
                 $image['attachment_id'] = $matches[1];
             }
 

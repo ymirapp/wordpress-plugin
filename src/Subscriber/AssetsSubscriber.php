@@ -116,7 +116,7 @@ class AssetsSubscriber implements SubscriberInterface
         foreach ($patterns as $pattern) {
             preg_match_all($pattern, $content, $matches);
 
-            $urls = $urls->merge($matches['url'] ?? []);
+            $urls = $urls->merge($matches['url']);
         }
 
         if ($urls->isEmpty()) {
