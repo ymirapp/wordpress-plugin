@@ -180,7 +180,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
 
         // Parse the attachment ID and add it to image array.
         $images = $images->map(function (array $image) {
-            preg_match('#class=["|\']?[^"\']*wp-image-([\d]+)[^"\']*["|\']?#i', $image['image_tag'], $matches);
+            preg_match('#class=["|\']?[^"\']*wp-image-(\d+)[^"\']*["|\']?#i', $image['image_tag'], $matches);
 
             if (!empty($matches[1])) {
                 $image['attachment_id'] = $matches[1];
@@ -225,7 +225,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         })->mapWithKeys(function (array $image) {
             $src = $this->getOriginalImageUrl($image['image_src']);
 
-            $tag = preg_replace('#(src=["|\'])[^\s]+?(["|\'])#', sprintf('$1%s$2', esc_url($this->generateImageUrl($src, $image['height'], $image['width'], $image['cropped']))), $image['image_tag']);
+            $tag = preg_replace('#(src=["|\'])\S+?(["|\'])#', sprintf('$1%s$2', esc_url($this->generateImageUrl($src, $image['height'], $image['width'], $image['cropped']))), $image['image_tag']);
             $tag = preg_replace('#(?<=\s)(height|width)=["|\']?[\d%]+["|\']?\s?#i', '', $tag);
 
             return [
@@ -448,7 +448,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
         $uploadsUrl = $this->uploadsUrl;
 
         if ($this->isMultisite) {
-            $uploadsUrl = preg_replace('#/sites/[\d]+#', '', $uploadsUrl);
+            $uploadsUrl = preg_replace('#/sites/\d+#', '', $uploadsUrl);
         }
 
         return str_starts_with($imageUrl, $uploadsUrl);
