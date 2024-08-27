@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.22.1...v1.23.0) (2024-08-27)
+
+
+### Features
+
+* allow `ymir_page_caching_urls_to_clear` filter to return an array or string ([0ae69cf](https://github.com/ymirapp/wordpress-plugin/commit/0ae69cf02228a13a520759c2c1337a0ac850cf13))
+
 ## [1.22.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.22.0...v1.22.1) (2024-08-16)
 
 
