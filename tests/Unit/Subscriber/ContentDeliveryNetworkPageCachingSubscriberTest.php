@@ -711,9 +711,9 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
-            ->method('filter')
-            ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
-            ->willReturn('*');
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->willReturn('*');
 
         $post = $this->getWPPostMock();
         $post->post_status = 'publish';
