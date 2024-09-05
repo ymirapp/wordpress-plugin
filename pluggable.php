@@ -24,7 +24,11 @@ if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, [
     add_action('admin_notices', function () {
         echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Sending emails using SES is disabled because the "wp_mail" function was already overridden by another plugin.</p></div>';
     });
-} elseif ($ymir->isSesEnabled() && !function_exists('wp_mail')) {
+} elseif ($ymir->isSesEnabled() && $ymir->isUsingVanityDomain()) {
+    add_action('admin_notices', function () {
+        echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Sending emails using SES is disabled because the site is using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.</p></div>';
+    });
+} elseif ($ymir->isSesEnabled() && !$ymir->isUsingVanityDomain() && !function_exists('wp_mail')) {
     /**
      * Send email using the cloud provider email client.
      */

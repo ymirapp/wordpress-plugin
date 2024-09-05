@@ -112,9 +112,16 @@ class Plugin
      */
     public function isSesEnabled(): bool
     {
-        return !$this->container['ymir_using_vanity_domain']
-            && false === getenv('YMIR_DISABLE_SES')
+        return false === getenv('YMIR_DISABLE_SES')
             && (!defined('YMIR_DISABLE_SES') || !YMIR_DISABLE_SES);
+    }
+
+    /**
+     * Checks if the site is using a vanity domain.
+     */
+    public function isUsingVanityDomain(): bool
+    {
+        return $this->container['ymir_using_vanity_domain'];
     }
 
     /**
