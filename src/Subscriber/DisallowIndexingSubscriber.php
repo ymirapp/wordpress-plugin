@@ -42,8 +42,8 @@ class DisallowIndexingSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'ymir_admin_notices' => 'displayAdminNotice',
             'pre_option_blog_public' => 'filterBlogPublic',
+            'ymir_admin_notices' => 'displayAdminNotice',
         ];
     }
 
