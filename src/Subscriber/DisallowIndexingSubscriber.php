@@ -63,10 +63,6 @@ class DisallowIndexingSubscriber implements SubscriberInterface
      */
     public function filterBlogPublic($value)
     {
-        if ($this->usingVanityDomain) {
-            $value = 0;
-        }
-
-        return $value;
+        return !$this->usingVanityDomain ? $value : 0;
     }
 }
