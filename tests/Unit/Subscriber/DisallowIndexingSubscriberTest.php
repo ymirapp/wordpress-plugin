@@ -50,4 +50,20 @@ class DisallowIndexingSubscriberTest extends TestCase
     {
         $this->assertSame(0, (new DisallowIndexingSubscriber(true))->filterBlogPublic('value'));
     }
+
+    public function testGetSubscribedEvents()
+    {
+        $callbacks = DisallowIndexingSubscriber::getSubscribedEvents();
+
+        foreach ($callbacks as $callback) {
+            $this->assertTrue(method_exists(DisallowIndexingSubscriber::class, is_array($callback) ? $callback[0] : $callback));
+        }
+
+        $subscribedEvents = [
+            'pre_option_blog_public' => 'filterBlogPublic',
+            'ymir_admin_notices' => 'displayAdminNotice',
+        ];
+
+        $this->assertSame($subscribedEvents, $callbacks);
+    }
 }
