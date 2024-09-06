@@ -38,12 +38,12 @@ class YmirConfiguration implements ContainerConfigurationInterface
 
             return false;
         });
-        $container['ymir_mapped_domain_names'] = $container->service(function (Container $container) {
-            return new MappedDomainNames((array) explode(',', (string) getenv('YMIR_DOMAIN_NAMES')), $container['ymir_primary_domain_name']);
-        });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
         $container['ymir_http_client'] = $container->service(function (Container $container) {
             return function_exists('_wp_http_get_object') ? new WordPressClient(_wp_http_get_object(), $container['ymir_plugin_version']) : new CurlClient($container['ymir_plugin_version']);
+        });
+        $container['ymir_mapped_domain_names'] = $container->service(function (Container $container) {
+            return new MappedDomainNames((array) explode(',', (string) getenv('YMIR_DOMAIN_NAMES')), $container['ymir_primary_domain_name']);
         });
         $container['ymir_primary_domain_name'] = (string) getenv('YMIR_PRIMARY_DOMAIN_NAME');
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';
