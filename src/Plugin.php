@@ -100,20 +100,19 @@ class Plugin
     }
 
     /**
+     * Checks if email sending is enabled or not.
+     */
+    public function isEmailSendingEnabled(): bool
+    {
+        return $this->container['ymir_is_email_sending_enabled'];
+    }
+
+    /**
      * Checks if the plugin is loaded.
      */
     public function isLoaded(): bool
     {
         return $this->loaded;
-    }
-
-    /**
-     * Checks if SES is enabled.
-     */
-    public function isSesEnabled(): bool
-    {
-        return false === getenv('YMIR_DISABLE_SES')
-            && (!defined('YMIR_DISABLE_SES') || !YMIR_DISABLE_SES);
     }
 
     /**

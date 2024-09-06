@@ -24,6 +24,28 @@ class SesClient extends AbstractClient implements EmailClientInterface
     /**
      * {@inheritdoc}
      */
+    public function canSendEmails(): bool
+    {
+        $response = $this->request('get', '/v2/email/account');
+
+        if (200 !== $this->parseResponseStatusCode($response)) {
+            throw new \RuntimeException('Unable to get SES account details');
+        }
+
+        $response = json_decode($response['body'], true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException('Unable to parse the SES response body');
+        } elseif (!isset($response['ProductionAccessEnabled'])) {
+            throw new \RuntimeException('Unable to get SES production access status');
+        }
+
+        return (bool) $response['ProductionAccessEnabled'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function sendEmail(Email $email)
     {
         $response = $this->request('post', '/', http_build_query([

@@ -19,6 +19,11 @@ namespace Ymir\Plugin\Email;
 interface EmailClientInterface
 {
     /**
+     * Check if the client can send emails.
+     */
+    public function canSendEmails(): bool;
+
+    /**
      * Send the given email.
      */
     public function sendEmail(Email $email);

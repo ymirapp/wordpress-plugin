@@ -34,5 +34,18 @@ class EmailConfiguration implements ContainerConfigurationInterface
         $container['email'] = function (Container $container) {
             return new Email($container['event_manager'], $container['default_email_from'], $container['file_manager'], $container['phpmailer'], $container['blog_charset']);
         };
+        $container['ymir_is_email_sending_enabled'] = $container->service(function () {
+            if (defined('YMIR_DISABLE_EMAIL_SENDING') && (bool) YMIR_DISABLE_EMAIL_SENDING) {
+                return false;
+            } elseif (false !== getenv('YMIR_DISABLE_EMAIL_SENDING') && (bool) getenv('YMIR_DISABLE_EMAIL_SENDING')) {
+                return false;
+            } elseif (false !== getenv('YMIR_DISABLE_SES') && (bool) getenv('YMIR_DISABLE_SES')) {
+                return false;
+            } elseif (defined('YMIR_DISABLE_SES') && (bool) YMIR_DISABLE_SES) {
+                return false;
+            }
+
+            return true;
+        });
     }
 }

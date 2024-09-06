@@ -21,7 +21,7 @@ use Ymir\Plugin\Support\Collection;
  */
 global $pagenow, $ymir;
 
-if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
+if ($ymir->isEmailSendingEnabled() && function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
     add_filter('ymir_admin_notices', function ($notices) {
         if ($notices instanceof Collection) {
             $notices[] = [
@@ -32,18 +32,7 @@ if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, [
 
         return $notices;
     });
-} elseif ($ymir->isSesEnabled() && $ymir->isUsingVanityDomain()) {
-    add_filter('ymir_admin_notices', function ($notices) {
-        if ($notices instanceof Collection) {
-            $notices[] = [
-                'message' => 'Sending emails using SES is disabled because the site is using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.',
-                'type' => 'warning',
-            ];
-        }
-
-        return $notices;
-    });
-} elseif ($ymir->isSesEnabled() && !$ymir->isUsingVanityDomain() && !function_exists('wp_mail')) {
+} elseif ($ymir->isEmailSendingEnabled() && !$ymir->isUsingVanityDomain() && !function_exists('wp_mail')) {
     /**
      * Send email using the cloud provider email client.
      */

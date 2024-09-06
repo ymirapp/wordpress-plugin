@@ -48,6 +48,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\AssetsSubscriber($container['content_directory_name'], $container['site_url'], $container['assets_url'], $container['ymir_project_type'], $container['uploads_baseurl']),
                 new Subscriber\ContentDeliveryNetworkPageCachingSubscriber($container['cloudfront_client'], $container['rest_url'], $container['is_page_caching_disabled']),
                 new Subscriber\DisallowIndexingSubscriber($container['ymir_using_vanity_domain']),
+                new Subscriber\EmailSubscriber($container['email_client'], $container['ymir_is_email_sending_enabled'], $container['ymir_using_vanity_domain']),
                 new Subscriber\ImageEditorSubscriber($container['console_client'], $container['file_manager']),
                 new Subscriber\PluploadSubscriber($container['plugin_relative_path'], $container['rest_namespace'], $container['assets_url'], $container['plupload_error_messages']),
                 new Subscriber\RedirectSubscriber($container['ymir_mapped_domain_names'], $container['http_host'], $container['request_uri'], $container['is_multisite'], $container['ymir_project_type']),
