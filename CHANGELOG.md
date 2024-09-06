@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.24.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.23.0...v1.24.0) (2024-09-06)
+
+
+### Features
+
+* add `ymir_admin_notices` filter to handle admin notices ([514679b](https://github.com/ymirapp/wordpress-plugin/commit/514679bd8aced83e09085a1a666c299239db9afc))
+* add an admin notice when production access isn't enabled in ses ([204327c](https://github.com/ymirapp/wordpress-plugin/commit/204327c3ef9b70b12fa9572be4927999c8dd28d1))
+* add an admin notice when ses email is disabled because of the vanity domain ([55d7703](https://github.com/ymirapp/wordpress-plugin/commit/55d7703ef054460d951e85332431a51d5236271a))
+
 ## [1.23.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.22.1...v1.23.0) (2024-08-27)
 
 
