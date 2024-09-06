@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Ymir\Plugin\Email\Email;
 use Ymir\Plugin\Email\EmailClientInterface;
 use Ymir\Plugin\Plugin;
+use Ymir\Plugin\Support\Collection;
 
 /**
  * Pluggable functions used by the Ymir plugin.
@@ -21,12 +22,26 @@ use Ymir\Plugin\Plugin;
 global $pagenow, $ymir;
 
 if ($ymir->isSesEnabled() && function_exists('wp_mail') && !in_array($pagenow, ['plugins.php', 'update-core.php'], true)) {
-    add_action('admin_notices', function () {
-        echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Sending emails using SES is disabled because the "wp_mail" function was already overridden by another plugin.</p></div>';
+    add_filter('ymir_admin_notices', function ($notices) {
+        if ($notices instanceof Collection) {
+            $notices[] = [
+                'message' => 'Sending emails using SES is disabled because the "wp_mail" function was already overridden by another plugin.',
+                'type' => 'warning',
+            ];
+        }
+
+        return $notices;
     });
 } elseif ($ymir->isSesEnabled() && $ymir->isUsingVanityDomain()) {
-    add_action('admin_notices', function () {
-        echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Sending emails using SES is disabled because the site is using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.</p></div>';
+    add_filter('ymir_admin_notices', function ($notices) {
+        if ($notices instanceof Collection) {
+            $notices[] = [
+                'message' => 'Sending emails using SES is disabled because the site is using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.',
+                'type' => 'warning',
+            ];
+        }
+
+        return $notices;
     });
 } elseif ($ymir->isSesEnabled() && !$ymir->isUsingVanityDomain() && !function_exists('wp_mail')) {
     /**

@@ -16,7 +16,7 @@ namespace Ymir\Plugin\Support;
 /**
  * A collection offers a fluent interface for easier array manipulation.
  */
-class Collection implements \ArrayAccess
+class Collection implements \ArrayAccess, \Countable
 {
     /**
      * The items contained in the collection.

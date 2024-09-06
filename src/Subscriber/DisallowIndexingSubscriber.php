@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Subscriber;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
+use Ymir\Plugin\Support\Collection;
 
 /**
  * Subscriber for managing whether we allow indexing or not.
@@ -41,7 +42,7 @@ class DisallowIndexingSubscriber implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'admin_notices' => 'displayAdminNotice',
+            'ymir_admin_notices' => 'displayAdminNotice',
             'pre_option_blog_public' => 'filterBlogPublic',
         ];
     }
@@ -49,13 +50,16 @@ class DisallowIndexingSubscriber implements SubscriberInterface
     /**
      * Display admin notice about search indexing being disabled.
      */
-    public function displayAdminNotice()
+    public function displayAdminNotice($notices)
     {
-        if (!$this->usingVanityDomain) {
-            return;
+        if ($notices instanceof Collection && $this->usingVanityDomain) {
+            $notices[] = [
+                'message' => 'Search engine indexing is disallowed when using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.',
+                'type' => 'warning',
+            ];
         }
 
-        echo '<div class="notice notice-warning"><p><strong>Ymir:</strong> Search engine indexing is disallowed when using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.</p></div>';
+        return $notices;
     }
 
     /**
