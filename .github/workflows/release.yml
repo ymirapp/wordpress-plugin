@@ -12,9 +12,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         with:
-          release-type: php
-          pull-request-title-pattern: 'chore: release ${version}'
-          skip-labeling: true
-          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":true}]'
+          config-file: release-please-config.json
