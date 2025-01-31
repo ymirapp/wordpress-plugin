@@ -47,7 +47,7 @@ class YmirConfiguration implements ContainerConfigurationInterface
         });
         $container['ymir_primary_domain_name'] = (string) getenv('YMIR_PRIMARY_DOMAIN_NAME');
         $container['ymir_project_type'] = getenv('YMIR_PROJECT_TYPE') ?: 'wordpress';
-        $container['ymir_plugin_version'] = '1.24.0';
+        $container['ymir_plugin_version'] = '1.25.0';
         $container['ymir_using_vanity_domain'] = $container->service(function (Container $container) {
             return false !== stripos($container['site_url'], '.ymirsites.com');
         });

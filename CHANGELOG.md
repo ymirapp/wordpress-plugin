@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.24.0...v1.25.0) (2025-01-31)
+
+
+### Features
+
+* Disable some health checks when on ymir ([9e42fa9](https://github.com/ymirapp/wordpress-plugin/commit/9e42fa941ae21f91dc58b5e9c31f92e88b060109))
+
 ## [1.24.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.23.0...v1.24.0) (2024-09-06)
 
 
