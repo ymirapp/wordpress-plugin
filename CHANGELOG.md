@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.26.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.25.0...v1.26.0) (2025-01-31)
+
+
+### Features
+
+* Add `ymir_admin_notices` filter to handle admin notices ([514679b](https://github.com/ymirapp/wordpress-plugin/commit/514679bd8aced83e09085a1a666c299239db9afc))
+* Add an admin notice when production access isn't enabled in ses ([204327c](https://github.com/ymirapp/wordpress-plugin/commit/204327c3ef9b70b12fa9572be4927999c8dd28d1))
+* Add an admin notice when ses email is disabled because of the vanity domain ([55d7703](https://github.com/ymirapp/wordpress-plugin/commit/55d7703ef054460d951e85332431a51d5236271a))
+* Add support for `stream_metadata` operations with stream wrapper ([bacc240](https://github.com/ymirapp/wordpress-plugin/commit/bacc240a90b66adc54f3858a72baef0c20a14a60))
+* Allow `ymir_page_caching_urls_to_clear` filter to return an array or string ([0ae69cf](https://github.com/ymirapp/wordpress-plugin/commit/0ae69cf02228a13a520759c2c1337a0ac850cf13))
+* Disable some health checks when on ymir ([9e42fa9](https://github.com/ymirapp/wordpress-plugin/commit/9e42fa941ae21f91dc58b5e9c31f92e88b060109))
+* Move woocommerce logs directory to private cloud storage ([d9f3512](https://github.com/ymirapp/wordpress-plugin/commit/d9f3512c736d6fc15ec7521cfe661e8184277680))
+
+
+### Bug Fixes
+
+* Cast source value as int ([f7bf891](https://github.com/ymirapp/wordpress-plugin/commit/f7bf8910c16ba5ee459926bed3e2f68389ce6a8a))
+* Don't allow wp all import to use php ([e4e7508](https://github.com/ymirapp/wordpress-plugin/commit/e4e75080442e6dd6265647f63764533ffe2ca082))
+
 ## [1.25.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.24.0...v1.25.0) (2025-01-31)
 
 
