@@ -193,10 +193,13 @@ class AssetsSubscriber implements SubscriberInterface
         // cached) if an asset URL was enqueued directly.
         $uri = '/'.ltrim(preg_replace("#^{$this->siteUrl}(/assets/[^/]*)?#i", '', $url), '/');
 
-        // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock. This gets messed
-        // up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
+        // We need to ensure we always have the /wp/ prefix in the asset URLs when using Bedrock or Radicle. This gets
+        // messed up in multisite subdirectory installations because it would be handled by a rewrite rule normally. We
         // need to handle it programmatically instead.
-        if ('bedrock' === $this->projectType && !str_starts_with($uri, '/wp/') && !str_starts_with($uri, '/app/')) {
+        if (
+            ('bedrock' === $this->projectType && !$this->startsWithAny($uri, ['/wp/', '/app/']))
+            || ('radicle' === $this->projectType && !$this->startsWithAny($uri, ['/wp/', '/content/', '/dist/']))
+        ) {
             $uri = '/wp'.$uri;
         }
 
@@ -255,5 +258,19 @@ class AssetsSubscriber implements SubscriberInterface
         preg_match($pattern, $url, $matches);
 
         return empty($matches[$matchIndex]) ? $url : $this->uploadsUrl.'/'.ltrim($matches[$matchIndex], '/');
+    }
+
+    /**
+     * Check if the given string starts with any of the given needles.
+     */
+    private function startsWithAny(string $haystack, array $needles): bool
+    {
+        foreach ($needles as $needle) {
+            if (str_starts_with($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

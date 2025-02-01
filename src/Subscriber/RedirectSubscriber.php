@@ -109,7 +109,7 @@ class RedirectSubscriber implements SubscriberInterface
 
         $url = $this->mappedDomainNames->getPrimaryDomainNameUrl();
 
-        if ('bedrock' === $this->projectType) {
+        if (in_array($this->projectType, ['bedrock', 'radicle'])) {
             $url .= '/wp';
         }
 

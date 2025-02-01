@@ -31,6 +31,14 @@ class AssetsSubscriberTest extends TestCase
         ];
     }
 
+    public function provideRootsProjectTypes(): array
+    {
+        return [
+            ['bedrock'],
+            ['radicle'],
+        ];
+    }
+
     public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
     {
         $this->assertSame(['https://assets.com/assets/uuid'], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
@@ -102,9 +110,12 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('app', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
     }
 
-    public function testRewriteEnqueuedUrlAddsWpWhenMissingWithBedrockProjectWithSourceSameAsSiteUrl()
+    /**
+     * @dataProvider provideRootsProjectTypes
+     */
+    public function testRewriteEnqueuedUrlAddsWpWhenMissingWithRootsProjectWithSourceSameAsSiteUrl(string $projectType)
     {
-        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
 
     public function testRewriteEnqueuedUrlDoesntAddWpWithBedrockProjectWithAppUrl()
@@ -112,9 +123,22 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/app/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlDoesntAddWpWithBedrockProjectWithSourceSameAsSiteUrl()
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithContentUrl()
     {
-        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/wp/asset.css'));
+        $this->assertSame('https://assets.com/assets/uuid/content/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/content/asset.css'));
+    }
+
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithDistUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/dist/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/dist/asset.css'));
+    }
+
+    /**
+     * @dataProvider provideRootsProjectTypes
+     */
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectWithSourceSameAsSiteUrl(string $projectType)
+    {
+        $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/wp/asset.css'));
     }
 
     public function testRewriteEnqueuedUrlDoesntRemoveDoubleSlashesWhenUrlStartsWithDoubleSlash()
@@ -162,9 +186,12 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/uploads/asset.css'));
     }
 
-    public function testRewriteIncludesUrlWithBedrockIncludesDirectory()
+    /**
+     * @dataProvider provideRootsProjectTypes
+     */
+    public function testRewriteIncludesUrlWithRootsProjectIncludesDirectory(string $projectType)
     {
-        $this->assertSame('https://assets.com/assets/uuid/wp/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock'))->rewriteIncludesUrl('https://foo.com/wp/wp-includes/js/script.min.js'));
+        $this->assertSame('https://assets.com/assets/uuid/wp/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType))->rewriteIncludesUrl('https://foo.com/wp/wp-includes/js/script.min.js'));
     }
 
     public function testRewriteIncludesUrlWithStandardIncludesDirectory()

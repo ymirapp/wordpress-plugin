@@ -16,9 +16,9 @@ namespace Ymir\Plugin\Subscriber;
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 
 /**
- * Subscriber for Bedrock project support.
+ * Subscriber for Roots project support.
  */
-class BedrockSubscriber implements SubscriberInterface
+class RootsSubscriber implements SubscriberInterface
 {
     /**
      * The Ymir project type.
@@ -52,7 +52,7 @@ class BedrockSubscriber implements SubscriberInterface
      */
     public function ensureHomeUrlDoesntContainWp(string $homeUrl): string
     {
-        if ($this->isBedrockProject() && str_ends_with($homeUrl, '/wp')) {
+        if ($this->isRootsProject() && str_ends_with($homeUrl, '/wp')) {
             $homeUrl = substr($homeUrl, 0, -3);
         }
 
@@ -64,7 +64,7 @@ class BedrockSubscriber implements SubscriberInterface
      */
     public function ensureNetworkSiteUrlContainsWp(string $networkSiteUrl, string $path): string
     {
-        if (!$this->isBedrockProject()) {
+        if (!$this->isRootsProject()) {
             return $networkSiteUrl;
         }
 
@@ -78,11 +78,11 @@ class BedrockSubscriber implements SubscriberInterface
     }
 
     /**
-     * Ensure that site URL contains the /wp subdirectory for Bedrock projects.
+     * Ensure that site URL contains the /wp subdirectory for Roots projects.
      */
     public function ensureSiteUrlContainsWp(string $siteUrl): string
     {
-        if ($this->isBedrockProject() && !str_ends_with($siteUrl, '/wp') && (is_main_site() || is_subdomain_install())) {
+        if ($this->isRootsProject() && !str_ends_with($siteUrl, '/wp') && (is_main_site() || is_subdomain_install())) {
             $siteUrl .= '/wp';
         }
 
@@ -90,10 +90,10 @@ class BedrockSubscriber implements SubscriberInterface
     }
 
     /**
-     * Checks if this is a Bedrock project.
+     * Checks if this is a Roots project.
      */
-    private function isBedrockProject(): bool
+    private function isRootsProject(): bool
     {
-        return 'bedrock' === $this->projectType;
+        return in_array($this->projectType, ['bedrock', 'radicle']);
     }
 }

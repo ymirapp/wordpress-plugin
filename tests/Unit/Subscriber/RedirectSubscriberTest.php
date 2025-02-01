@@ -26,7 +26,18 @@ class RedirectSubscriberTest extends TestCase
     use FunctionMockTrait;
     use MappedDomainNamesMockTrait;
 
-    public function testAddSlashToBedrockWpAdminWithHttpHostDifferentThanPrimaryDomainName()
+    public function provideRootsProjectTypes(): array
+    {
+        return [
+            ['bedrock'],
+            ['radicle'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRootsProjectTypes
+     */
+    public function testAddSlashToRootsProjectWpAdminWithHttpHostDifferentThanPrimaryDomainName(string $projectType)
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -42,10 +53,13 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber($mappedDomainNames, 'another_domain_name', '/wp/wp-admin', false, 'bedrock'))->redirect();
+        (new RedirectSubscriber($mappedDomainNames, 'another_domain_name', '/wp/wp-admin', false, $projectType))->redirect();
     }
 
-    public function testAddSlashToBedrockWpAdminWithHttpHostSameAsPrimaryDomainName()
+    /**
+     * @dataProvider provideRootsProjectTypes
+     */
+    public function testAddSlashToRootsProjectWpAdminWithHttpHostSameAsPrimaryDomainName(string $projectType)
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -61,7 +75,7 @@ class RedirectSubscriberTest extends TestCase
                     ->with($this->identicalTo('https://domain_name/wp/wp-admin/'), $this->identicalTo(301))
                     ->willReturn(false);
 
-        (new RedirectSubscriber($mappedDomainNames, 'domain_name', '/wp/wp-admin', false, 'bedrock'))->redirect();
+        (new RedirectSubscriber($mappedDomainNames, 'domain_name', '/wp/wp-admin', false, $projectType))->redirect();
     }
 
     public function testAddSlashToWpAdminWithHttpHostDifferentThanPrimaryDomainName()

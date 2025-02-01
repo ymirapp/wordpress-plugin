@@ -92,7 +92,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
         $container['home_url'] = $container->service(function (Container $container) {
             $homeUrl = $container['site_url'];
 
-            if ('bedrock' === $container['ymir_project_type']) {
+            if (in_array($container['ymir_project_type'], ['bedrock', 'radicle'])) {
                 $homeUrl = preg_replace('#wp/?$#i', '', $homeUrl);
             }
 
