@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.25.0...v1.26.0) (2025-03-22)
+
+
+### Features
+
+* Add support for radicle ([aade37b](https://github.com/ymirapp/wordpress-plugin/commit/aade37bb46f8c2eb4deaf868f190a5fa94f07a4c))
+
 ## [1.25.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.24.0...v1.25.0) (2025-01-31)
 
 
