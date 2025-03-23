@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.26.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.25.0...v1.26.0) (2025-02-10)
+## [1.26.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.25.0...v1.26.0) (2025-03-22)
 
 
 ### Features
