@@ -83,7 +83,7 @@ class PluploadSubscriber implements SubscriberInterface
         $scripts->remove('wp-plupload');
 
         $scripts->add('plupload', "{$this->assetsUrl}/plupload.js", ['moxiejs', 'wp-api-request']);
-        $scripts->add('plupload-handlers', "{$this->assetsUrl}/handlers.js", ['plupload', 'jquery']);
+        $scripts->add('plupload-handlers', "{$this->assetsUrl}/handlers.js", ['clipboard', 'plupload', 'jquery']);
         $scripts->add('wp-plupload', "{$this->assetsUrl}/wp-plupload.js", ['plupload', 'jquery', 'json2', 'media-models', 'wp-api-request']);
 
         $scripts->localize('plupload-handlers', 'pluploadL10n', $this->errorMessages);

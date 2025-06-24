@@ -75,7 +75,7 @@ class PluploadSubscriberTest extends TestCase
                 ->method('add')
                 ->withConsecutive(
                     [$this->identicalTo('plupload'), $this->identicalTo('https://assets.com/plugin/assets/js/plupload.js'), $this->identicalTo(['moxiejs', 'wp-api-request'])],
-                    [$this->identicalTo('plupload-handlers'), $this->identicalTo('https://assets.com/plugin/assets/js/handlers.js'), $this->identicalTo(['plupload', 'jquery'])],
+                    [$this->identicalTo('plupload-handlers'), $this->identicalTo('https://assets.com/plugin/assets/js/handlers.js'), $this->identicalTo(['clipboard', 'plupload', 'jquery'])],
                     [$this->identicalTo('wp-plupload'), $this->identicalTo('https://assets.com/plugin/assets/js/wp-plupload.js'), $this->identicalTo(['plupload', 'jquery', 'json2', 'media-models', 'wp-api-request'])]
                 );
 
