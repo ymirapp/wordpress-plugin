@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.0...v1.26.1) (2025-06-24)
+
+
+### Bug Fixes
+
+* Add `clipboard` as dependency for the plupload handler ([79b74d2](https://github.com/ymirapp/wordpress-plugin/commit/79b74d2f06c62a6f1b736e7e62d1a08855c49e70))
+
 ## [1.26.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.25.0...v1.26.0) (2025-03-22)
 
 
