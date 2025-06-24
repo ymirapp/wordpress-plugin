@@ -234,11 +234,11 @@ window.wp = window.wp || {};
 		/**
 		 * After a file is successfully uploaded, update its model.
 		 *
-		 * @param {plupload.Uploader} up   Uploader instance.
-         * @param {plupload.File}     file File that was uploaded.
-         * @param {Object}            data Object with attachment data.
+		 * @param {plupload.Uploader} up       Uploader instance.
+		 * @param {plupload.File}     file     File that was uploaded.
+		 * @param {Object}            response Object with response properties.
 		 */
-		fileUploaded = function( up, file, data ) {
+		fileUploaded = function( up, file, response ) {
 			var complete;
 
 			// Remove the "uploading" UI elements.
@@ -246,9 +246,9 @@ window.wp = window.wp || {};
 				file.attachment.unset( key );
 			} );
 
-			file.attachment.set( _.extend( data, { uploading: false } ) );
+			file.attachment.set( _.extend( response.data, { uploading: false } ) );
 
-			wp.media.model.Attachment.get( data.id, file.attachment );
+			wp.media.model.Attachment.get( response.data.id, file.attachment );
 
 			complete = Uploader.queue.all( function( attachment ) {
 				return ! attachment.get( 'uploading' );
@@ -363,6 +363,11 @@ window.wp = window.wp || {};
 					error( pluploadL10n.noneditable_image, {}, file, 'no-retry' );
 					up.removeFile( file );
 					return;
+				} else if ( file.type === 'image/avif' && up.settings.avif_upload_error ) {
+					// Disallow uploading of AVIF images if the server cannot edit them.
+					error( pluploadL10n.noneditable_image, {}, file, 'no-retry' );
+					up.removeFile( file );
+					return;
 				}
 
 				// Generate attributes for a new `Attachment` model.
@@ -421,8 +426,8 @@ window.wp = window.wp || {};
                 },
                 type: 'POST',
                 dataType: 'json',
-                success: function (response) {
-                    fileUploaded( up, file, response);
+                success: function ( response ) {
+                    fileUploaded( up, file, response );
                 }
             });
 		});
