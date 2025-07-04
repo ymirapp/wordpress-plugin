@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.2](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.1...v1.26.2) (2025-07-04)
+
+
+### Bug Fixes
+
+* Disable `upload_path` and `upload_url_path` options ([d98b2fe](https://github.com/ymirapp/wordpress-plugin/commit/d98b2fe9cb621e8fa8ce26276a221d6e8e4ae74f))
+
 ## [1.26.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.0...v1.26.1) (2025-06-24)
 
 
