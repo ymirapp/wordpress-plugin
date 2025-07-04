@@ -89,10 +89,20 @@ class UploadsSubscriber implements SubscriberInterface
     {
         return [
             'pre_wp_unique_filename_file_list' => ['getUniqueFilenameList', 10, 3],
+            'pre_option_upload_path' => 'disableOption',
+            'pre_option_upload_url_path' => 'disableOption',
             'upload_dir' => 'replaceUploadDirectories',
             'upload_size_limit' => 'overrideUploadSizeLimit',
             '_wp_relative_upload_path' => ['useFileManagerForRelativePath', 10, 2],
         ];
+    }
+
+    /**
+     * Disable the option by returning an empty string.
+     */
+    public function disableOption(): string
+    {
+        return '';
     }
 
     /**
