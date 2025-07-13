@@ -418,18 +418,27 @@ window.wp = window.wp || {};
 		 * @return {mixed}
 		 */
 		this.uploader.bind( 'FileUploaded', function( up, file, response ) {
-            wp.apiRequest( {
-                async: false,
-                url: up.settings.attachments_endpoint_url,
-                data: {
-                    path: file.path
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function ( response ) {
-                    fileUploaded( up, file, response );
-                }
-            } );
+			wp.apiRequest( {
+				async: false,
+				url: up.settings.attachments_endpoint_url,
+				data: {
+					path: file.path
+				},
+				type: 'POST',
+				dataType: 'json'
+			} )
+				.done( function( response ) {
+					fileUploaded( up, file, response );
+				} )
+				.fail( function( response ) {
+					let message = pluploadL10n.default_error;
+
+					if ( 'undefined' !== typeof( response.responseJSON ) && 'undefined' !== typeof( response.responseJSON.message ) ) {
+						message = response.responseJSON.message;
+					}
+
+					error( message, response.data ?? null, file );
+				} );
 		});
 
 		/**
