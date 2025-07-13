@@ -428,6 +428,13 @@ window.wp = window.wp || {};
 				dataType: 'json'
 			} )
 				.done( function( response ) {
+					if ( ! response.data ) {
+						response = {
+							success: true,
+							data: response
+						};
+					}
+
 					fileUploaded( up, file, response );
 				} )
 				.fail( function( response ) {
