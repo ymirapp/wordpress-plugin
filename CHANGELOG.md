@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.3](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.2...v1.26.3) (2025-07-13)
+
+
+### Bug Fixes
+
+* Enforce that we always have `response.data` when passing response to `fileUploaded` ([39a852d](https://github.com/ymirapp/wordpress-plugin/commit/39a852dacc19885f77ec638fab6d210a1cc3441f))
+
 ## [1.26.2](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.1...v1.26.2) (2025-07-04)
 
 
