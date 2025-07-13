@@ -418,7 +418,7 @@ window.wp = window.wp || {};
 		 * @return {mixed}
 		 */
 		this.uploader.bind( 'FileUploaded', function( up, file, response ) {
-            wp.apiRequest({
+            wp.apiRequest( {
                 async: false,
                 url: up.settings.attachments_endpoint_url,
                 data: {
@@ -429,7 +429,7 @@ window.wp = window.wp || {};
                 success: function ( response ) {
                     fileUploaded( up, file, response );
                 }
-            });
+            } );
 		});
 
 		/**
