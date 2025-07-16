@@ -123,6 +123,11 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/app/asset.css'));
     }
 
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithBuildUrl()
+    {
+        $this->assertSame('https://assets.com/assets/uuid/build/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/build/asset.css'));
+    }
+
     public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithContentUrl()
     {
         $this->assertSame('https://assets.com/assets/uuid/content/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/content/asset.css'));

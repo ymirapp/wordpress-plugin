@@ -198,7 +198,7 @@ class AssetsSubscriber implements SubscriberInterface
         // need to handle it programmatically instead.
         if (
             ('bedrock' === $this->projectType && !$this->startsWithAny($uri, ['/wp/', '/app/']))
-            || ('radicle' === $this->projectType && !$this->startsWithAny($uri, ['/wp/', '/content/', '/dist/']))
+            || ('radicle' === $this->projectType && !$this->startsWithAny($uri, ['/wp/', '/content/', '/build/', '/dist/']))
         ) {
             $uri = '/wp'.$uri;
         }
