@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.4](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.3...v1.26.4) (2025-07-16)
+
+
+### Bug Fixes
+
+* Don't add `/wp` prefix to `build` directory with radicle projects ([3264105](https://github.com/ymirapp/wordpress-plugin/commit/3264105db96a727d78e10323bbd2aea6258e9ff5))
+
 ## [1.26.3](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.2...v1.26.3) (2025-07-13)
 
 
