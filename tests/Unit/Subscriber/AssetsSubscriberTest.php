@@ -39,6 +39,18 @@ class AssetsSubscriberTest extends TestCase
         ];
     }
 
+    public function provideRootsProjectTypesAndStartingPaths(): array
+    {
+        return [
+            ['bedrock', '/app/'],
+            ['bedrock', '/wp/'],
+            ['radicle', '/build/'],
+            ['radicle', '/content/'],
+            ['radicle', '/dist/'],
+            ['radicle', '/wp/'],
+        ];
+    }
+
     public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
     {
         $this->assertSame(['https://assets.com/assets/uuid'], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
@@ -118,24 +130,12 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlDoesntAddWpWithBedrockProjectWithAppUrl()
+    /**
+     * @dataProvider provideRootsProjectTypesAndStartingPaths
+     */
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectAndStartingPath(string $projectType, string $startingPath)
     {
-        $this->assertSame('https://assets.com/assets/uuid/app/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'bedrock', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/app/asset.css'));
-    }
-
-    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithBuildUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/build/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/build/asset.css'));
-    }
-
-    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithContentUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/content/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/content/asset.css'));
-    }
-
-    public function testRewriteEnqueuedUrlDoesntAddWpWithRadicleProjectWithDistUrl()
-    {
-        $this->assertSame('https://assets.com/assets/uuid/dist/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', 'radicle', 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/dist/asset.css'));
+        $this->assertSame(sprintf('https://assets.com/assets/uuid%sasset.css', $startingPath), (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl(sprintf('https://foo.com%sasset.css', $startingPath)));
     }
 
     /**
