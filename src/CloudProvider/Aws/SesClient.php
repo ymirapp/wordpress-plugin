@@ -29,7 +29,7 @@ class SesClient extends AbstractClient implements EmailClientInterface
         $response = $this->request('get', '/v2/email/account');
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to get SES account details');
+            throw new \RuntimeException($this->createExceptionMessage('Unable to get SES account details', $response));
         }
 
         $response = json_decode($response['body'], true);
@@ -52,12 +52,9 @@ class SesClient extends AbstractClient implements EmailClientInterface
             'Action' => 'SendRawEmail',
             'RawMessage.Data' => base64_encode($email->toString()),
         ]));
-        $statusCode = $this->parseResponseStatusCode($response);
 
-        if (400 === $statusCode) {
-            throw new \RuntimeException(sprintf('SES API request failed: %s', $this->getErrorMessage($response['body'] ?? '')));
-        } elseif (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('SES API request failed with status code %d', $statusCode));
+        if (200 !== $this->parseResponseStatusCode($response)) {
+            throw new \RuntimeException($this->createExceptionMessage('SES API request failed', $response));
         }
     }
 
@@ -75,19 +72,5 @@ class SesClient extends AbstractClient implements EmailClientInterface
     protected function getService(): string
     {
         return 'ses';
-    }
-
-    /**
-     * Get the SES error message.
-     */
-    private function getErrorMessage($body): string
-    {
-        $body = simplexml_load_string($body);
-
-        if (!$body instanceof \SimpleXMLElement) {
-            return '[unable to parse error message]';
-        }
-
-        return (string) $body->Error->Message;
     }
 }

@@ -26,7 +26,7 @@ class DynamoDbClient extends AbstractClient
         $response = $this->perform('BatchGetItem', $arguments);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to get cache items');
+            throw new \RuntimeException($this->createExceptionMessage('Unable to get cache items', $response));
         }
 
         $items = json_decode($response['body'], true);
@@ -46,7 +46,7 @@ class DynamoDbClient extends AbstractClient
         $response = $this->perform('DeleteItem', $arguments);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to delete cache item');
+            throw new \RuntimeException($this->createExceptionMessage('Unable to delete cache item', $response));
         }
     }
 
@@ -58,7 +58,7 @@ class DynamoDbClient extends AbstractClient
         $response = $this->perform('GetItem', $arguments);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to delete cache item');
+            throw new \RuntimeException($this->createExceptionMessage('Unable to get cache item', $response));
         }
 
         $item = json_decode($response['body'], true);
@@ -78,7 +78,7 @@ class DynamoDbClient extends AbstractClient
         $response = $this->perform('PutItem', $arguments);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Unable to save cache item');
+            throw new \RuntimeException($this->createExceptionMessage('Unable to save cache item', $response));
         }
     }
 

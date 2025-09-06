@@ -81,6 +81,40 @@ abstract class AbstractClient
     }
 
     /**
+     * Create an enhanced exception message with AWS error details.
+     */
+    protected function createExceptionMessage(string $message, array $response): string
+    {
+        $message .= sprintf(' (HTTP %s)', $this->parseResponseStatusCode($response));
+
+        if (empty($response['body']) || !is_string($response['body'])) {
+            return $message;
+        }
+
+        $awsError = $this->parseAwsError($response['body']);
+
+        if (empty($awsError['code'])) {
+            return $message;
+        }
+
+        $message .= sprintf(' - AWS Error: %s', $awsError['code']);
+
+        if (empty($awsError['message'])) {
+            return $message;
+        }
+
+        $message .= sprintf(' (%s)', $awsError['message']);
+
+        if (empty($awsError['request_id'])) {
+            return $message;
+        }
+
+        $message .= sprintf(' [Request ID: %s]', $awsError['request_id']);
+
+        return $message;
+    }
+
+    /**
      * Creates a presigned request for the given key and method.
      *
      * @see https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
@@ -117,6 +151,20 @@ abstract class AbstractClient
     protected function getHostname(): string
     {
         return "{$this->getEndpointName()}.{$this->region}.amazonaws.com";
+    }
+
+    /**
+     * Parse AWS error details from the response body.
+     */
+    protected function parseAwsError(string $body): ?array
+    {
+        $xml = simplexml_load_string($body);
+
+        return $xml instanceof \SimpleXMLElement ? [
+            'code' => (string) ($xml->Error->Code ?? $xml->Code ?? ''),
+            'message' => (string) ($xml->Error->Message ?? $xml->Message ?? ''),
+            'request_id' => (string) ($xml->RequestId ?? ''),
+        ] : null;
     }
 
     /**

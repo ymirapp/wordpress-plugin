@@ -49,7 +49,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         ]);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Could not copy object "%s"', $sourceKey));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Could not copy object "%s"', $sourceKey), $response));
         }
     }
 
@@ -71,7 +71,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         $response = $this->request('delete', $key);
 
         if (204 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Unable to delete object "%s"', $key));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Unable to delete object "%s"', $key), $response));
         }
     }
 
@@ -83,7 +83,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         $response = $this->request('get', $key);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Object "%s" not found', $key));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Object "%s" not found', $key), $response));
         }
 
         return $response['body'] ?? '';
@@ -97,7 +97,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         $response = $this->request('head', $key);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Object "%s" not found', $key));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Object "%s" not found', $key), $response));
         }
 
         $details = [];
@@ -144,7 +144,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         $response = $this->request('get', '/?'.http_build_query($parameters));
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Unable to list objects with prefix "%s"', $prefix));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Unable to list objects with prefix "%s"', $prefix), $response));
         } elseif (empty($response['body'])) {
             throw new \RuntimeException('No content returned from S3 API');
         }
@@ -189,7 +189,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
         $response = $this->request('put', $key, $object, $headers);
 
         if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException(sprintf('Unable to save object "%s"', $key));
+            throw new \RuntimeException($this->createExceptionMessage(sprintf('Unable to save object "%s"', $key), $response));
         }
     }
 

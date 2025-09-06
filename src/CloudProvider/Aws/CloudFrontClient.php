@@ -132,9 +132,8 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
 
         $response = $this->request('post', "/2020-05-31/distribution/{$this->distributionId}/invalidation", $this->generateInvalidationPayload($paths));
 
-        // TODO: Need to get the error message
         if (201 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException('Invalidation request failed');
+            throw new \RuntimeException($this->createExceptionMessage('Invalidation request failed', $response));
         }
     }
 
