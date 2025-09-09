@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.5](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.4...v1.26.5) (2025-09-09)
+
+
+### Bug Fixes
+
+* Change capability required to access lifterlms setup wizard ([5cc67e5](https://github.com/ymirapp/wordpress-plugin/commit/5cc67e5c5e77f555f54847ae1f27dd067f3b2b5c))
+
 ## [1.26.4](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.3...v1.26.4) (2025-07-16)
 
 
