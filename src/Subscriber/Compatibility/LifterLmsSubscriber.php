@@ -15,6 +15,9 @@ namespace Ymir\Plugin\Subscriber\Compatibility;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 
+/**
+ * Subscriber that handles LifterLMS compatibility.
+ */
 class LifterLmsSubscriber implements SubscriberInterface
 {
     /**

@@ -15,6 +15,9 @@ namespace Ymir\Plugin\Subscriber\Compatibility;
 
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 
+/**
+ * Subscriber that handles WP All Import compatibility.
+ */
 class WpAllImportSubscriber implements SubscriberInterface
 {
     /**
