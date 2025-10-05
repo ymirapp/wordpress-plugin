@@ -26,23 +26,16 @@
         "fakerphp/faker": "^1.12",
         "friendsofphp/php-cs-fixer": "^3.0",
         "php-mock/php-mock-phpunit": "^2.6",
-        "php-parallel-lint/php-parallel-lint": "^1.2",
         "php-stubs/wp-cli-stubs": "^2.8",
         "phpmailer/phpmailer": "^5.2",
-        "phpmd/phpmd": "^2.8",
-        "phpro/grumphp": "^1.0",
         "phpunit/phpunit": "^8.0 || ^9.0",
-        "sebastian/phpcpd": "^4.1 || ^5.0 || ^6.0",
         "symfony/polyfill-php80": "^1.28",
         "szepeviktor/phpstan-wordpress": "^1.0"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "phpro/grumphp": true
-        }
+        "sort-packages": true
     },
     "extra": {
         "installer-name": "ymir-wordpress-plugin"
@@ -59,5 +52,11 @@
     },
     "suggest": {
         "ext-redis": "Required to use the Redis object cache."
+    },
+    "scripts": {
+        "php-cs-fixer": "php-cs-fixer fix --dry-run --allow-risky=yes",
+        "phpstan": "phpstan analyze --ansi",
+        "tests-integration": "phpunit --testsuite integration",
+        "tests-unit": "phpunit --testsuite unit"
     }
 }

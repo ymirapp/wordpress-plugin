@@ -21,8 +21,10 @@ jobs:
           extensions: msgpack, igbinary
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
-      - name: Run code quality checks
-        run: vendor/bin/grumphp run --testsuite=code_quality
+      - name: Run PHP CS Fixer
+        run: composer php-cs-fixer
+      - name: Run PHPStan
+        run: composer phpstan
   php-test:
     name: Run tests on ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
@@ -39,16 +41,14 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: msgpack, igbinary
-      - name: Remove GrumPHP
-        run: composer remove --dev phpro/grumphp
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
       - name: Install WordPress
         run: .github/workflows/install-wp.sh
       - name: Run unit tests
-        run: vendor/bin/phpunit --testsuite unit
+        run: composer tests-unit
       - name: Run integration tests
         env:
           AWS_TEST_ACCESS_KEY_ID: ${{ secrets.AWS_TEST_ACCESS_KEY_ID }}
           AWS_TEST_SECRET_ACCESS_KEY: ${{ secrets.AWS_TEST_SECRET_ACCESS_KEY }}
-        run: vendor/bin/phpunit --testsuite integration
+        run: composer tests-integration

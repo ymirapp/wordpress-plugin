@@ -5,7 +5,6 @@
 .gitignore export-ignore
 .php-cs-fixer.dist.php export-ignore
 .release-please-manifest.json export-ignore
-grumphp.yml export-ignore
 phpmd.xml export-ignore
 phpstan.neon export-ignore
 phpunit.xml.dist export-ignore
