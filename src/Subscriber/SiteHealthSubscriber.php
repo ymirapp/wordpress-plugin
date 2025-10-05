@@ -21,21 +21,6 @@ use Ymir\Plugin\EventManagement\SubscriberInterface;
 class SiteHealthSubscriber implements SubscriberInterface
 {
     /**
-     * The Ymir environment that the WordPress site is running in.
-     *
-     * @var string
-     */
-    private $environment;
-
-    /**
-     * Constructor.
-     */
-    public function __construct(string $environment)
-    {
-        $this->environment = $environment;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
@@ -50,9 +35,11 @@ class SiteHealthSubscriber implements SubscriberInterface
      */
     public function adjustSiteHealthTests(array $tests): array
     {
-        if (!empty($this->environment)) {
-            unset($tests['async']['background_updates'], $tests['direct']['update_temp_backup_writable']);
-        }
+        unset(
+            $tests['async']['background_updates'],
+            $tests['direct']['available_updates_disk_space'],
+            $tests['direct']['update_temp_backup_writable']
+        );
 
         return $tests;
     }

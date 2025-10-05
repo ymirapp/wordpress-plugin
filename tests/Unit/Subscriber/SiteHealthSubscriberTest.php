@@ -21,9 +21,9 @@ use Ymir\Plugin\Tests\Unit\TestCase;
  */
 class SiteHealthSubscriberTest extends TestCase
 {
-    public function testAdjustSiteHealthTestsDoestRemoveTestsInNonYmirEnvironment()
+    public function testAdjustSiteHealthTestsRemovesTests()
     {
-        $subscriber = new SiteHealthSubscriber('');
+        $subscriber = new SiteHealthSubscriber();
         $tests = [
             'async' => [
                 'background_updates' => [
@@ -33,29 +33,11 @@ class SiteHealthSubscriberTest extends TestCase
                 ],
             ],
             'direct' => [
-                'update_temp_backup_writable' => [
-                    'label' => 'Update backup directory is writable',
-                    'test' => 'update_temp_backup_writable',
+                'available_updates_disk_space' => [
+                    'label' => 'Available updates disk space',
+                    'test' => 'available_updates_disk_space',
                     'recommended' => true,
                 ],
-            ],
-        ];
-
-        $this->assertSame($tests, $subscriber->adjustSiteHealthTests($tests));
-    }
-
-    public function testAdjustSiteHealthTestsRemovesTestsInYmirEnvironment()
-    {
-        $subscriber = new SiteHealthSubscriber('staging');
-        $tests = [
-            'async' => [
-                'background_updates' => [
-                    'label' => 'Background updates are working',
-                    'test' => 'background_updates',
-                    'recommended' => true,
-                ],
-            ],
-            'direct' => [
                 'update_temp_backup_writable' => [
                     'label' => 'Update backup directory is writable',
                     'test' => 'update_temp_backup_writable',
