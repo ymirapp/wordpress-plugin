@@ -37,7 +37,7 @@ class EmailSubscriberTest extends TestCase
 
         $this->assertCount(1, $notices);
         $this->assertSame('error', $notices[0]['type']);
-        $this->assertSame('Sending emails using SES is disabled because your AWS isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
+        $this->assertSame('Sending emails using SES is disabled because your AWS account isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
     }
 
     public function testDisplayAdminNoticeAddsNoticeIfEmailClientCannotSendEmailsAndUsingVanityDomainIsTrue()
@@ -52,7 +52,7 @@ class EmailSubscriberTest extends TestCase
 
         $this->assertCount(1, $notices);
         $this->assertSame('error', $notices[0]['type']);
-        $this->assertSame('Sending emails using SES is disabled because your AWS isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
+        $this->assertSame('Sending emails using SES is disabled because your AWS account isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
     }
 
     public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue()

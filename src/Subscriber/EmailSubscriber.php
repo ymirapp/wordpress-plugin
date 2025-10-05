@@ -74,7 +74,7 @@ class EmailSubscriber implements SubscriberInterface
 
         if (!$this->client->canSendEmails()) {
             $notices[] = [
-                'message' => 'Sending emails using SES is disabled because your AWS isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.',
+                'message' => 'Sending emails using SES is disabled because your AWS account isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.',
                 'type' => 'error',
             ];
         } elseif ($this->usingVanityDomain) {
