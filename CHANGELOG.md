@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.27.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.5...v1.27.0) (2025-10-05)
+
+
+### Features
+
+* Add compatibility layer for divi ([6663368](https://github.com/ymirapp/wordpress-plugin/commit/66633684271a0904e7cf2d1cc6d0b3961ee1ea9b))
+* Disable unnecessary `available_updates_disk_space` health check ([6c866d9](https://github.com/ymirapp/wordpress-plugin/commit/6c866d96ee22547c346c36449c05ad6d458a38ce))
+
 ## [1.26.5](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.4...v1.26.5) (2025-09-09)
 
 
