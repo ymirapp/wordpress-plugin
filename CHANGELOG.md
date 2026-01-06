@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.27.0...v1.28.0) (2026-01-06)
+
+
+### Features
+
+* Remove support for phpmailer 5 classes ([057b743](https://github.com/ymirapp/wordpress-plugin/commit/057b7437e9de39e8289a196c1c831bc254ba45ce))
+
 ## [1.27.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.5...v1.27.0) (2025-10-05)
 
 
