@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Email;
 
+use PHPMailer\PHPMailer\PHPMailer;
 use Ymir\Plugin\Attachment\AttachmentFileManager;
 use Ymir\Plugin\EventManagement\EventManager;
 use Ymir\Plugin\Support\Collection;
@@ -57,14 +58,14 @@ class Email
     /**
      * WordPress PHPMailer object.
      *
-     * @var \PHPMailer
+     * @var PHPMailer
      */
     private $mailer;
 
     /**
      * Constructor.
      */
-    public function __construct(EventManager $eventManager, string $defaultFromAddress, AttachmentFileManager $fileManager, \PHPMailer $mailer, string $defaultCharset = 'UTF-8', string $defaultContentType = 'text/plain')
+    public function __construct(EventManager $eventManager, string $defaultFromAddress, AttachmentFileManager $fileManager, PHPMailer $mailer, string $defaultCharset = 'UTF-8', string $defaultContentType = 'text/plain')
     {
         $this->defaultCharset = $defaultCharset;
         $this->defaultContentType = $defaultContentType;

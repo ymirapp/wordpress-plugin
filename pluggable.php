@@ -11,6 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use PHPMailer\PHPMailer\Exception;
 use Ymir\Plugin\Email\Email;
 use Ymir\Plugin\Email\EmailClientInterface;
 use Ymir\Plugin\Plugin;
@@ -68,7 +69,7 @@ if ($ymir->isEmailSendingEnabled() && function_exists('wp_mail') && !in_array($p
         } catch (\Exception $exception) {
             $errorData = compact('to', 'subject', 'message', 'headers', 'attachments');
 
-            if ($exception instanceof phpmailerException) {
+            if ($exception instanceof Exception) {
                 $errorData['phpmailer_exception_code'] = $exception->getCode();
             }
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Tests\Mock;
 
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPUnit\Framework\MockObject\MockObject;
 
 trait PHPMailerMockTrait
@@ -22,7 +23,7 @@ trait PHPMailerMockTrait
      */
     private function getPHPMailerMock(): MockObject
     {
-        return $this->getMockBuilder(\PHPMailer::class)
+        return $this->getMockBuilder(PHPMailer::class)
                     ->disableOriginalConstructor()
                     ->getMock();
     }

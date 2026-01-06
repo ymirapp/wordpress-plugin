@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Ymir\Plugin\Configuration;
 
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\DependencyInjection\ContainerConfigurationInterface;
 
@@ -103,17 +105,15 @@ class WordPressConfiguration implements ContainerConfigurationInterface
             return $container['is_multisite'] && function_exists('is_subdomain_install') && is_subdomain_install();
         });
         $container['phpmailer'] = function () {
-            if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class) && file_exists(ABSPATH.WPINC.'/PHPMailer/PHPMailer.php')) {
+            if (!class_exists(PHPMailer::class) && file_exists(ABSPATH.WPINC.'/PHPMailer/PHPMailer.php')) {
                 require_once ABSPATH.WPINC.'/PHPMailer/PHPMailer.php';
                 require_once ABSPATH.WPINC.'/PHPMailer/Exception.php';
 
-                class_alias(\PHPMailer\PHPMailer\PHPMailer::class, 'PHPMailer');
-                class_alias(\PHPMailer\PHPMailer\Exception::class, 'phpmailerException');
-            } elseif (!class_exists(\PHPMailer::class)) {
-                require_once ABSPATH.WPINC.'/class-phpmailer.php';
+                class_alias(PHPMailer::class, 'PHPMailer');
+                class_alias(Exception::class, 'phpmailerException');
             }
 
-            return new \PHPMailer(true);
+            return new PHPMailer(true);
         };
         $container['plupload_error_messages'] = $container->service(function () {
             return [
