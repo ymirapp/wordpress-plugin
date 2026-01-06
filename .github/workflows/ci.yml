@@ -20,7 +20,7 @@ jobs:
           php-version: '7.4'
           extensions: msgpack, igbinary
       - name: Install dependencies
-        run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
       - name: Run PHP CS Fixer
         run: composer php-cs-fixer
       - name: Run PHPStan
@@ -42,7 +42,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: msgpack, igbinary
       - name: Install dependencies
-        run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
       - name: Install WordPress
         run: .github/workflows/install-wp.sh
       - name: Run unit tests
