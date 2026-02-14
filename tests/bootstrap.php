@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use Symfony\Component\Dotenv\Dotenv;
+use Dotenv\Dotenv;
 
 /**
  * PHPUnit bootstrap file for Ymir WordPress plugin.
@@ -21,7 +21,7 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 $dotEnvFilePath = dirname(__DIR__).'/.env';
 
 if (file_exists($dotEnvFilePath)) {
-    (new Dotenv())->load($dotEnvFilePath);
+    Dotenv::createImmutable(dirname(__DIR__))->load();
 }
 
 $_tests_dir = getenv('WP_TESTS_DIR');
