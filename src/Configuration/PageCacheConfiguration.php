@@ -30,7 +30,7 @@ class PageCacheConfiguration implements ContainerConfigurationInterface
         $container['cloudfront_client'] = $container->service(function (Container $container) {
             return new CloudFrontClient($container['ymir_http_client'], getenv('YMIR_DISTRIBUTION_ID'), $container['cloud_provider_key'], $container['cloud_provider_secret']);
         });
-        $container['is_page_caching_disabled'] = $container->service(function (Container $container) {
+        $container['page_caching_invalidation_disabled'] = $container->service(function (Container $container) {
             if (false !== getenv('YMIR_DISABLE_PAGE_CACHING')) {
                 return (bool) getenv('YMIR_DISABLE_PAGE_CACHING');
             } elseif (defined('YMIR_DISABLE_PAGE_CACHING')) {
@@ -38,6 +38,21 @@ class PageCacheConfiguration implements ContainerConfigurationInterface
             }
 
             return parse_url($container['upload_url'], PHP_URL_HOST) !== parse_url(WP_HOME, PHP_URL_HOST);
+        });
+        $container['page_caching_clear_all_on_post_update'] = $container->service(function () {
+            if (false !== getenv('YMIR_CLEAR_ALL_ON_POST_UPDATE')) {
+                return (bool) getenv('YMIR_CLEAR_ALL_ON_POST_UPDATE');
+            } elseif (defined('YMIR_CLEAR_ALL_ON_POST_UPDATE')) {
+                return (bool) YMIR_CLEAR_ALL_ON_POST_UPDATE;
+            }
+
+            return false;
+        });
+        $container['page_caching_options'] = $container->service(function (Container $container) {
+            return [
+                'invalidation_enabled' => !$container['page_caching_invalidation_disabled'],
+                'clear_all_on_post_update' => $container['page_caching_clear_all_on_post_update'],
+            ];
         });
     }
 }

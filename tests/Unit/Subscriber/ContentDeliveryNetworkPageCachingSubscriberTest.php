@@ -63,7 +63,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -127,7 +127,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('rest_url/wp/v2/categories/24/')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -139,7 +139,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -202,7 +202,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                 [$this->identicalTo('post_archive_permalink')]
             );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -214,7 +214,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -283,7 +283,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('custom_post_type_archive_feed_url')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -295,7 +295,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -388,7 +388,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('post_commments_feed_url')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -400,7 +400,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -482,7 +482,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('rest_url/wp/v2/taxonomy/slug/')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -494,7 +494,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -555,7 +555,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('rest_url/wp/v2/pages/42/')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -567,7 +567,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -634,7 +634,25 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                 [$this->identicalTo('rest_url/wp/v2/tag/24/')]
             );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
+    }
+
+    public function testClearPostClearsEntireCacheIfClearAllOnPostUpdateOptionIsEnabled()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('execute')
+                     ->with($this->identicalTo('ymir_page_caching_clear_all'));
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearAll');
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['clear_all_on_post_update' => true, 'invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -646,7 +664,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn(['*']);
 
         $post = $this->getWPPostMock();
@@ -700,7 +718,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                         ->method('clearUrl')
                         ->with($this->identicalTo('*'));
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -712,7 +730,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn('*');
 
         $post = $this->getWPPostMock();
@@ -766,7 +784,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                         ->method('clearUrl')
                         ->with($this->identicalTo('*'));
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -778,7 +796,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn(null);
 
         $post = $this->getWPPostMock();
@@ -831,7 +849,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -850,7 +868,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', true))->clearPost(42);
+        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => false]))->clearPost(42);
     }
 
     public function testClearPostFixesTrashedPostPermalinkUrl()
@@ -858,7 +876,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
                      ->method('filter')
-                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class))
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
                      ->willReturn($this->returnArgument(1));
 
         $post = $this->getWPPostMock();
@@ -915,7 +933,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                             [$this->identicalTo('home_url/')]
                         );
 
-        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
         $subscriber->setEventManager($eventManager);
 
@@ -924,6 +942,12 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
     public function testClearPostWhenGetPermalinkDoesntReturnAString()
     {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
+                     ->willReturn($this->returnArgument(1));
+
         $get_post = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post');
         $get_post->expects($this->once())
                  ->with($this->identicalTo(42))
@@ -931,18 +955,28 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->once())
-                      ->with($this->identicalTo(42))
-                      ->willReturn(false);
+                       ->with($this->identicalTo(42))
+                       ->willReturn(false);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url'))->clearPost(42);
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
     }
 
     public function testClearPostWhenGetPostDoesntReturnAPost()
     {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
+                     ->willReturn($this->returnArgument(1));
+
         $get_post = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_post');
         $get_post->expects($this->once())
                  ->with($this->identicalTo(42))
@@ -950,18 +984,28 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->once())
-                      ->with($this->identicalTo(42))
-                      ->willReturn(false);
+                       ->with($this->identicalTo(42))
+                       ->willReturn(false);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
             ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url'))->clearPost(42);
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
     }
 
     public function testClearPostWhenPostStatusIsInherit()
     {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
+                     ->willReturn($this->returnArgument(1));
+
         $post = $this->getWPPostMock();
         $post->post_status = 'inherit';
 
@@ -972,18 +1016,28 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->once())
-                      ->with($this->identicalTo(42))
-                      ->willReturn(false);
+                       ->with($this->identicalTo(42))
+                       ->willReturn(false);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url'))->clearPost(42);
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
     }
 
     public function testClearPostWhenPostTypeIsNavMenuItem()
     {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
+                     ->willReturn($this->returnArgument(1));
+
         $post = $this->getWPPostMock();
         $post->post_status = 'publish';
         $post->post_type = 'nav_menu_item';
@@ -995,18 +1049,28 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->once())
-                      ->with($this->identicalTo(42))
-                      ->willReturn(false);
+                       ->with($this->identicalTo(42))
+                       ->willReturn(false);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url'))->clearPost(42);
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
     }
 
     public function testClearPostWhenPostTypeIsRevision()
     {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('filter')
+                     ->with($this->identicalTo('ymir_page_caching_urls_to_clear'), $this->isInstanceOf(Collection::class), $this->identicalTo(42))
+                     ->willReturn($this->returnArgument(1));
+
         $post = $this->getWPPostMock();
         $post->post_status = 'publish';
         $post->post_type = 'revision';
@@ -1018,14 +1082,18 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->once())
-                      ->with($this->identicalTo(42))
-                      ->willReturn(false);
+                       ->with($this->identicalTo(42))
+                       ->willReturn(false);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
                         ->method('clearUrl');
 
-        (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url'))->clearPost(42);
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->clearPost(42);
     }
 
     public function testGetSubscribedEvents()

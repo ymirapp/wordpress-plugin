@@ -46,7 +46,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 // Ymir subscribers
                 new Subscriber\AdminSubscriber(),
                 new Subscriber\AssetsSubscriber($container['content_directory_name'], $container['site_url'], $container['assets_url'], $container['ymir_project_type'], $container['uploads_baseurl']),
-                new Subscriber\ContentDeliveryNetworkPageCachingSubscriber($container['cloudfront_client'], $container['rest_url'], $container['is_page_caching_disabled']),
+                new Subscriber\ContentDeliveryNetworkPageCachingSubscriber($container['cloudfront_client'], $container['rest_url'], $container['page_caching_options']),
                 new Subscriber\DisallowIndexingSubscriber($container['ymir_using_vanity_domain']),
                 new Subscriber\EmailSubscriber($container['email_client'], $container['ymir_is_email_sending_enabled'], $container['ymir_using_vanity_domain']),
                 new Subscriber\ImageEditorSubscriber($container['console_client'], $container['file_manager']),

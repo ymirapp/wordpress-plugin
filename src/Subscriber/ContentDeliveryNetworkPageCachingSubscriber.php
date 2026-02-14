@@ -30,11 +30,11 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     private $pageCacheClient;
 
     /**
-     * Flag whether page caching is disabled or not.
+     * The page caching options.
      *
-     * @var bool
+     * @var array
      */
-    private $pageCachingDisabled;
+    private $pageCachingOptions;
 
     /**
      * Base URL for the WordPress REST API endpoints.
@@ -46,10 +46,10 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     /**
      * Constructor.
      */
-    public function __construct(ContentDeliveryNetworkPageCacheClientInterface $pageCacheClient, string $restUrl, bool $pageCachingDisabled = false)
+    public function __construct(ContentDeliveryNetworkPageCacheClientInterface $pageCacheClient, string $restUrl, array $pageCachingOptions = [])
     {
         $this->pageCacheClient = $pageCacheClient;
-        $this->pageCachingDisabled = $pageCachingDisabled;
+        $this->pageCachingOptions = $pageCachingOptions;
         $this->restBaseUrl = rtrim($restUrl, '/').'/wp/v2';
     }
 
@@ -83,32 +83,68 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     }
 
     /**
-     * Clear all the URLs related to the given post for the page cache.
+     * Clear all the URLs related to the given post from the page cache.
      */
     public function clearPost($postId)
     {
-        if ($this->pageCachingDisabled) {
+        if (empty($this->pageCachingOptions['invalidation_enabled'])) {
+            return;
+        } elseif (!empty($this->pageCachingOptions['clear_all_on_post_update'])) {
+            $this->clearCache();
+
             return;
         }
 
+        $urlsToClear = $this->eventManager->filter('ymir_page_caching_urls_to_clear', $this->getUrlsToClear($postId), $postId);
+
+        if (is_array($urlsToClear) || is_string($urlsToClear)) {
+            $urlsToClear = new Collection($urlsToClear);
+        } elseif (!$urlsToClear instanceof Collection) {
+            return;
+        }
+
+        $urlsToClear->filter(function ($url) {
+            return is_string($url) && !empty($url);
+        })->each(function (string $url) {
+            $this->pageCacheClient->clearUrl($url);
+        });
+    }
+
+    /**
+     * Send request to content delivery network to clear all requested URLs from its cache.
+     */
+    public function sendClearRequest()
+    {
+        $this->eventManager->execute('ymir_page_caching_send_clear_request');
+
+        $this->pageCacheClient->sendClearRequest();
+    }
+
+    /**
+     * Get all the URLs to clear for the given post ID.
+     */
+    private function getUrlsToClear($postId): Collection
+    {
         $permalink = get_permalink($postId);
         $post = get_post($postId);
+        $urlsToClear = new Collection();
 
         if (!$post instanceof \WP_Post
             || !is_string($permalink)
             || !in_array($post->post_status, ['publish', 'private', 'trash', 'pending', 'draft'], true)
             || in_array($post->post_type, ['nav_menu_item', 'revision'], true)
         ) {
-            return;
+            return $urlsToClear;
         }
 
         if ('trash' === $post->post_status) {
             $permalink = str_replace('__trashed', '', $permalink);
         }
 
-        $permalink = rtrim($permalink, '/').'/';
         $postType = get_post_type_object($postId);
-        $urlsToClear = new Collection([$permalink, rtrim(home_url(), '/').'/']);
+
+        $urlsToClear[] = rtrim($permalink, '/').'/';
+        $urlsToClear[] = rtrim(home_url(), '/').'/';
 
         // Custom post archive
         if ('page' === get_site_option('show_on_front') && !empty(get_site_option('page_for_posts'))) {
@@ -189,28 +225,6 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
             $urlsToClear[] = get_post_type_archive_feed_link($post->post_type);
         }
 
-        $urlsToClear = $this->eventManager->filter('ymir_page_caching_urls_to_clear', $urlsToClear);
-
-        if (is_array($urlsToClear) || is_string($urlsToClear)) {
-            $urlsToClear = new Collection($urlsToClear);
-        } elseif (!$urlsToClear instanceof Collection) {
-            return;
-        }
-
-        $urlsToClear->filter(function ($url) {
-            return is_string($url) && !empty($url);
-        })->each(function (string $url) {
-            $this->pageCacheClient->clearUrl($url);
-        });
-    }
-
-    /**
-     * Send request to content delivery network to clear all requested URLs from its cache.
-     */
-    public function sendClearRequest()
-    {
-        $this->eventManager->execute('ymir_page_caching_send_clear_request');
-
-        $this->pageCacheClient->sendClearRequest();
+        return $urlsToClear;
     }
 }
