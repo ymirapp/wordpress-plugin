@@ -16,6 +16,7 @@ namespace Ymir\Plugin\Subscriber\Compatibility;
 use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
 use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\EventManagement\SubscriberInterface;
+use Ymir\Plugin\PageCache\ContentDeliveryNetworkPageCacheClientInterface;
 use Ymir\Plugin\Support\Collection;
 
 /**
@@ -38,6 +39,20 @@ class WooCommerceSubscriber implements SubscriberInterface
     private $isImageProcessingEnabled;
 
     /**
+     * Client interacting with the content delivery network handling page caching.
+     *
+     * @var ContentDeliveryNetworkPageCacheClientInterface
+     */
+    private $pageCacheClient;
+
+    /**
+     * The page caching options.
+     *
+     * @var array
+     */
+    private $pageCachingOptions;
+
+    /**
      * WordPress site URL.
      *
      * @var string
@@ -47,10 +62,12 @@ class WooCommerceSubscriber implements SubscriberInterface
     /**
      * Constructor.
      */
-    public function __construct(string $siteUrl, string $assetsUrl = '', bool $isImageProcessingEnabled = false)
+    public function __construct(ContentDeliveryNetworkPageCacheClientInterface $pageCacheClient, string $siteUrl, string $assetsUrl = '', bool $isImageProcessingEnabled = false, array $pageCachingOptions = [])
     {
         $this->assetsUrl = rtrim($assetsUrl, '/');
         $this->isImageProcessingEnabled = $isImageProcessingEnabled;
+        $this->pageCacheClient = $pageCacheClient;
+        $this->pageCachingOptions = $pageCachingOptions;
         $this->siteUrl = rtrim($siteUrl, '/');
     }
 
@@ -66,6 +83,8 @@ class WooCommerceSubscriber implements SubscriberInterface
             'woocommerce_log_directory' => 'changeLogDirectory',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_resize_images' => 'disableImageResizeWithImageProcessing',
+            'woocommerce_update_product' => 'clearCacheOnProductUpdate',
+            'woocommerce_update_product_variation' => 'clearCacheOnProductVariationUpdate',
         ];
     }
 
@@ -77,6 +96,26 @@ class WooCommerceSubscriber implements SubscriberInterface
         return is_string($logDirectory) && str_starts_with($logDirectory, PublicCloudStorageStreamWrapper::getProtocol())
              ? sprintf('%s:///wc-logs/', PrivateCloudStorageStreamWrapper::getProtocol())
              : $logDirectory;
+    }
+
+    /**
+     * Clear all the related product URLs when a product is updated.
+     */
+    public function clearCacheOnProductUpdate($productId)
+    {
+        $this->clearProductUrls($productId);
+    }
+
+    /**
+     * Clear all the related product URLs when a product variation is updated.
+     */
+    public function clearCacheOnProductVariationUpdate($variationId, $variation)
+    {
+        if (!is_object($variation) || !method_exists($variation, 'get_parent_id')) {
+            return;
+        }
+
+        $this->clearProductUrls($variation->get_parent_id());
     }
 
     /**
@@ -119,5 +158,51 @@ class WooCommerceSubscriber implements SubscriberInterface
         })->all();
 
         return wp_json_encode($cachedScriptData);
+    }
+
+    /**
+     * Clear all the URLs related to the given product from the page cache.
+     */
+    private function clearProductUrls($productId)
+    {
+        if (empty($this->pageCachingOptions['invalidation_enabled'])) {
+            return;
+        } elseif (!empty($this->pageCachingOptions['clear_all_on_post_update'])) {
+            $this->pageCacheClient->clearAll();
+
+            return;
+        }
+
+        $permalink = get_permalink($productId);
+
+        if (!is_string($permalink)) {
+            return;
+        }
+
+        $urlsToClear = new Collection();
+
+        $urlsToClear[] = rtrim($permalink, '/').'/';
+
+        if (function_exists('wc_get_page_permalink')) {
+            $urlsToClear[] = rtrim(wc_get_page_permalink('shop'), '/').'/*';
+        }
+
+        // Product category URLs
+        $productCategories = (new Collection(get_the_terms($productId, 'product_cat')))->filter(function ($category) {
+            return $category instanceof \WP_Term;
+        });
+        $urlsToClear = $urlsToClear->merge($productCategories->map(function (\WP_Term $category) {
+            return rtrim(get_term_link($category), '/').'/*';
+        }));
+
+        // Product tag URLs
+        $productTags = (new Collection(get_the_terms($productId, 'product_tag')))->filter(function ($category) {
+            return $category instanceof \WP_Term;
+        });
+        $urlsToClear = $urlsToClear->merge($productTags->map(function (\WP_Term $tag) {
+            return rtrim(get_term_link($tag), '/').'/*';
+        }));
+
+        $this->pageCacheClient->clearUrls($urlsToClear);
     }
 }

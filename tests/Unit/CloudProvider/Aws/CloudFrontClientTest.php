@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ymir\Plugin\Tests\Unit\CloudProvider\Aws;
 
 use Ymir\Plugin\CloudProvider\Aws\CloudFrontClient;
+use Ymir\Plugin\Support\Collection;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\HttpClientMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
@@ -92,6 +93,45 @@ class CloudFrontClientTest extends TestCase
         $client->clearUrl($path);
 
         $this->assertSame(['/'.$path], $invalidationPathsProperty->getValue($client));
+    }
+
+    public function testClearUrlsWithArray()
+    {
+        $urls = [$this->faker->url, $this->faker->url];
+
+        $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
+        $invalidationPathsProperty->setAccessible(true);
+
+        $client = new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret');
+        $client->clearUrls($urls);
+
+        $this->assertSame([parse_url($urls[0], PHP_URL_PATH), parse_url($urls[1], PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
+    }
+
+    public function testClearUrlsWithCollection()
+    {
+        $urls = new Collection([$this->faker->url, $this->faker->url]);
+
+        $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
+        $invalidationPathsProperty->setAccessible(true);
+
+        $client = new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret');
+        $client->clearUrls($urls);
+
+        $this->assertSame([parse_url($urls[0], PHP_URL_PATH), parse_url($urls[1], PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
+    }
+
+    public function testClearUrlsWithString()
+    {
+        $url = $this->faker->url;
+
+        $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
+        $invalidationPathsProperty->setAccessible(true);
+
+        $client = new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret');
+        $client->clearUrls($url);
+
+        $this->assertSame([parse_url($url, PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
     }
 
     public function testClearUrlWithAPath()

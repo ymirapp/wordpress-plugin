@@ -118,14 +118,18 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                           ->willReturn('category_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')],
-                            [$this->identicalTo('category_url')],
-                            [$this->identicalTo('rest_url/wp/v2/categories/24/')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                                'category_url',
+                                'rest_url/wp/v2/categories/24/',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -194,13 +198,17 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(3))
-            ->method('clearUrl')
-            ->withConsecutive(
-                [$this->identicalTo('permalink/')],
-                [$this->identicalTo('home_url/')],
-                [$this->identicalTo('post_archive_permalink')]
-            );
+        $pageCacheClient->expects($this->once())
+            ->method('clearUrls')
+            ->with($this->callback(function ($urls) {
+                $this->assertSame([
+                    'permalink/',
+                    'home_url/',
+                    'post_archive_permalink',
+                ], $urls->all());
+
+                return true;
+            }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -274,14 +282,18 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                                         ->willReturn('custom_post_type_archive_feed_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')],
-                            [$this->identicalTo('custom_post_type_archive_url')],
-                            [$this->identicalTo('custom_post_type_archive_feed_url')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                                'custom_post_type_archive_url',
+                                'custom_post_type_archive_feed_url',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -372,21 +384,25 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                                     ->willReturn('post_commments_feed_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(11))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')],
-                            [$this->identicalTo('author_posts_url')],
-                            [$this->identicalTo('author_feed_url')],
-                            [$this->identicalTo('rest_url/wp/v2/users/24/')],
-                            [$this->identicalTo('rdf_url')],
-                            [$this->identicalTo('rss_url')],
-                            [$this->identicalTo('rss2_url')],
-                            [$this->identicalTo('atom_url')],
-                            [$this->identicalTo('comments_rss2_url')],
-                            [$this->identicalTo('post_commments_feed_url')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                                'author_posts_url',
+                                'author_feed_url',
+                                'rest_url/wp/v2/users/24/',
+                                'rdf_url',
+                                'rss_url',
+                                'rss2_url',
+                                'atom_url',
+                                'comments_rss2_url',
+                                'post_commments_feed_url',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -473,14 +489,18 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                           ->willReturn([$taxonomyTerm]);
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')],
-                            [$this->identicalTo('taxonomy_url')],
-                            [$this->identicalTo('rest_url/wp/v2/taxonomy/slug/')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                                'taxonomy_url',
+                                'rest_url/wp/v2/taxonomy/slug/',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -547,13 +567,17 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(3))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')],
-                            [$this->identicalTo('rest_url/wp/v2/pages/42/')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                                'rest_url/wp/v2/pages/42/',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -625,14 +649,18 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                      ->willReturn('tag_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(4))
-            ->method('clearUrl')
-            ->withConsecutive(
-                [$this->identicalTo('permalink/')],
-                [$this->identicalTo('home_url/')],
-                [$this->identicalTo('tag_url')],
-                [$this->identicalTo('rest_url/wp/v2/tag/24/')]
-            );
+        $pageCacheClient->expects($this->once())
+            ->method('clearUrls')
+            ->with($this->callback(function ($urls) {
+                $this->assertSame([
+                    'permalink/',
+                    'home_url/',
+                    'tag_url',
+                    'rest_url/wp/v2/tag/24/',
+                ], $urls->all());
+
+                return true;
+            }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -715,8 +743,12 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->once())
-                        ->method('clearUrl')
-                        ->with($this->identicalTo('*'));
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame(['*'], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -781,8 +813,12 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->once())
-                        ->method('clearUrl')
-                        ->with($this->identicalTo('*'));
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame(['*'], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 
@@ -926,12 +962,16 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
                  ->willReturn('home_url');
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
-        $pageCacheClient->expects($this->exactly(2))
-                        ->method('clearUrl')
-                        ->withConsecutive(
-                            [$this->identicalTo('permalink/')],
-                            [$this->identicalTo('home_url/')]
-                        );
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'permalink/',
+                                'home_url/',
+                            ], $urls->all());
+
+                            return true;
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => true]);
 

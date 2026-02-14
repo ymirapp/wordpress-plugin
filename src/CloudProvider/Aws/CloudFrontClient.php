@@ -72,6 +72,24 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
+    public function clearUrls($urls)
+    {
+        if (is_array($urls) || is_string($urls)) {
+            $urls = new Collection($urls);
+        } elseif (!$urls instanceof Collection) {
+            throw new \InvalidArgumentException('Urls must be an array, a collection or a string');
+        }
+
+        $urls->filter(function ($url) {
+            return is_string($url) && !empty($url);
+        })->each(function (string $url) {
+            $this->clearUrl($url);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function sendClearRequest()
     {
         if (empty($this->invalidationPaths)) {

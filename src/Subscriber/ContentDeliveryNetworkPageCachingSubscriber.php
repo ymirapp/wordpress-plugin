@@ -103,11 +103,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
             return;
         }
 
-        $urlsToClear->filter(function ($url) {
-            return is_string($url) && !empty($url);
-        })->each(function (string $url) {
-            $this->pageCacheClient->clearUrl($url);
-        });
+        $this->pageCacheClient->clearUrls($urlsToClear);
     }
 
     /**

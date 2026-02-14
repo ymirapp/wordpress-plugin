@@ -29,6 +29,11 @@ interface ContentDeliveryNetworkPageCacheClientInterface
     public function clearUrl(string $url);
 
     /**
+     * Clear the given URLs from the page cache.
+     */
+    public function clearUrls($urls);
+
+    /**
      * Send request to content delivery network to clear all requested URLs from its cache.
      */
     public function sendClearRequest();
