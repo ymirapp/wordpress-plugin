@@ -79,6 +79,7 @@ $config
         'phpdoc_types_order' => ['null_adjustment' => 'always_last'],
         'semicolon_after_instruction' => true,
         'single_line_comment_style' => true,
+        'static_lambda' => false,
         'yoda_style' => true,
     ])
     ->setFinder($finder)
