@@ -46,9 +46,9 @@ jobs:
       - name: Install WordPress
         run: .github/workflows/install-wp.sh
       - name: Run unit tests
-        run: composer tests-unit
+        run: composer tests:unit
       - name: Run integration tests
         env:
           AWS_TEST_ACCESS_KEY_ID: ${{ secrets.AWS_TEST_ACCESS_KEY_ID }}
           AWS_TEST_SECRET_ACCESS_KEY: ${{ secrets.AWS_TEST_SECRET_ACCESS_KEY }}
-        run: composer tests-integration
+        run: composer tests:integration

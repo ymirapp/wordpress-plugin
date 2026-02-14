@@ -57,7 +57,7 @@
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix --dry-run --allow-risky=yes",
         "phpstan": "phpstan analyze --ansi",
-        "tests-integration": "phpunit --testsuite integration",
-        "tests-unit": "phpunit --testsuite unit"
+        "tests:integration": "phpunit --testsuite integration",
+        "tests:unit": "phpunit --testsuite unit"
     }
 }
