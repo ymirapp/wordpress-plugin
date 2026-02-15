@@ -35,6 +35,8 @@ interface ContentDeliveryNetworkPageCacheClientInterface
 
     /**
      * Send request to content delivery network to clear all requested URLs from its cache.
+     *
+     * You may pass a guard to determine whether the clear request should be sent or not.
      */
-    public function sendClearRequest();
+    public function sendClearRequest(?callable $guard = null);
 }

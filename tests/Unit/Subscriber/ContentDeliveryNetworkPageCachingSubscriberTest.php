@@ -1169,7 +1169,91 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->once())
-                        ->method('sendClearRequest');
+                        ->method('sendClearRequest')
+                        ->with($this->isInstanceOf(\Closure::class));
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->sendClearRequest();
+    }
+
+    public function testSendClearRequestDoesntSendRequestIfTransientIsSet()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('execute')
+                     ->with($this->identicalTo('ymir_page_caching_send_clear_request'));
+
+        $get_transient = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_transient');
+        $get_transient->expects($this->once())
+                      ->with($this->identicalTo('ymir_invalidation_'.sha1('/path')))
+                      ->willReturn(true);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('sendClearRequest')
+                        ->with($this->callback(function (callable $guard) {
+                            return false === $guard(['/path']);
+                        }));
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->sendClearRequest();
+    }
+
+    public function testSendClearRequestSetsTransientIfItIsntSet()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('execute')
+                     ->with($this->identicalTo('ymir_page_caching_send_clear_request'));
+
+        $get_transient = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_transient');
+        $get_transient->expects($this->once())
+                      ->with($this->identicalTo('ymir_invalidation_'.sha1('/path')))
+                      ->willReturn(false);
+
+        $set_transient = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'set_transient');
+        $set_transient->expects($this->once())
+                      ->with($this->identicalTo('ymir_invalidation_'.sha1('/path')), $this->identicalTo(true), $this->identicalTo(60))
+                      ->willReturn(true);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('sendClearRequest')
+                        ->with($this->callback(function (callable $guard) {
+                            return true === $guard(['/path']);
+                        }));
+
+        $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
+
+        $subscriber->setEventManager($eventManager);
+
+        $subscriber->sendClearRequest();
+    }
+
+    public function testSendClearRequestSortsPathsBeforeHashing()
+    {
+        $eventManager = $this->getEventManagerMock();
+        $eventManager->expects($this->once())
+                     ->method('execute')
+                     ->with($this->identicalTo('ymir_page_caching_send_clear_request'));
+
+        $get_transient = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_transient');
+        $get_transient->expects($this->once())
+                      ->with($this->identicalTo('ymir_invalidation_'.sha1('/path1|/path2')))
+                      ->willReturn(true);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('sendClearRequest')
+                        ->with($this->callback(function (callable $guard) {
+                            return false === $guard(['/path2', '/path1']);
+                        }));
 
         $subscriber = new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url');
 

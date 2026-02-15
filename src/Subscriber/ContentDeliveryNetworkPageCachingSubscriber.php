@@ -23,6 +23,13 @@ use Ymir\Plugin\Support\Collection;
 class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAwareSubscriber
 {
     /**
+     * The prefix used to generate the invalidation key.
+     *
+     * @var string
+     */
+    private const TRANSIENT_PREFIX = 'ymir_invalidation_';
+
+    /**
      * Client interacting with the content delivery network handling page caching.
      *
      * @var ContentDeliveryNetworkPageCacheClientInterface
@@ -113,7 +120,19 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     {
         $this->eventManager->execute('ymir_page_caching_send_clear_request');
 
-        $this->pageCacheClient->sendClearRequest();
+        $this->pageCacheClient->sendClearRequest(function (array $paths) {
+            sort($paths);
+
+            $key = self::TRANSIENT_PREFIX.sha1(implode('|', $paths));
+
+            if (get_transient($key)) {
+                return false;
+            }
+
+            set_transient($key, true, MINUTE_IN_SECONDS);
+
+            return true;
+        });
     }
 
     /**

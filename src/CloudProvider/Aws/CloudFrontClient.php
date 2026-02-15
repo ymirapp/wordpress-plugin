@@ -90,15 +90,21 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function sendClearRequest()
+    public function sendClearRequest(?callable $guard = null)
     {
         if (empty($this->invalidationPaths)) {
             return;
         }
 
-        $this->createInvalidation($this->invalidationPaths);
+        $paths = $this->filterUniquePaths($this->invalidationPaths);
 
         $this->invalidationPaths = [];
+
+        if ($guard && !$guard($paths)) {
+            return;
+        }
+
+        $this->createInvalidation($paths);
     }
 
     /**
@@ -160,6 +166,10 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
      */
     private function filterUniquePaths(array $paths): array
     {
+        if (1 === count($paths)) {
+            return $paths;
+        }
+
         $paths = (new Collection($paths))->unique();
 
         $filteredPaths = $paths->filter(function (string $path) {

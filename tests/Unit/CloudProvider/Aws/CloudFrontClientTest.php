@@ -42,6 +42,10 @@ class CloudFrontClientTest extends TestCase
                 ['/foo', '/bar', '/foo/bar', '/foo/*', '/bar', '*', '/baz/*', '/foo/bar/*'],
                 ['*'],
             ],
+            [
+                ['/foo'],
+                ['/foo'],
+            ],
         ];
     }
 
@@ -188,6 +192,28 @@ class CloudFrontClientTest extends TestCase
                      ->willReturn($time);
 
         $this->assertSame($expectedXml, $generateInvalidationPayloadMethod->invoke(new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret'), $paths));
+    }
+
+    public function testSendClearRequestWithGuardReturningFalse()
+    {
+        $http = $this->getHttpClientMock();
+        $http->expects($this->never())
+             ->method('request');
+
+        $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
+        $invalidationPathsProperty->setAccessible(true);
+
+        $client = new CloudFrontClient($http, 'distribution-id', 'aws-key', 'aws-secret');
+
+        $invalidationPathsProperty->setValue($client, ['/path']);
+
+        $client->sendClearRequest(function (array $paths) {
+            $this->assertSame(['/path'], $paths);
+
+            return false;
+        });
+
+        $this->assertEmpty($invalidationPathsProperty->getValue($client));
     }
 
     public function testSendClearRequestWithMultiplePathsAndASuccessfulResponse()
