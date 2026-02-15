@@ -88,6 +88,26 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     }
 
     /**
+     * Invalidate the given paths.
+     */
+    public function invalidatePaths(array $paths)
+    {
+        $concretePaths = array_filter($paths, function (string $path) {
+            return !str_ends_with($path, '*');
+        });
+        $wildcardPaths = array_filter($paths, function (string $path) {
+            return str_ends_with($path, '*');
+        });
+
+        while (!empty($wildcardPaths) || !empty($concretePaths)) {
+            $batch = array_splice($wildcardPaths, 0, 15);
+            $batch = array_merge($batch, array_splice($concretePaths, 0, 3000 - count($batch)));
+
+            $this->sendInvalidation($batch);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function sendClearRequest(?callable $guard = null)
@@ -104,7 +124,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
             return;
         }
 
-        $this->createInvalidation($paths);
+        $this->invalidatePaths($paths);
     }
 
     /**
@@ -140,28 +160,6 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     }
 
     /**
-     * Create an invalidation request.
-     */
-    private function createInvalidation($paths)
-    {
-        if (is_string($paths)) {
-            $paths = [$paths];
-        } elseif (!is_array($paths)) {
-            throw new \InvalidArgumentException('"paths" argument must be an array or a string');
-        }
-
-        if (count($paths) > 1) {
-            $paths = $this->filterUniquePaths($paths);
-        }
-
-        $response = $this->request('post', "/2020-05-31/distribution/{$this->distributionId}/invalidation", $this->generateInvalidationPayload($paths));
-
-        if (201 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException($this->createExceptionMessage('Invalidation request failed', $response));
-        }
-    }
-
-    /**
      * Filter all paths and only keep unique ones.
      */
     private function filterUniquePaths(array $paths): array
@@ -180,7 +178,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
         });
 
         $wildcardPaths = $wildcardPaths->map(function (string $path) use ($wildcardPaths) {
-            $filteredWildcardPaths = preg_grep(sprintf('/%s/', str_replace('\*', '.*', preg_quote($path, '/'))), $wildcardPaths->all(), PREG_GREP_INVERT);
+            $filteredWildcardPaths = preg_grep(sprintf('/^%s/', str_replace('\*', '.*', preg_quote($path, '/'))), $wildcardPaths->all(), PREG_GREP_INVERT);
             $filteredWildcardPaths[] = $path;
 
             return $filteredWildcardPaths;
@@ -188,12 +186,8 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
 
         $wildcardPaths = new Collection(!$wildcardPaths->isEmpty() ? array_intersect(...$wildcardPaths->all()) : []);
 
-        if ($wildcardPaths->count() > 15) {
-            throw new \RuntimeException('CloudFront only allows for a maximum of 15 wildcard invalidations');
-        }
-
         $wildcardPaths->each(function (string $path) use (&$filteredPaths) {
-            $filteredPaths = preg_grep(sprintf('/%s/', str_replace('\*', '.*', preg_quote($path, '/'))), $filteredPaths, PREG_GREP_INVERT);
+            $filteredPaths = preg_grep(sprintf('/^%s/', str_replace('\*', '.*', preg_quote($path, '/'))), $filteredPaths, PREG_GREP_INVERT);
         });
 
         return array_merge($wildcardPaths->all(), $filteredPaths);
@@ -243,5 +237,37 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
         }
 
         return $xml;
+    }
+
+    /**
+     * Send an invalidation request.
+     */
+    private function sendInvalidation(array $paths)
+    {
+        $attempts = 0;
+        $maxAttempts = 3;
+        $payload = $this->generateInvalidationPayload($paths);
+
+        while ($attempts < $maxAttempts) {
+            ++$attempts;
+
+            $response = $this->request('post', "/2020-05-31/distribution/{$this->distributionId}/invalidation", $payload);
+            $statusCode = $this->parseResponseStatusCode($response);
+
+            if (201 === $statusCode) {
+                return;
+            }
+
+            $awsError = $this->parseAwsError($response['body'] ?? '');
+            $errorCode = $awsError['code'] ?? '';
+
+            $shouldRetry = $statusCode >= 500 || 429 === $statusCode || (400 === $statusCode && in_array($errorCode, ['Throttling', 'TooManyInvalidationsInProgress'], true));
+
+            if (!$shouldRetry || $attempts >= $maxAttempts) {
+                throw new \RuntimeException($this->createExceptionMessage('Invalidation request failed', $response));
+            }
+
+            sleep($attempts * 2);
+        }
     }
 }
