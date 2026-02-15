@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.28.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.27.0...v1.28.0) (2026-02-15)
+
+
+### Features
+
+* Add `clear_all_on_post_update` option to CDN page caching subscriber ([e992899](https://github.com/ymirapp/wordpress-plugin/commit/e992899e1c305519f1637c5834e51781455a6f58))
+* Add duplicate invalidation request suppression using transients ([97272ee](https://github.com/ymirapp/wordpress-plugin/commit/97272eec7883a5e18e158108cc2583c9f2aed611))
+* Add page cache invalidation to woocommerce product updates ([9dd9adf](https://github.com/ymirapp/wordpress-plugin/commit/9dd9adf34bac43190a78cae14ace992cb3039519))
+* Remove support for phpmailer 5 classes ([057b743](https://github.com/ymirapp/wordpress-plugin/commit/057b7437e9de39e8289a196c1c831bc254ba45ce))
+
 ## [1.27.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.26.5...v1.27.0) (2025-10-05)
 
 
