@@ -1,12 +1,18 @@
 includes:
-    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+    - ./phpstan-baseline.neon
+    - ./vendor/szepeviktor/phpstan-wordpress/extension.neon
 parameters:
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    phpVersion:
+        min: 70200
+        max: 80500
+    bootstrapFiles:
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
     paths:
         - ymir.php
         - bootstrap.php
         - pluggable.php
         - src/
-    bootstrapFiles:
-        - tests/phpstan/bootstrap.php
-        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
-    level: 5
+    excludePaths:
+        - src/Configuration/*

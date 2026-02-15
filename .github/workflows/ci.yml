@@ -41,6 +41,8 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: msgpack, igbinary
+      - name: Remove code quality dependencies
+        run: composer remove --dev szepeviktor/phpstan-wordpress
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
       - name: Install WordPress
