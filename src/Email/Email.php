@@ -295,10 +295,6 @@ class Email
     {
         $header = array_map('trim', explode(':', trim($header), 2));
 
-        if (!is_array($header) || 2 !== count($header)) {
-            return;
-        }
-
         $body = $header[1];
         $name = strtolower($header[0]);
 
