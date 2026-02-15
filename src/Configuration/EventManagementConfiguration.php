@@ -60,6 +60,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 // Plugin compatibility subscribers
                 new Subscriber\Compatibility\ActionSchedulerSubscriber(),
                 new Subscriber\Compatibility\DiviSubscriber(),
+                new Subscriber\Compatibility\ElementorSubscriber($container['cloudfront_client'], $container['page_caching_options']),
                 new Subscriber\Compatibility\LifterLmsSubscriber(),
                 new Subscriber\Compatibility\WooCommerceSubscriber($container['cloudfront_client'], $container['site_url'], $container['assets_url'], $container['ymir_cdn_image_processing_enabled'], $container['page_caching_options']),
                 new Subscriber\Compatibility\WpAllImportSubscriber(),
