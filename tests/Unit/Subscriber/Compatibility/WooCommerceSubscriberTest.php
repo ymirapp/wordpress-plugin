@@ -16,9 +16,11 @@ namespace Ymir\Plugin\Tests\Unit\Subscriber\Compatibility;
 use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
 use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\Subscriber\Compatibility\WooCommerceSubscriber;
+use Ymir\Plugin\Support\WordPress;
 use Ymir\Plugin\Tests\Mock\ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
+use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPTermMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
@@ -27,6 +29,7 @@ class WooCommerceSubscriberTest extends TestCase
     use ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;
     use EventManagerMockTrait;
     use FunctionMockTrait;
+    use WPPostMockTrait;
     use WPTermMockTrait;
 
     public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatDoesntStartWithThePublicCloudStorageProtocol()
@@ -46,6 +49,63 @@ class WooCommerceSubscriberTest extends TestCase
         $logDirectory = 42;
 
         $this->assertSame($logDirectory, $this->createSubscriber()->changeLogDirectory($logDirectory));
+    }
+
+    public function testClearCacheOnProductSave()
+    {
+        $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
+        $function_exists->expects($this->exactly(2))
+                        ->withConsecutive(
+                            [$this->identicalTo('wp_is_post_autosave')],
+                            [$this->identicalTo('wp_is_post_revision')]
+                        )
+                        ->willReturn(true);
+
+        $wp_is_post_autosave = $this->getFunctionMock($this->getNamespace(WordPress::class), 'wp_is_post_autosave');
+        $wp_is_post_autosave->expects($this->once())
+                            ->with(123)
+                            ->willReturn(false);
+
+        $wp_is_post_revision = $this->getFunctionMock($this->getNamespace(WordPress::class), 'wp_is_post_revision');
+        $wp_is_post_revision->expects($this->once())
+                            ->with(123)
+                            ->willReturn(false);
+
+        $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
+        $function_exists->expects($this->once())
+                        ->with('wc_get_page_permalink')
+                        ->willReturn(true);
+
+        $get_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_permalink');
+        $get_permalink->expects($this->once())
+                      ->with(123)
+                      ->willReturn('https://foo.com/product/bar/');
+
+        $wc_get_page_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wc_get_page_permalink');
+        $wc_get_page_permalink->expects($this->once())
+                               ->with('shop')
+                               ->willReturn('https://foo.com/shop/');
+
+        $get_the_terms = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_the_terms');
+        $get_the_terms->expects($this->exactly(2))
+                      ->willReturn([]);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'https://foo.com/product/bar/',
+                                'https://foo.com/shop/*',
+                            ], $urls->all());
+
+                            return true;
+                        }));
+
+        $post = $this->getWPPostMock();
+
+        $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)
+            ->clearCacheOnProductSave(123, $post, true);
     }
 
     public function testClearCacheOnProductUpdateWhenClearAllOnPostUpdateIsDisabled()
@@ -118,6 +178,68 @@ class WooCommerceSubscriberTest extends TestCase
                         ->method('clearUrls');
 
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => false], $pageCacheClient)->clearCacheOnProductUpdate(123);
+    }
+
+    public function testClearCacheOnProductVariationSave()
+    {
+        $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
+        $function_exists->expects($this->exactly(2))
+                        ->withConsecutive(
+                            [$this->identicalTo('wp_is_post_autosave')],
+                            [$this->identicalTo('wp_is_post_revision')]
+                        )
+                        ->willReturn(true);
+
+        $wp_is_post_autosave = $this->getFunctionMock($this->getNamespace(WordPress::class), 'wp_is_post_autosave');
+        $wp_is_post_autosave->expects($this->once())
+                            ->with(456)
+                            ->willReturn(false);
+
+        $wp_is_post_revision = $this->getFunctionMock($this->getNamespace(WordPress::class), 'wp_is_post_revision');
+        $wp_is_post_revision->expects($this->once())
+                            ->with(456)
+                            ->willReturn(false);
+
+        $wp_get_post_parent_id = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_get_post_parent_id');
+        $wp_get_post_parent_id->expects($this->once())
+                              ->with(456)
+                              ->willReturn(123);
+
+        $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
+        $function_exists->expects($this->once())
+                        ->with('wc_get_page_permalink')
+                        ->willReturn(true);
+
+        $get_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_permalink');
+        $get_permalink->expects($this->once())
+                      ->with(123)
+                      ->willReturn('https://foo.com/product/bar/');
+
+        $wc_get_page_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wc_get_page_permalink');
+        $wc_get_page_permalink->expects($this->once())
+                               ->with('shop')
+                               ->willReturn('https://foo.com/shop/');
+
+        $get_the_terms = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_the_terms');
+        $get_the_terms->expects($this->exactly(2))
+                      ->willReturn([]);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'https://foo.com/product/bar/',
+                                'https://foo.com/shop/*',
+                            ], $urls->all());
+
+                            return true;
+                        }));
+
+        $post = $this->getWPPostMock();
+
+        $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)
+            ->clearCacheOnProductVariationSave(456, $post, true);
     }
 
     public function testClearCacheOnProductVariationUpdate()
@@ -312,6 +434,8 @@ class WooCommerceSubscriberTest extends TestCase
         $subscribedEvents = [
             'transient_woocommerce_blocks_asset_api_script_data' => 'fixAssetUrlPathsInCachedScriptData',
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
+            'save_post_product' => ['clearCacheOnProductSave', 20, 3],
+            'save_post_product_variation' => ['clearCacheOnProductVariationSave', 20, 3],
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_log_directory' => 'changeLogDirectory',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',

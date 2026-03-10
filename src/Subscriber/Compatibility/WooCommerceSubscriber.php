@@ -79,6 +79,8 @@ class WooCommerceSubscriber implements SubscriberInterface
         return [
             'transient_woocommerce_blocks_asset_api_script_data' => 'fixAssetUrlPathsInCachedScriptData',
             'transient_woocommerce_blocks_asset_api_script_data_ssl' => 'fixAssetUrlPathsInCachedScriptData',
+            'save_post_product' => ['clearCacheOnProductSave', 20, 3],
+            'save_post_product_variation' => ['clearCacheOnProductVariationSave', 20, 3],
             'woocommerce_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
             'woocommerce_log_directory' => 'changeLogDirectory',
             'woocommerce_product_csv_importer_check_import_file_path' => 'disableCheckImportFilePath',
@@ -99,11 +101,41 @@ class WooCommerceSubscriber implements SubscriberInterface
     }
 
     /**
+     * Clear product-related URLs when a product post is saved directly.
+     */
+    public function clearCacheOnProductSave(int $postId, \WP_Post $post, bool $update): void
+    {
+        if (!$update || WordPress::isAutosaveOrRevision($postId)) {
+            return;
+        }
+
+        $this->clearProductUrls($postId);
+    }
+
+    /**
      * Clear all the related product URLs when a product is updated.
      */
     public function clearCacheOnProductUpdate($productId)
     {
         $this->clearProductUrls($productId);
+    }
+
+    /**
+     * Clear product-related URLs when a product variation post is saved directly.
+     */
+    public function clearCacheOnProductVariationSave(int $postId, \WP_Post $post, bool $update): void
+    {
+        if (!$update || WordPress::isAutosaveOrRevision($postId)) {
+            return;
+        }
+
+        $parentId = (int) wp_get_post_parent_id($postId);
+
+        if ($parentId <= 0) {
+            return;
+        }
+
+        $this->clearProductUrls($parentId);
     }
 
     /**
@@ -214,5 +246,13 @@ class WooCommerceSubscriber implements SubscriberInterface
         }));
 
         $this->pageCacheClient->clearUrls($urlsToClear);
+    }
+
+    /**
+     * Check if a post save is an autosave or revision.
+     */
+    private function isAutosaveOrRevision(int $postId): bool
+    {
+        return (bool) wp_is_post_autosave($postId) || (bool) wp_is_post_revision($postId);
     }
 }
