@@ -18,9 +18,6 @@ use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @coversNothing
- */
 abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
 {
     use CloudStorageClientInterfaceMockTrait;

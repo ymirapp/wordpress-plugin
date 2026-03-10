@@ -17,9 +17,6 @@ use Ymir\Plugin\CloudProvider\Aws\CloudFrontClient;
 use Ymir\Plugin\Http\CurlClient;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\CloudProvider\Aws\CloudFrontClient
- */
 class CloudFrontClientTest extends TestCase
 {
     private $client;

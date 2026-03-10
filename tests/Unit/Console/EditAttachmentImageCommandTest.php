@@ -22,9 +22,6 @@ use Ymir\Plugin\Tests\Mock\WPImageEditorMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Console\EditAttachmentImageCommand
- */
 class EditAttachmentImageCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

@@ -16,9 +16,6 @@ namespace Ymir\Plugin\Tests\Unit\ValueObject;
 use Ymir\Plugin\Tests\Unit\TestCase;
 use Ymir\Plugin\ValueObject\MappedDomainNames;
 
-/**
- * @covers \Ymir\Plugin\ValueObject\MappedDomainNames
- */
 class MappedDomainNamesTest extends TestCase
 {
     public function testGetPrimaryDomainName()

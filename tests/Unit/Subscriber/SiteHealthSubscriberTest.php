@@ -16,9 +16,6 @@ namespace Ymir\Plugin\Tests\Unit\Subscriber;
 use Ymir\Plugin\Subscriber\SiteHealthSubscriber;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\SiteHealthSubscriber
- */
 class SiteHealthSubscriberTest extends TestCase
 {
     public function testAdjustSiteHealthTestsRemovesTests()

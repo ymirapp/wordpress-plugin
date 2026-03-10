@@ -15,9 +15,6 @@ namespace Ymir\Plugin\Tests\Integration\CloudStorage;
 
 use Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper;
 
-/**
- * @covers \Ymir\Plugin\CloudStorage\PrivateCloudStorageStreamWrapper
- */
 class PrivateCloudStorageStreamWrapperS3Test extends AbstractCloudStorageStreamWrapperS3TestCase
 {
     protected function getStreamWrapperClass(): string

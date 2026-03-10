@@ -17,9 +17,6 @@ use Ymir\Plugin\DependencyInjection\Container;
 use Ymir\Plugin\Tests\Mock\ContainerConfigurationInterfaceMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\DependencyInjection\Container
- */
 class ContainerTest extends TestCase
 {
     use ContainerConfigurationInterfaceMockTrait;

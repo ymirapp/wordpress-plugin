@@ -22,9 +22,6 @@ use Ymir\Plugin\Tests\Mock\WPImageEditorMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Console\ResizeAttachmentImageCommand
- */
 class ResizeAttachmentImageCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

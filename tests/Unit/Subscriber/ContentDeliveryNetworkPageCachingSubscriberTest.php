@@ -24,9 +24,6 @@ use Ymir\Plugin\Tests\Mock\WPTaxonomyMockTrait;
 use Ymir\Plugin\Tests\Mock\WPTermMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\ContentDeliveryNetworkPageCachingSubscriber
- */
 class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
 {
     use ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;

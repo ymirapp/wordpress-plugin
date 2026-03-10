@@ -21,9 +21,6 @@ use Ymir\Plugin\Tests\Mock\WPErrorMockTrait;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\RestApi\CreateAttachmentEndpoint
- */
 class CreateAttachmentEndpointTest extends TestCase
 {
     use CloudStorageClientInterfaceMockTrait;

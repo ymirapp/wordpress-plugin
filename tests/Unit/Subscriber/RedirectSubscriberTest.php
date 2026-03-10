@@ -18,9 +18,6 @@ use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\MappedDomainNamesMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\RedirectSubscriber
- */
 class RedirectSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

@@ -19,9 +19,6 @@ use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\RestApi\GetFileDetailsEndpoint
- */
 class GetFileDetailsEndpointTest extends TestCase
 {
     use CloudStorageClientInterfaceMockTrait;

@@ -22,9 +22,6 @@ use Ymir\Plugin\Tests\Mock\WPSiteMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteQueryMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Console\RunAllCronCommand
- */
 class RunAllCronCommandTest extends TestCase
 {
     use ConsoleClientInterfaceMockTrait;

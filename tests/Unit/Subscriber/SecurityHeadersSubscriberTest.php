@@ -17,9 +17,6 @@ use Ymir\Plugin\Subscriber\SecurityHeadersSubscriber;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\SecurityHeadersSubscriber
- */
 class SecurityHeadersSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

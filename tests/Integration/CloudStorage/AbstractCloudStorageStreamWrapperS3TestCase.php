@@ -17,9 +17,6 @@ use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\CloudProvider\Aws\S3Client;
 use Ymir\Plugin\Http\CurlClient;
 
-/**
- * @coversNothing
- */
 abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
 {
     private $client;

@@ -19,9 +19,6 @@ use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\HttpClientMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\CloudProvider\Aws\CloudFrontClient
- */
 class CloudFrontClientTest extends TestCase
 {
     use FunctionMockTrait;

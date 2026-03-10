@@ -17,9 +17,6 @@ use Ymir\Plugin\EventManagement\EventManager;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\EventManagement\EventManager
- */
 class EventManagerTest extends TestCase
 {
     use FunctionMockTrait;

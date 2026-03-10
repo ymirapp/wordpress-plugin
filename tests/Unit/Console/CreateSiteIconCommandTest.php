@@ -23,9 +23,6 @@ use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPSiteIconMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Console\CreateSiteIconCommand
- */
 class CreateSiteIconCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

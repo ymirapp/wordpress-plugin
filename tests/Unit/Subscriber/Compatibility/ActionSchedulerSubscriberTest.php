@@ -18,9 +18,6 @@ use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\Compatibility\ActionSchedulerSubscriber
- */
 class ActionSchedulerSubscriberTest extends TestCase
 {
     use EventManagerMockTrait;

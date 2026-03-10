@@ -19,9 +19,6 @@ use Ymir\Plugin\Tests\Mock\EventManagerMockTrait;
 use Ymir\Plugin\Tests\Mock\PHPMailerMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Email\Email
- */
 class EmailTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

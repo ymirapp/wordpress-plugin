@@ -18,9 +18,6 @@ use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPScriptsMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\PluploadSubscriber
- */
 class PluploadSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

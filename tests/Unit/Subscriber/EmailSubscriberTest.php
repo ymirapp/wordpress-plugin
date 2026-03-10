@@ -18,9 +18,6 @@ use Ymir\Plugin\Support\Collection;
 use Ymir\Plugin\Tests\Mock\EmailClientMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\EmailSubscriber
- */
 class EmailSubscriberTest extends TestCase
 {
     use EmailClientMockTrait;

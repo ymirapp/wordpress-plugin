@@ -19,9 +19,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ymir\Plugin\Tests\Mock\CloudStorageClientInterfaceMockTrait;
 
-/**
- * @coversNothing
- */
 abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
 {
     use CloudStorageClientInterfaceMockTrait;

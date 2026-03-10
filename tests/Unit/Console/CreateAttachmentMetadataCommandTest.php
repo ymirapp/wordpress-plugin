@@ -21,9 +21,6 @@ use Ymir\Plugin\Tests\Mock\WpCliMockTrait;
 use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Console\CreateAttachmentMetadataCommand
- */
 class CreateAttachmentMetadataCommandTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

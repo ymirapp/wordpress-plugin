@@ -20,9 +20,6 @@ use Ymir\Plugin\Tests\Mock\WPPostMockTrait;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\ContentDeliveryNetworkImageProcessingSubscriber
- */
 class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

@@ -17,9 +17,6 @@ use Ymir\Plugin\Subscriber\RootsSubscriber;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\RootsSubscriber
- */
 class RootsSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

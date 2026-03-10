@@ -21,9 +21,6 @@ use Ymir\Plugin\Tests\Mock\ConsoleClientInterfaceMockTrait;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\ImageEditorSubscriber
- */
 class ImageEditorSubscriberTest extends TestCase
 {
     use AttachmentFileManagerMockTrait;

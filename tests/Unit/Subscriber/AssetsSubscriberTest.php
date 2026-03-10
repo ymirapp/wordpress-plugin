@@ -16,9 +16,6 @@ namespace Ymir\Plugin\Tests\Unit\Subscriber;
 use Ymir\Plugin\Subscriber\AssetsSubscriber;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\AssetsSubscriber
- */
 class AssetsSubscriberTest extends TestCase
 {
     public function provideReplaceUrlsInContent(): array

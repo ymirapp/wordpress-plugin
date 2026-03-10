@@ -18,9 +18,6 @@ use Ymir\Plugin\Tests\Mock\ContentDeliveryNetworkPageCacheClientInterfaceMockTra
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\Compatibility\ElementorSubscriber
- */
 class ElementorSubscriberTest extends TestCase
 {
     use ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;

@@ -17,9 +17,6 @@ use Ymir\Plugin\Subscriber\DisallowIndexingSubscriber;
 use Ymir\Plugin\Support\Collection;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\DisallowIndexingSubscriber
- */
 class DisallowIndexingSubscriberTest extends TestCase
 {
     public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue()

@@ -16,9 +16,6 @@ namespace Ymir\Plugin\Tests\Unit\Subscriber;
 use Ymir\Plugin\Subscriber\WordPressSubscriber;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\WordPressSubscriber
- */
 class WordPressSubscriberTest extends TestCase
 {
     public function testEnableUrlRewriteWithOtherServerSoftware()

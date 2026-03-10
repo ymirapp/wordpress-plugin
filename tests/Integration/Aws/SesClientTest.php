@@ -17,9 +17,6 @@ use Ymir\Plugin\CloudProvider\Aws\SesClient;
 use Ymir\Plugin\Http\CurlClient;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\CloudProvider\Aws\SesClient
- */
 class SesClientTest extends TestCase
 {
     public function testCanSendEmailsReturnsFalse()

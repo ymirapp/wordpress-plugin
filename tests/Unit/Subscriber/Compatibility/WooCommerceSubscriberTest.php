@@ -22,9 +22,6 @@ use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Mock\WPTermMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\Compatibility\WooCommerceSubscriber
- */
 class WooCommerceSubscriberTest extends TestCase
 {
     use ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;

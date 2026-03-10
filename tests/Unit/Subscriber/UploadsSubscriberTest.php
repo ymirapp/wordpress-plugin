@@ -17,9 +17,6 @@ use Ymir\Plugin\Subscriber\UploadsSubscriber;
 use Ymir\Plugin\Tests\Mock\FunctionMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\Subscriber\UploadsSubscriber
- */
 class UploadsSubscriberTest extends TestCase
 {
     use FunctionMockTrait;

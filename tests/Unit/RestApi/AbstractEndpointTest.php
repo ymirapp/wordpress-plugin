@@ -17,9 +17,6 @@ use Ymir\Plugin\RestApi\AbstractEndpoint;
 use Ymir\Plugin\Tests\Mock\WPRESTRequestMockTrait;
 use Ymir\Plugin\Tests\Unit\TestCase;
 
-/**
- * @covers \Ymir\Plugin\RestApi\AbstractEndpoint
- */
 class AbstractEndpointTest extends TestCase
 {
     use WPRESTRequestMockTrait;
