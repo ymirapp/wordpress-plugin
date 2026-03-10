@@ -18,6 +18,7 @@ use Ymir\Plugin\CloudStorage\PublicCloudStorageStreamWrapper;
 use Ymir\Plugin\EventManagement\SubscriberInterface;
 use Ymir\Plugin\PageCache\ContentDeliveryNetworkPageCacheClientInterface;
 use Ymir\Plugin\Support\Collection;
+use Ymir\Plugin\Support\WordPress;
 
 /**
  * Subscriber that handles WooCommerce compatibility.
@@ -246,13 +247,5 @@ class WooCommerceSubscriber implements SubscriberInterface
         }));
 
         $this->pageCacheClient->clearUrls($urlsToClear);
-    }
-
-    /**
-     * Check if a post save is an autosave or revision.
-     */
-    private function isAutosaveOrRevision(int $postId): bool
-    {
-        return (bool) wp_is_post_autosave($postId) || (bool) wp_is_post_revision($postId);
     }
 }
