@@ -30,11 +30,11 @@ class CloudStorageConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['private_cloud_storage_client'] = $container->service(function (Container $container) {
-            return new S3Client($container['ymir_http_client'], $container['cloud_provider_private_store'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret']);
+            return new S3Client($container['ymir_http_client'], $container['cloud_provider_private_store'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['cloud_provider_security_token']);
         });
         $container['private_cloud_storage_protocol'] = PrivateCloudStorageStreamWrapper::getProtocol().'://';
         $container['public_cloud_storage_client'] = $container->service(function (Container $container) {
-            return new S3Client($container['ymir_http_client'], $container['cloud_provider_public_store'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret']);
+            return new S3Client($container['ymir_http_client'], $container['cloud_provider_public_store'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['cloud_provider_security_token']);
         });
         $container['public_cloud_storage_protocol'] = PublicCloudStorageStreamWrapper::getProtocol().'://';
     }

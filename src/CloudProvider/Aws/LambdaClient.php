@@ -39,9 +39,9 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(ClientInterface $client, string $functionName, string $key, string $region, string $secret, string $siteUrl)
+    public function __construct(ClientInterface $client, string $functionName, string $key, string $region, string $secret, string $siteUrl, string $securityToken = '')
     {
-        parent::__construct($client, $key, $region, $secret);
+        parent::__construct($client, $key, $region, $secret, $securityToken);
 
         $this->functionName = $functionName;
         $this->siteUrl = $siteUrl;

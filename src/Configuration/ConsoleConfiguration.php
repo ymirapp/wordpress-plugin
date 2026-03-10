@@ -39,7 +39,7 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
             ];
         });
         $container['console_client'] = $container->service(function (Container $container) {
-            return new LambdaClient($container['ymir_http_client'], $container['cloud_provider_function_name'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['site_url']);
+            return new LambdaClient($container['ymir_http_client'], $container['cloud_provider_function_name'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['site_url'], $container['cloud_provider_security_token']);
         });
         $container['wp_cli'] = $container->service(function () {
             return new Console\WpCli();

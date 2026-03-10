@@ -28,7 +28,7 @@ class PageCacheConfiguration implements ContainerConfigurationInterface
     public function modify(Container $container)
     {
         $container['cloudfront_client'] = $container->service(function (Container $container) {
-            return new CloudFrontClient($container['ymir_http_client'], getenv('YMIR_DISTRIBUTION_ID'), $container['cloud_provider_key'], $container['cloud_provider_secret']);
+            return new CloudFrontClient($container['ymir_http_client'], getenv('YMIR_DISTRIBUTION_ID'), $container['cloud_provider_key'], $container['cloud_provider_secret'], $container['cloud_provider_security_token']);
         });
         $container['page_caching_invalidation_disabled'] = $container->service(function (Container $container) {
             if (false !== getenv('YMIR_DISABLE_PAGE_CACHING')) {

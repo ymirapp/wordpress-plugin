@@ -39,9 +39,9 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function __construct(ClientInterface $client, string $distributionId, string $key, string $secret)
+    public function __construct(ClientInterface $client, string $distributionId, string $key, string $secret, string $securityToken = '')
     {
-        parent::__construct($client, $key, 'us-east-1', $secret);
+        parent::__construct($client, $key, 'us-east-1', $secret, $securityToken);
 
         $this->distributionId = $distributionId;
         $this->invalidationPaths = [];

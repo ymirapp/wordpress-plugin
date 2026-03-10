@@ -46,6 +46,9 @@ class CloudProviderConfiguration implements ContainerConfigurationInterface
         $container['cloud_provider_secret'] = $container->service(function () {
             return getenv('AWS_SECRET_ACCESS_KEY') ?: (defined('YMIR_CLOUD_PROVIDER_SECRET') ? YMIR_CLOUD_PROVIDER_SECRET : '');
         });
+        $container['cloud_provider_security_token'] = $container->service(function () {
+            return getenv('AWS_SESSION_TOKEN') ?: '';
+        });
         $container['cloud_provider_private_store'] = $container->service(function () {
             return getenv('YMIR_PRIVATE_STORE') ?: (defined('YMIR_CLOUD_PROVIDER_PRIVATE_STORE') ? YMIR_CLOUD_PROVIDER_PRIVATE_STORE : '');
         });

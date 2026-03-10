@@ -58,13 +58,13 @@ abstract class AbstractClient
     /**
      * Constructor.
      */
-    public function __construct(ClientInterface $client, string $key, string $region, string $secret)
+    public function __construct(ClientInterface $client, string $key, string $region, string $secret, string $securityToken = '')
     {
         $this->client = $client;
         $this->key = $key;
         $this->region = $region;
         $this->secret = $secret;
-        $this->securityToken = getenv('AWS_SESSION_TOKEN') ?: '';
+        $this->securityToken = $securityToken;
     }
 
     /**

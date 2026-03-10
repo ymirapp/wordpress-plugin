@@ -31,9 +31,9 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * Constructor.
      */
-    public function __construct(ClientInterface $client, string $bucket, string $key, string $region, string $secret)
+    public function __construct(ClientInterface $client, string $bucket, string $key, string $region, string $secret, string $securityToken = '')
     {
-        parent::__construct($client, $key, $region, $secret);
+        parent::__construct($client, $key, $region, $secret, $securityToken);
 
         $this->bucket = $bucket;
     }
