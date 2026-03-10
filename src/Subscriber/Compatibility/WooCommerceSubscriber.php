@@ -111,11 +111,21 @@ class WooCommerceSubscriber implements SubscriberInterface
      */
     public function clearCacheOnProductVariationUpdate($variationId, $variation)
     {
-        if (!is_object($variation) || !method_exists($variation, 'get_parent_id')) {
+        $parentId = 0;
+
+        if (is_object($variation) && method_exists($variation, 'get_parent_id')) {
+            $parentId = (int) $variation->get_parent_id();
+        }
+
+        if ($parentId <= 0) {
+            $parentId = (int) wp_get_post_parent_id((int) $variationId);
+        }
+
+        if ($parentId <= 0) {
             return;
         }
 
-        $this->clearProductUrls($variation->get_parent_id());
+        $this->clearProductUrls($parentId);
     }
 
     /**

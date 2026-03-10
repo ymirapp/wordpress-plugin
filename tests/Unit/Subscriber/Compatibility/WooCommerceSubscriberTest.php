@@ -166,6 +166,47 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)->clearCacheOnProductVariationUpdate(456, $variation);
     }
 
+    public function testClearCacheOnProductVariationUpdateFallsBackToVariationPostParentId()
+    {
+        $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
+        $function_exists->expects($this->once())
+                        ->with('wc_get_page_permalink')
+                        ->willReturn(true);
+
+        $wp_get_post_parent_id = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_get_post_parent_id');
+        $wp_get_post_parent_id->expects($this->once())
+                              ->with(456)
+                              ->willReturn(123);
+
+        $get_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_permalink');
+        $get_permalink->expects($this->once())
+                      ->with(123)
+                      ->willReturn('https://foo.com/product/bar/');
+
+        $wc_get_page_permalink = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wc_get_page_permalink');
+        $wc_get_page_permalink->expects($this->once())
+                               ->with('shop')
+                               ->willReturn('https://foo.com/shop/');
+
+        $get_the_terms = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'get_the_terms');
+        $get_the_terms->expects($this->exactly(2))
+                      ->willReturn([]);
+
+        $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
+        $pageCacheClient->expects($this->once())
+                        ->method('clearUrls')
+                        ->with($this->callback(function ($urls) {
+                            $this->assertSame([
+                                'https://foo.com/product/bar/',
+                                'https://foo.com/shop/*',
+                            ], $urls->all());
+
+                            return true;
+                        }));
+
+        $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)->clearCacheOnProductVariationUpdate(456, new \stdClass());
+    }
+
     public function testDisableCheckImportFilePath()
     {
         $this->assertFalse($this->createSubscriber()->disableCheckImportFilePath());
