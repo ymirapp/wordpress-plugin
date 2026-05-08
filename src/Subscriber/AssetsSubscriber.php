@@ -211,7 +211,7 @@ class AssetsSubscriber implements SubscriberInterface
      */
     public function rewriteIncludesUrl(string $url): string
     {
-        return $this->rewriteUrlWithAssetsUrl('#https?://[^/]*((/[^/]*)?/wp-includes.*)#', $url);
+        return $this->rewriteUrlWithAssetsUrl(sprintf('#^https?://%s((/wp)?/wp-includes.*)#i', preg_quote((string) preg_replace('#^https?://#i', '', $this->siteUrl), '#')), $url);
     }
 
     /**

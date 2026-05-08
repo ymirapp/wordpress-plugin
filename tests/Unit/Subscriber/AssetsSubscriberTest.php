@@ -201,6 +201,11 @@ class AssetsSubscriberTest extends TestCase
         $this->assertSame('https://assets.com/assets/uuid/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteIncludesUrl('https://foo.com/wp-includes/js/script.min.js'));
     }
 
+    public function testRewriteIncludesUrlWithSubdirectoryMultisite()
+    {
+        $this->assertSame('https://foo.com/test/assets/uuid/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com/test', 'https://foo.com/test/assets/uuid'))->rewriteIncludesUrl('https://foo.com/test/wp-includes/js/script.min.js'));
+    }
+
     public function testRewritePluginsUrlOnlyKeepsDirectoryBelowPlugins()
     {
         $this->assertSame('https://assets.com/assets/uuid/directory/plugins/test.php', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
