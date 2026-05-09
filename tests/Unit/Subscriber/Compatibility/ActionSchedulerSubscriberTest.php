@@ -23,7 +23,7 @@ class ActionSchedulerSubscriberTest extends TestCase
     use EventManagerMockTrait;
     use FunctionMockTrait;
 
-    public function testConfigureActionSchedulerWhenActionSchedulerClassDoesntExist()
+    public function testConfigureActionSchedulerWhenActionSchedulerClassDoesntExist(): void
     {
         $class_exists = $this->getFunctionMock($this->getNamespace(ActionSchedulerSubscriber::class), 'class_exists');
         $class_exists->expects($this->once())
@@ -41,7 +41,7 @@ class ActionSchedulerSubscriberTest extends TestCase
         $subscriber->configureActionScheduler();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = ActionSchedulerSubscriber::getSubscribedEvents();
 
@@ -57,7 +57,7 @@ class ActionSchedulerSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testScheduleActionSchedulerCommand()
+    public function testScheduleActionSchedulerCommand(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())

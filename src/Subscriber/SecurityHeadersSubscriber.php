@@ -56,7 +56,7 @@ class SecurityHeadersSubscriber implements SubscriberInterface
     /**
      * Send security headers.
      */
-    public function sendSecurityHeaders()
+    public function sendSecurityHeaders(): void
     {
         foreach (self::HEADERS as $header => $value) {
             header("{$header}: {$value}");

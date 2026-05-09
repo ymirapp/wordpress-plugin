@@ -11,6 +11,6 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-function on_foo()
+function on_foo(): void
 {
 }

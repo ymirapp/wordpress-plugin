@@ -25,7 +25,7 @@ class GetFileDetailsEndpointTest extends TestCase
     use FunctionMockTrait;
     use WPRESTRequestMockTrait;
 
-    public function testGetArguments()
+    public function testGetArguments(): void
     {
         $arguments = (new GetFileDetailsEndpoint($this->getCloudStorageClientInterfaceMock(), 'uploads_path', 'uploads_subdir'))->getArguments();
 
@@ -33,17 +33,17 @@ class GetFileDetailsEndpointTest extends TestCase
         $this->assertIsCallable($arguments['filename']['sanitize_callback']);
     }
 
-    public function testGetMethods()
+    public function testGetMethods(): void
     {
         $this->assertSame(['GET'], (new GetFileDetailsEndpoint($this->getCloudStorageClientInterfaceMock(), 'uploads_path', 'uploads_subdir'))->getMethods());
     }
 
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $this->assertSame('/file-details', GetFileDetailsEndpoint::getPath());
     }
 
-    public function testRespondWithEncodedCharacters()
+    public function testRespondWithEncodedCharacters(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -79,7 +79,7 @@ class GetFileDetailsEndpointTest extends TestCase
         ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/2020/08', '/2020/08'))->respond($request));
     }
 
-    public function testRespondWithMultisiteUploadsPath()
+    public function testRespondWithMultisiteUploadsPath(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -115,7 +115,7 @@ class GetFileDetailsEndpointTest extends TestCase
         ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/sites/2/2020/08', '/2020/08'))->respond($request));
     }
 
-    public function testRespondWithYearMonthFoldersDisabled()
+    public function testRespondWithYearMonthFoldersDisabled(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -151,7 +151,7 @@ class GetFileDetailsEndpointTest extends TestCase
         ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads', ''))->respond($request));
     }
 
-    public function testRespondWithYearMonthFoldersEnabled()
+    public function testRespondWithYearMonthFoldersEnabled(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -187,7 +187,7 @@ class GetFileDetailsEndpointTest extends TestCase
         ], (new GetFileDetailsEndpoint($cloudStorageClient, 'ymir-public:///uploads/2020/08', '/2020/08'))->respond($request));
     }
 
-    public function testValidateRequest()
+    public function testValidateRequest(): void
     {
         $current_user_can = $this->getFunctionMock($this->getNamespace(GetFileDetailsEndpoint::class), 'current_user_can');
         $current_user_can->expects($this->once())

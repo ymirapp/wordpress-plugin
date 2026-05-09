@@ -23,7 +23,7 @@ class AbstractClientTest extends TestCase
     use FunctionMockTrait;
     use HttpClientMockTrait;
 
-    public function testCreatePresignedRequestWithSecurityToken()
+    public function testCreatePresignedRequestWithSecurityToken(): void
     {
         $gmdate = $this->getFunctionMock($this->getNamespace(S3Client::class), 'gmdate');
         $gmdate->expects($this->exactly(5))

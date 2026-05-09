@@ -72,7 +72,7 @@ class ElementorSubscriber implements SubscriberInterface
     /**
      * Clear loop page discovery transient when Elementor content can change.
      */
-    public function clearElementorLoopPageCache(int $postId)
+    public function clearElementorLoopPageCache(int $postId): void
     {
         if (WordPress::isAutosaveOrRevision($postId)) {
             return;
@@ -84,7 +84,7 @@ class ElementorSubscriber implements SubscriberInterface
     /**
      * Clear loop page discovery transient when relevant posts are deleted.
      */
-    public function clearElementorLoopPageCacheOnDelete(int $postId)
+    public function clearElementorLoopPageCacheOnDelete(int $postId): void
     {
         if (!in_array(get_post_type($postId), ['page', 'elementor_library'], true)) {
             return;
@@ -96,7 +96,7 @@ class ElementorSubscriber implements SubscriberInterface
     /**
      * Clear cache for Elementor loop pages.
      */
-    public function clearElementorLoopPages()
+    public function clearElementorLoopPages(): void
     {
         if (empty($this->pageCachingOptions['invalidation_enabled'])) {
             return;
@@ -124,7 +124,7 @@ class ElementorSubscriber implements SubscriberInterface
     /**
      * Clear Elementor loop page cache when a product is saved directly.
      */
-    public function clearElementorLoopPagesOnSave(int $postId)
+    public function clearElementorLoopPagesOnSave(int $postId): void
     {
         if (WordPress::isAutosaveOrRevision($postId)) {
             return;

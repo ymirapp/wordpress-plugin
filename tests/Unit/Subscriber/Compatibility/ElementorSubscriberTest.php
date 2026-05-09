@@ -23,7 +23,7 @@ class ElementorSubscriberTest extends TestCase
     use ContentDeliveryNetworkPageCacheClientInterfaceMockTrait;
     use FunctionMockTrait;
 
-    public function testClearElementorLoopPageCacheOnDelete()
+    public function testClearElementorLoopPageCacheOnDelete(): void
     {
         $get_post_type = $this->getFunctionMock($this->getNamespace(ElementorSubscriber::class), 'get_post_type');
         $get_post_type->expects($this->once())
@@ -37,7 +37,7 @@ class ElementorSubscriberTest extends TestCase
         $this->createSubscriber()->clearElementorLoopPageCacheOnDelete(42);
     }
 
-    public function testClearElementorLoopPageCacheOnDeleteDoesNothingForNonElementorPostType()
+    public function testClearElementorLoopPageCacheOnDeleteDoesNothingForNonElementorPostType(): void
     {
         $get_post_type = $this->getFunctionMock($this->getNamespace(ElementorSubscriber::class), 'get_post_type');
         $get_post_type->expects($this->once())
@@ -50,7 +50,7 @@ class ElementorSubscriberTest extends TestCase
         $this->createSubscriber()->clearElementorLoopPageCacheOnDelete(42);
     }
 
-    public function testClearElementorLoopPagesDoesNothingWhenInvalidationIsDisabled()
+    public function testClearElementorLoopPagesDoesNothingWhenInvalidationIsDisabled(): void
     {
         $get_transient = $this->getFunctionMock($this->getNamespace(ElementorSubscriber::class), 'get_transient');
         $get_transient->expects($this->never());
@@ -62,7 +62,7 @@ class ElementorSubscriberTest extends TestCase
         $this->createSubscriber(['invalidation_enabled' => false], $pageCacheClient)->clearElementorLoopPages();
     }
 
-    public function testClearElementorLoopPagesUsesCachedPageIds()
+    public function testClearElementorLoopPagesUsesCachedPageIds(): void
     {
         $get_transient = $this->getFunctionMock($this->getNamespace(ElementorSubscriber::class), 'get_transient');
         $get_transient->expects($this->once())
@@ -92,7 +92,7 @@ class ElementorSubscriberTest extends TestCase
         $this->createSubscriber(['invalidation_enabled' => true], $pageCacheClient)->clearElementorLoopPages();
     }
 
-    public function testClearElementorLoopPagesWithTransientMissDiscoversAndCachesPageIds()
+    public function testClearElementorLoopPagesWithTransientMissDiscoversAndCachesPageIds(): void
     {
         $get_transient = $this->getFunctionMock($this->getNamespace(ElementorSubscriber::class), 'get_transient');
         $get_transient->expects($this->once())
@@ -140,7 +140,7 @@ class ElementorSubscriberTest extends TestCase
         $this->createSubscriber(['invalidation_enabled' => true], $pageCacheClient)->clearElementorLoopPages();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = ElementorSubscriber::getSubscribedEvents();
 

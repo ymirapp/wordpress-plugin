@@ -32,26 +32,26 @@ class WooCommerceSubscriberTest extends TestCase
     use WPPostMockTrait;
     use WPTermMockTrait;
 
-    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatDoesntStartWithThePublicCloudStorageProtocol()
+    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatDoesntStartWithThePublicCloudStorageProtocol(): void
     {
         $logDirectory = '/var/logs';
 
         $this->assertSame($logDirectory, $this->createSubscriber()->changeLogDirectory($logDirectory));
     }
 
-    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatStartsWithThePublicCloudStorageProtocol()
+    public function testChangeLogDirectoryWhenLogDirectoryIsAStringThatStartsWithThePublicCloudStorageProtocol(): void
     {
         $this->assertSame(sprintf('%s:///wc-logs/', PrivateCloudStorageStreamWrapper::getProtocol()), $this->createSubscriber()->changeLogDirectory(sprintf('%s:///uploads', PublicCloudStorageStreamWrapper::getProtocol())));
     }
 
-    public function testChangeLogDirectoryWhenLogDirectoryIsntAString()
+    public function testChangeLogDirectoryWhenLogDirectoryIsntAString(): void
     {
         $logDirectory = 42;
 
         $this->assertSame($logDirectory, $this->createSubscriber()->changeLogDirectory($logDirectory));
     }
 
-    public function testClearCacheOnProductSave()
+    public function testClearCacheOnProductSave(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->exactly(2))
@@ -108,7 +108,7 @@ class WooCommerceSubscriberTest extends TestCase
             ->clearCacheOnProductSave(123, $post, true);
     }
 
-    public function testClearCacheOnProductUpdateWhenClearAllOnPostUpdateIsDisabled()
+    public function testClearCacheOnProductUpdateWhenClearAllOnPostUpdateIsDisabled(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
         $function_exists->expects($this->once())
@@ -160,7 +160,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true, 'clear_all_on_post_update' => false], $pageCacheClient)->clearCacheOnProductUpdate(123);
     }
 
-    public function testClearCacheOnProductUpdateWhenClearAllOnPostUpdateIsEnabled()
+    public function testClearCacheOnProductUpdateWhenClearAllOnPostUpdateIsEnabled(): void
     {
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->once())
@@ -171,7 +171,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true, 'clear_all_on_post_update' => true], $pageCacheClient)->clearCacheOnProductUpdate(123);
     }
 
-    public function testClearCacheOnProductUpdateWhenInvalidationIsDisabled()
+    public function testClearCacheOnProductUpdateWhenInvalidationIsDisabled(): void
     {
         $pageCacheClient = $this->getContentDeliveryNetworkPageCacheClientInterfaceMock();
         $pageCacheClient->expects($this->never())
@@ -180,7 +180,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => false], $pageCacheClient)->clearCacheOnProductUpdate(123);
     }
 
-    public function testClearCacheOnProductVariationSave()
+    public function testClearCacheOnProductVariationSave(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->exactly(2))
@@ -242,7 +242,7 @@ class WooCommerceSubscriberTest extends TestCase
             ->clearCacheOnProductVariationSave(456, $post, true);
     }
 
-    public function testClearCacheOnProductVariationUpdate()
+    public function testClearCacheOnProductVariationUpdate(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
         $function_exists->expects($this->once())
@@ -285,7 +285,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)->clearCacheOnProductVariationUpdate(456, $variation);
     }
 
-    public function testClearCacheOnProductVariationUpdateFallsBackToVariationPostParentId()
+    public function testClearCacheOnProductVariationUpdateFallsBackToVariationPostParentId(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'function_exists');
         $function_exists->expects($this->once())
@@ -326,22 +326,22 @@ class WooCommerceSubscriberTest extends TestCase
         $this->createSubscriber('https://foo.com', '', false, ['invalidation_enabled' => true], $pageCacheClient)->clearCacheOnProductVariationUpdate(456, new \stdClass());
     }
 
-    public function testDisableCheckImportFilePath()
+    public function testDisableCheckImportFilePath(): void
     {
         $this->assertFalse($this->createSubscriber()->disableCheckImportFilePath());
     }
 
-    public function testDisableImageResizeWithImageProcessingWithImageProcessingDisabled()
+    public function testDisableImageResizeWithImageProcessingWithImageProcessingDisabled(): void
     {
         $this->assertTrue($this->createSubscriber()->disableImageResizeWithImageProcessing(true));
     }
 
-    public function testDisableImageResizeWithImageProcessingWithImageProcessingEnabled()
+    public function testDisableImageResizeWithImageProcessingWithImageProcessingEnabled(): void
     {
         $this->assertFalse($this->createSubscriber('https://foo.com', 'https://assets.com/assets/uuid', true)->disableImageResizeWithImageProcessing(true));
     }
 
-    public function testFixAssetUrlPathsInCachedScriptDataIfAssetsUrlIsEmpty()
+    public function testFixAssetUrlPathsInCachedScriptDataIfAssetsUrlIsEmpty(): void
     {
         $wp_json_encode = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'wp_json_encode');
         $wp_json_encode->expects($this->never());
@@ -349,7 +349,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertSame('foo', $this->createSubscriber()->fixAssetUrlPathsInCachedScriptData('foo'));
     }
 
-    public function testFixAssetUrlPathsInCachedScriptDataIfJsonDecodeHasError()
+    public function testFixAssetUrlPathsInCachedScriptDataIfJsonDecodeHasError(): void
     {
         $json_last_error = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'json_last_error');
         $json_last_error->expects($this->once())
@@ -361,7 +361,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertSame('foo', $this->createSubscriber('https://foo.com', 'https://assets.com/assets/uuid')->fixAssetUrlPathsInCachedScriptData('foo'));
     }
 
-    public function testFixAssetUrlPathsInCachedScriptDataIfScriptDataHasNoScriptData()
+    public function testFixAssetUrlPathsInCachedScriptDataIfScriptDataHasNoScriptData(): void
     {
         $json_last_error = $this->getFunctionMock($this->getNamespace(WooCommerceSubscriber::class), 'json_last_error');
         $json_last_error->expects($this->once())
@@ -373,7 +373,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertSame('foo', $this->createSubscriber('https://foo.com', 'https://assets.com/assets/uuid')->fixAssetUrlPathsInCachedScriptData('foo'));
     }
 
-    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndDifferentAssetDomain()
+    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndDifferentAssetDomain(): void
     {
         $scriptData = [
             'script_data' => [
@@ -398,7 +398,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertSame(json_encode($expectedScriptData), $this->createSubscriber('https://foo.com', 'https://assets.com/assets/new_uuid')->fixAssetUrlPathsInCachedScriptData(json_encode($scriptData)));
     }
 
-    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndSameAssetDomain()
+    public function testFixAssetUrlPathsInCachedScriptDataWithDifferentAssetsUrlAndSameAssetDomain(): void
     {
         $scriptData = [
             'script_data' => [
@@ -423,7 +423,7 @@ class WooCommerceSubscriberTest extends TestCase
         $this->assertSame(json_encode($expectedScriptData), $this->createSubscriber('https://foo.com', 'https://foo.com/assets/new_uuid')->fixAssetUrlPathsInCachedScriptData(json_encode($scriptData)));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = WooCommerceSubscriber::getSubscribedEvents();
 

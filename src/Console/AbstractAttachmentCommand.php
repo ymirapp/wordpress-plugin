@@ -45,7 +45,7 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
     /**
      * Add all the backup image sizes using the image metadata.
      */
-    protected function addBackupImageSizes(\WP_Post $attachment, array $imageMetadata, string $suffix)
+    protected function addBackupImageSizes(\WP_Post $attachment, array $imageMetadata, string $suffix): void
     {
         $backupSizes = $this->getBackupImageSizes($attachment);
 

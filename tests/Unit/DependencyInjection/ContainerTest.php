@@ -36,7 +36,7 @@ class ContainerTest extends TestCase
         $this->container = null;
     }
 
-    public function testConfigureArrayCast()
+    public function testConfigureArrayCast(): void
     {
         $configuration = $this->getContainerConfigurationInterfaceMock();
         $configuration->expects($this->once())
@@ -46,7 +46,7 @@ class ContainerTest extends TestCase
         $this->container->configure($configuration);
     }
 
-    public function testConfigureWithArray()
+    public function testConfigureWithArray(): void
     {
         $fooConfiguration = $this->getContainerConfigurationInterfaceMock();
         $fooConfiguration->expects($this->once())
@@ -61,7 +61,7 @@ class ContainerTest extends TestCase
         $this->container->configure([$fooConfiguration, $barConfiguration]);
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $arguments = ['foo' => 'bar'];
         $container = new Container($arguments);
@@ -69,7 +69,7 @@ class ContainerTest extends TestCase
         $this->assertEquals($arguments['foo'], $container['foo']);
     }
 
-    public function testIsset()
+    public function testIsset(): void
     {
         $this->container['null'] = null;
         $this->container['param'] = 'value';
@@ -83,7 +83,7 @@ class ContainerTest extends TestCase
         $this->assertFalse(isset($this->container['non_existent']));
     }
 
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         $this->container['null'] = null;
         $this->container['param'] = 'value';
@@ -96,7 +96,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf('stdClass', $this->container['service']);
     }
 
-    public function testOffsetGetException()
+    public function testOffsetGetException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Container doesn\'t have a value stored for the "foo" key');
@@ -104,7 +104,7 @@ class ContainerTest extends TestCase
         echo $this->container['foo'];
     }
 
-    public function testService()
+    public function testService(): void
     {
         $this->container['service'] = $this->container->service(function (Container $container) {
             return new \stdClass();
@@ -119,7 +119,7 @@ class ContainerTest extends TestCase
         $this->assertSame($foo_service, $bar_service);
     }
 
-    public function testServiceException()
+    public function testServiceException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Service definition is not a Closure or invokable object');
@@ -129,7 +129,7 @@ class ContainerTest extends TestCase
         $this->container->service('foo');
     }
 
-    public function testUnset()
+    public function testUnset(): void
     {
         $this->container['null'] = null;
         $this->container['param'] = 'value';

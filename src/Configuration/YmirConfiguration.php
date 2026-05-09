@@ -27,7 +27,7 @@ class YmirConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['ymir_cdn_image_processing_enabled'] = $container->service(function () {
             if (defined('YMIR_CDN_IMAGE_PROCESSING_ENABLED')) {

@@ -28,7 +28,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->getStreamWrapperClass()::register($this->client);
     }
 
-    public function testCopyFromLocal()
+    public function testCopyFromLocal(): void
     {
         $tempFilePath = tempnam(sys_get_temp_dir(), 'ymir-').'.txt';
         $relativePath = '/'.basename($tempFilePath);
@@ -47,7 +47,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    public function testCopyFromS3()
+    public function testCopyFromS3(): void
     {
         $filePath = tempnam(sys_get_temp_dir(), 'ymir-');
 
@@ -62,7 +62,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->assertSame("bar\n", file_get_contents($filePath));
     }
 
-    public function testFileExistsAfterCreatingEmptyFile()
+    public function testFileExistsAfterCreatingEmptyFile(): void
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
         $s3FilePath = "{$this->getProtocol()}://".$relativePath;
@@ -76,17 +76,17 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    public function testFileExistsWithExistingFile()
+    public function testFileExistsWithExistingFile(): void
     {
         $this->assertTrue(file_exists("{$this->getProtocol()}:///foo.txt"));
     }
 
-    public function testIsReadable()
+    public function testIsReadable(): void
     {
         $this->assertTrue(is_readable("{$this->getProtocol()}:///foo.txt"));
     }
 
-    public function testMkdirAndRmdir()
+    public function testMkdirAndRmdir(): void
     {
         $directoryName = 'directory'.rand();
         $directoryPath = sprintf('/%s', $directoryName);
@@ -103,7 +103,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->assertFalse($this->client->objectExists($directoryPath.'/'));
     }
 
-    public function testTouchCreatesEmptyFileIfFileDoesntExist()
+    public function testTouchCreatesEmptyFileIfFileDoesntExist(): void
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
         $s3FilePath = "{$this->getProtocol()}://".$relativePath;
@@ -118,7 +118,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    public function testTouchDoesNothingIfFileExists()
+    public function testTouchDoesNothingIfFileExists(): void
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
         $s3FilePath = "{$this->getProtocol()}://".$relativePath;
@@ -136,7 +136,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    public function testTruncateExistingFile()
+    public function testTruncateExistingFile(): void
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
         $s3FilePath = "{$this->getProtocol()}://".$relativePath;
@@ -159,7 +159,7 @@ abstract class AbstractCloudStorageStreamWrapperS3TestCase extends TestCase
         $this->client->deleteObject($relativePath);
     }
 
-    public function testTruncateNewFile()
+    public function testTruncateNewFile(): void
     {
         $relativePath = '/'.basename(tempnam(sys_get_temp_dir(), 'ymir-').'.txt');
         $s3FilePath = "{$this->getProtocol()}://".$relativePath;

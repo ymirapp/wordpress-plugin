@@ -22,7 +22,7 @@ class EmailSubscriberTest extends TestCase
 {
     use EmailClientMockTrait;
 
-    public function testDisplayAdminNoticeAddsNoticeIfEmailClientCannotSendEmails()
+    public function testDisplayAdminNoticeAddsNoticeIfEmailClientCannotSendEmails(): void
     {
         $client = $this->getEmailClientMock();
 
@@ -37,7 +37,7 @@ class EmailSubscriberTest extends TestCase
         $this->assertSame('Sending emails using SES is disabled because your AWS account isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
     }
 
-    public function testDisplayAdminNoticeAddsNoticeIfEmailClientCannotSendEmailsAndUsingVanityDomainIsTrue()
+    public function testDisplayAdminNoticeAddsNoticeIfEmailClientCannotSendEmailsAndUsingVanityDomainIsTrue(): void
     {
         $client = $this->getEmailClientMock();
 
@@ -52,7 +52,7 @@ class EmailSubscriberTest extends TestCase
         $this->assertSame('Sending emails using SES is disabled because your AWS account isn\'t approved to send emails. To learn how to approve your AWS account, check out <a href="https://docs.ymirapp.com/team-resources/email.html#getting-your-aws-account-approved-for-sending-email">the documentation</a>.', $notices[0]['message']);
     }
 
-    public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue()
+    public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue(): void
     {
         $client = $this->getEmailClientMock();
 
@@ -67,17 +67,17 @@ class EmailSubscriberTest extends TestCase
         $this->assertSame('Sending emails using SES is disabled because the site is using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.', $notices[0]['message']);
     }
 
-    public function testDisplayAdminNoticeDoesNothingIfEmailSendingIsDisabled()
+    public function testDisplayAdminNoticeDoesNothingIfEmailSendingIsDisabled(): void
     {
         $this->assertCount(0, (new EmailSubscriber($this->getEmailClientMock(), false, true))->displayAdminNotices(new Collection()));
     }
 
-    public function testDisplayAdminNoticeDoesNothingIfWeDontPassACollectionObject()
+    public function testDisplayAdminNoticeDoesNothingIfWeDontPassACollectionObject(): void
     {
         $this->assertNull((new EmailSubscriber($this->getEmailClientMock(), true, false))->displayAdminNotices(null));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = EmailSubscriber::getSubscribedEvents();
 

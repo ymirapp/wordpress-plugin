@@ -126,7 +126,7 @@ class Plugin
     /**
      * Loads the plugin into WordPress.
      */
-    public function load()
+    public function load(): void
     {
         if ($this->isLoaded()) {
             return;

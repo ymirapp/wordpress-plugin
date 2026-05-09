@@ -21,7 +21,7 @@ class Autoloader
     /**
      * Handles autoloading of Ymir plugin classes.
      */
-    public static function autoload(string $class)
+    public static function autoload(string $class): void
     {
         if (!str_starts_with($class, __NAMESPACE__)) {
             return;
@@ -38,7 +38,7 @@ class Autoloader
     /**
      * Registers the plugin autoloader as an SPL autoloader.
      */
-    public static function register(bool $prepend = false)
+    public static function register(bool $prepend = false): void
     {
         spl_autoload_register([static::class, 'autoload'], true, $prepend);
     }

@@ -32,12 +32,12 @@ class CreateSiteIconCommandTest extends TestCase
     use WPPostMockTrait;
     use WPSiteIconMockTrait;
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('ymir create-site-icon', CreateSiteIconCommand::getName());
     }
 
-    public function testGetSynopsis()
+    public function testGetSynopsis(): void
     {
         Assert::assertArraySubset([
             [
@@ -73,7 +73,7 @@ class CreateSiteIconCommandTest extends TestCase
         ], CreateSiteIconCommand::getSynopsis());
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $arguments = ['4'];
         $options = ['image_height' => '420', 'image_width' => '240', 'height' => '42', 'width' => '24', 'x' => '14', 'y' => '21'];

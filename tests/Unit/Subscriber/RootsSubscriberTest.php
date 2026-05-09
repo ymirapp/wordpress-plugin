@@ -29,7 +29,7 @@ class RootsSubscriberTest extends TestCase
         ];
     }
 
-    public function testEnsureHomeUrlDoesntContainWpDoesNothingForNonRootsProject()
+    public function testEnsureHomeUrlDoesntContainWpDoesNothingForNonRootsProject(): void
     {
         $homeUrl = 'https://'.$this->faker->domainName.'/wp';
 
@@ -39,7 +39,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureHomeUrlDoesntContainWpDoesNothingForRootsProjectWithNoWp(string $projectType)
+    public function testEnsureHomeUrlDoesntContainWpDoesNothingForRootsProjectWithNoWp(string $projectType): void
     {
         $homeUrl = 'https://'.$this->faker->domainName;
 
@@ -49,7 +49,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureHomeUrlDoesntContainWpRemovesWpForRootsProject(string $projectType)
+    public function testEnsureHomeUrlDoesntContainWpRemovesWpForRootsProject(string $projectType): void
     {
         $homeUrl = 'https://'.$this->faker->domainName;
 
@@ -59,7 +59,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureNetworkSiteUrlContainsWpAddsWpForRootsProject(string $projectType)
+    public function testEnsureNetworkSiteUrlContainsWpAddsWpForRootsProject(string $projectType): void
     {
         $baseUrl = 'https://'.$this->faker->domainName;
         $path = '/path';
@@ -70,7 +70,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureNetworkSiteUrlContainsWpAddsWpForRootsProjectAndAddsSlash(string $projectType)
+    public function testEnsureNetworkSiteUrlContainsWpAddsWpForRootsProjectAndAddsSlash(string $projectType): void
     {
         $baseUrl = 'https://'.$this->faker->domainName;
         $path = 'path';
@@ -78,7 +78,7 @@ class RootsSubscriberTest extends TestCase
         $this->assertSame($baseUrl.'/wp/'.$path, (new RootsSubscriber($projectType))->ensureNetworkSiteUrlContainsWp($baseUrl.$path, $path));
     }
 
-    public function testEnsureNetworkSiteUrlContainsWpDoesNothingForNonRootsProject()
+    public function testEnsureNetworkSiteUrlContainsWpDoesNothingForNonRootsProject(): void
     {
         $networkSiteUrl = 'https://'.$this->faker->domainName;
 
@@ -88,7 +88,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureNetworkSiteUrlContainsWpDoesntAddsWpForRootsProjectWhenWpAlreadyInUrl(string $projectType)
+    public function testEnsureNetworkSiteUrlContainsWpDoesntAddsWpForRootsProjectWhenWpAlreadyInUrl(string $projectType): void
     {
         $baseUrl = 'https://'.$this->faker->domainName.'/wp';
         $path = '/path';
@@ -99,7 +99,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureSiteUrlContainsWpAddsWpForRootsProjectOnMainSite(string $projectType)
+    public function testEnsureSiteUrlContainsWpAddsWpForRootsProjectOnMainSite(string $projectType): void
     {
         $is_main_site = $this->getFunctionMock($this->getNamespace(RootsSubscriber::class), 'is_main_site');
         $siteUrl = 'https://'.$this->faker->domainName;
@@ -113,7 +113,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureSiteUrlContainsWpAddsWpForRootsProjectOnSubdomainInstalls(string $projectType)
+    public function testEnsureSiteUrlContainsWpAddsWpForRootsProjectOnSubdomainInstalls(string $projectType): void
     {
         $is_main_site = $this->getFunctionMock($this->getNamespace(RootsSubscriber::class), 'is_main_site');
         $is_subdomain_install = $this->getFunctionMock($this->getNamespace(RootsSubscriber::class), 'is_subdomain_install');
@@ -128,7 +128,7 @@ class RootsSubscriberTest extends TestCase
         $this->assertSame($siteUrl.'/wp', (new RootsSubscriber($projectType))->ensureSiteUrlContainsWp($siteUrl));
     }
 
-    public function testEnsureSiteUrlContainsWpDoesNothingForNonRootsProject()
+    public function testEnsureSiteUrlContainsWpDoesNothingForNonRootsProject(): void
     {
         $siteUrl = 'https://'.$this->faker->domainName;
 
@@ -138,7 +138,7 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureSiteUrlContainsWpDoesNothingForRootsProjectWithSubdirectoryMultisite(string $projectType)
+    public function testEnsureSiteUrlContainsWpDoesNothingForRootsProjectWithSubdirectoryMultisite(string $projectType): void
     {
         $is_main_site = $this->getFunctionMock($this->getNamespace(RootsSubscriber::class), 'is_main_site');
         $is_subdomain_install = $this->getFunctionMock($this->getNamespace(RootsSubscriber::class), 'is_subdomain_install');
@@ -156,14 +156,14 @@ class RootsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testEnsureSiteUrlContainsWpDoesntAddWpForRootsProjectWhenWpAlreadyInUrl(string $projectType)
+    public function testEnsureSiteUrlContainsWpDoesntAddWpForRootsProjectWhenWpAlreadyInUrl(string $projectType): void
     {
         $siteUrl = 'https://'.$this->faker->domainName.'/wp';
 
         $this->assertSame($siteUrl, (new RootsSubscriber($projectType))->ensureSiteUrlContainsWp($siteUrl));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = RootsSubscriber::getSubscribedEvents();
 

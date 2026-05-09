@@ -25,7 +25,7 @@ class SesClientTest extends TestCase
     use FunctionMockTrait;
     use HttpClientMockTrait;
 
-    public function testSendEmail()
+    public function testSendEmail(): void
     {
         $email = $this->getEmailMock();
         $email->expects($this->once())
@@ -68,7 +68,7 @@ class SesClientTest extends TestCase
         (new SesClient($http, 'aws-key', 'us-east-1', 'aws-secret'))->sendEmail($email);
     }
 
-    public function testSendEmailWithSesError()
+    public function testSendEmailWithSesError(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('SES API request failed (HTTP 400) - AWS Error: MessageRejected (Email address is not verified. The following identities failed the check in region US-EAST-1: WordPress <wordpress@example.com>) [Request ID: da8072bc-3550-4d98-81f5-28169cc53c7b]');
@@ -115,7 +115,7 @@ class SesClientTest extends TestCase
         (new SesClient($http, 'aws-key', 'us-east-1', 'aws-secret'))->sendEmail($email);
     }
 
-    public function testSendEmailWithSesErrorAndNoBody()
+    public function testSendEmailWithSesErrorAndNoBody(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('SES API request failed (HTTP 400)');

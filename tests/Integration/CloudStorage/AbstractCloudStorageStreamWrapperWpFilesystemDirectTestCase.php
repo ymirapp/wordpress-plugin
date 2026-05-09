@@ -31,7 +31,7 @@ abstract class AbstractCloudStorageStreamWrapperWpFilesystemDirectTestCase exten
         $this->getStreamWrapper()::register($this->client);
     }
 
-    public function testFile()
+    public function testFile(): void
     {
         $filePath = "{$this->getProtocol()}:///file".rand().'.txt';
 
@@ -46,7 +46,7 @@ abstract class AbstractCloudStorageStreamWrapperWpFilesystemDirectTestCase exten
         $this->assertFalse($this->filesystem->is_file($filePath));
     }
 
-    public function testMkdirAndRmdir()
+    public function testMkdirAndRmdir(): void
     {
         $directoryName = 'directory/subdirectory'.rand();
         $directoryPath = sprintf('/%s', $directoryName);

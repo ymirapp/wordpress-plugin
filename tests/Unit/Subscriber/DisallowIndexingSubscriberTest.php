@@ -19,7 +19,7 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 
 class DisallowIndexingSubscriberTest extends TestCase
 {
-    public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue()
+    public function testDisplayAdminNoticeAddsNoticeIfUsingVanityDomainIsTrue(): void
     {
         $notices = (new DisallowIndexingSubscriber(true))->displayAdminNotice(new Collection());
 
@@ -28,27 +28,27 @@ class DisallowIndexingSubscriberTest extends TestCase
         $this->assertSame('Search engine indexing is disallowed when using a vanity domain. To learn how to map a domain to your environment, check out <a href="https://docs.ymirapp.com/guides/domain-mapping.html">this guide</a>.', $notices[0]['message']);
     }
 
-    public function testDisplayAdminNoticeDoesNotAddNoticeIfUsingVanityDomainIsFalse()
+    public function testDisplayAdminNoticeDoesNotAddNoticeIfUsingVanityDomainIsFalse(): void
     {
         $this->assertCount(0, (new DisallowIndexingSubscriber(false))->displayAdminNotice(new Collection()));
     }
 
-    public function testDisplayAdminNoticeDoesNothingIfWeDontPassACollectionObject()
+    public function testDisplayAdminNoticeDoesNothingIfWeDontPassACollectionObject(): void
     {
         $this->assertNull((new DisallowIndexingSubscriber(false))->displayAdminNotice(null));
     }
 
-    public function testFilterBlogPublicReturnsSameValueIfUsingVanityDomainIsFalse()
+    public function testFilterBlogPublicReturnsSameValueIfUsingVanityDomainIsFalse(): void
     {
         $this->assertSame('value', (new DisallowIndexingSubscriber(false))->filterBlogPublic('value'));
     }
 
-    public function testFilterBlogPublicReturnsZeroValueIfUsingVanityDomainIsTrue()
+    public function testFilterBlogPublicReturnsZeroValueIfUsingVanityDomainIsTrue(): void
     {
         $this->assertSame(0, (new DisallowIndexingSubscriber(true))->filterBlogPublic('value'));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = DisallowIndexingSubscriber::getSubscribedEvents();
 

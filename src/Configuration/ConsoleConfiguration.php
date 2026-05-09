@@ -26,7 +26,7 @@ class ConsoleConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['commands'] = $container->service(function (Container $container) {
             return [

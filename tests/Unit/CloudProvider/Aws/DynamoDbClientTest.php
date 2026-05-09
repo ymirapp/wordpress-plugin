@@ -23,7 +23,7 @@ class DynamoDbClientTest extends TestCase
     use FunctionMockTrait;
     use HttpClientMockTrait;
 
-    public function testBatchGetItem()
+    public function testBatchGetItem(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -86,7 +86,7 @@ class DynamoDbClientTest extends TestCase
         ], $response);
     }
 
-    public function testDeleteItem()
+    public function testDeleteItem(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -132,7 +132,7 @@ class DynamoDbClientTest extends TestCase
         ]);
     }
 
-    public function testGetItem()
+    public function testGetItem(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -188,7 +188,7 @@ class DynamoDbClientTest extends TestCase
         ], $response);
     }
 
-    public function testPutItem()
+    public function testPutItem(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())

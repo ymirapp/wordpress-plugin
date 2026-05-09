@@ -138,7 +138,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * Check the given REST API request for the given attachment and maybe disable "image_downsize" filter.
      */
-    public function maybeDisableImageDownsizeFilterForInsertAttachmentRestRequest(\WP_Post $attachment, \WP_REST_Request $request)
+    public function maybeDisableImageDownsizeFilterForInsertAttachmentRestRequest(\WP_Post $attachment, \WP_REST_Request $request): void
     {
         $this->disableImageDownsizeFilterForEditMediaRestRequest($request);
     }
@@ -302,7 +302,7 @@ class ContentDeliveryNetworkImageProcessingSubscriber implements SubscriberInter
     /**
      * Disable the "image_downsize" filter if the WP_REST_Request is for the media endpoint in the edit context.
      */
-    private function disableImageDownsizeFilterForEditMediaRestRequest(\WP_REST_Request $request)
+    private function disableImageDownsizeFilterForEditMediaRestRequest(\WP_REST_Request $request): void
     {
         if (str_contains($request->get_route(), 'wp/v2/media') && 'edit' === $request->get_param('context')) {
             $this->imageDownsizeFilterEnabled = false;

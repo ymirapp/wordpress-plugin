@@ -18,27 +18,27 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 
 class WordPressSubscriberTest extends TestCase
 {
-    public function testEnableUrlRewriteWithOtherServerSoftware()
+    public function testEnableUrlRewriteWithOtherServerSoftware(): void
     {
         $this->assertFalse((new WordPressSubscriber('PHP', 'https://'.$this->faker->domainName))->enableUrlRewrite(false));
     }
 
-    public function testEnableUrlRewriteWithYmirServerSoftware()
+    public function testEnableUrlRewriteWithYmirServerSoftware(): void
     {
         $this->assertTrue((new WordPressSubscriber('YMIR', 'https://'.$this->faker->domainName))->enableUrlRewrite(false));
     }
 
-    public function testEnableVisualEditorWithOtherServerSoftware()
+    public function testEnableVisualEditorWithOtherServerSoftware(): void
     {
         $this->assertFalse((new WordPressSubscriber('PHP', 'https://'.$this->faker->domainName))->enableVisualEditor(false));
     }
 
-    public function testEnableVisualEditorWithYmirServerSoftware()
+    public function testEnableVisualEditorWithYmirServerSoftware(): void
     {
         $this->assertTrue((new WordPressSubscriber('YMIR', 'https://'.$this->faker->domainName))->enableVisualEditor(false));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = WordPressSubscriber::getSubscribedEvents();
 
@@ -55,7 +55,7 @@ class WordPressSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testSanitizeFileNameCharacters()
+    public function testSanitizeFileNameCharacters(): void
     {
         $this->assertSame(
             ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '+', chr(0)],

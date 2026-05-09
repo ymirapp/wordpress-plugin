@@ -87,7 +87,7 @@ abstract class AbstractCloudStorageStreamWrapper
     /**
      * Register the cloud storage stream wrapper.
      */
-    public static function register(CloudStorageClientInterface $client, ?\ArrayObject $cache = null)
+    public static function register(CloudStorageClientInterface $client, ?\ArrayObject $cache = null): void
     {
         if (in_array(static::getProtocol(), stream_get_wrappers())) {
             stream_wrapper_unregister(static::getProtocol());
@@ -279,7 +279,7 @@ abstract class AbstractCloudStorageStreamWrapper
      *
      * @see https://www.php.net/manual/en/streamwrapper.stream-close.php
      */
-    public function stream_close()
+    public function stream_close(): void
     {
         $this->cache = null;
         fclose($this->openedStreamObjectResource);
@@ -804,7 +804,7 @@ abstract class AbstractCloudStorageStreamWrapper
     /**
      * Remove the cache value for the given key.
      */
-    private function removeCacheValue(string $key)
+    private function removeCacheValue(string $key): void
     {
         $cache = $this->getCache();
 
@@ -818,7 +818,7 @@ abstract class AbstractCloudStorageStreamWrapper
     /**
      * Set the given cache value for the given key.
      */
-    private function setCacheValue(string $key, $value)
+    private function setCacheValue(string $key, $value): void
     {
         $this->getCache()->offsetSet($key, $value);
     }

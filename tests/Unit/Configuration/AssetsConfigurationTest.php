@@ -116,7 +116,7 @@ class AssetsConfigurationTest extends TestCase
         ];
     }
 
-    public function testAssetsPathDefaultsToEmptyString()
+    public function testAssetsPathDefaultsToEmptyString(): void
     {
         putenv('YMIR_ASSETS_PATH');
 
@@ -127,7 +127,7 @@ class AssetsConfigurationTest extends TestCase
         $this->assertSame('', $container['assets_path']);
     }
 
-    public function testAssetsPathUsesEnvironmentVariable()
+    public function testAssetsPathUsesEnvironmentVariable(): void
     {
         $container = new Container();
 
@@ -139,7 +139,7 @@ class AssetsConfigurationTest extends TestCase
     /**
      * @dataProvider provideAssetsUrls
      */
-    public function testAssetsUrl(string $assetsUrl, bool $isMultisite, bool $isMultisiteSubdomain, string $siteDomain, MappedDomainNames $mappedDomainNames, string $expectedAssetsUrl)
+    public function testAssetsUrl(string $assetsUrl, bool $isMultisite, bool $isMultisiteSubdomain, string $siteDomain, MappedDomainNames $mappedDomainNames, string $expectedAssetsUrl): void
     {
         putenv('YMIR_ASSETS_URL='.$assetsUrl);
 
@@ -150,7 +150,7 @@ class AssetsConfigurationTest extends TestCase
         $this->assertSame($expectedAssetsUrl, $container['assets_url']);
     }
 
-    public function testAssetsUrlDefaultsToEmptyString()
+    public function testAssetsUrlDefaultsToEmptyString(): void
     {
         putenv('YMIR_ASSETS_URL');
 
@@ -161,7 +161,7 @@ class AssetsConfigurationTest extends TestCase
         $this->assertSame('', $container['assets_url']);
     }
 
-    public function testAssetsUrlUsesCustomAssetsUrl()
+    public function testAssetsUrlUsesCustomAssetsUrl(): void
     {
         putenv('YMIR_CUSTOM_ASSETS_URL=https://assets.com/custom/');
 

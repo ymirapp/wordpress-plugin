@@ -21,7 +21,7 @@ class UploadsSubscriberTest extends TestCase
 {
     use FunctionMockTrait;
 
-    public function testConstructorWithInvalidUploadSizeLimit()
+    public function testConstructorWithInvalidUploadSizeLimit(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"uploadSizeLimit" needs to be a numeric value or a string');
@@ -29,7 +29,7 @@ class UploadsSubscriberTest extends TestCase
         $subscriber = new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url', ['test']);
     }
 
-    public function testConstructorWithNumericUploadSizeLimit()
+    public function testConstructorWithNumericUploadSizeLimit(): void
     {
         $subscriber = new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url', 15);
 
@@ -41,7 +41,7 @@ class UploadsSubscriberTest extends TestCase
         $this->assertSame(15, $uploadSizeLimitReflection->getValue($subscriber));
     }
 
-    public function testConstructorWithStringUploadSizeLimit()
+    public function testConstructorWithStringUploadSizeLimit(): void
     {
         $wp_convert_hr_to_bytes = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'wp_convert_hr_to_bytes');
         $wp_convert_hr_to_bytes->expects($this->once())
@@ -58,7 +58,7 @@ class UploadsSubscriberTest extends TestCase
         $this->assertSame(15, $uploadSizeLimitReflection->getValue($subscriber));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = UploadsSubscriber::getSubscribedEvents();
 
@@ -78,7 +78,7 @@ class UploadsSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testGetUniqueFilenameListWithCloudStorageDirectoryNoMatchingDirectory()
+    public function testGetUniqueFilenameListWithCloudStorageDirectoryNoMatchingDirectory(): void
     {
         $this->assertNull((new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'directory', 'filename'));
     }
@@ -86,7 +86,7 @@ class UploadsSubscriberTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetUniqueFilenameListWithPathinfoReturnsFalse()
+    public function testGetUniqueFilenameListWithPathinfoReturnsFalse(): void
     {
         $pathinfo = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'pathinfo');
         $pathinfo->expects($this->once())
@@ -99,7 +99,7 @@ class UploadsSubscriberTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetUniqueFilenameListWithScandirReturnsFalse()
+    public function testGetUniqueFilenameListWithScandirReturnsFalse(): void
     {
         $scandir = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'scandir');
         $scandir->expects($this->once())
@@ -112,7 +112,7 @@ class UploadsSubscriberTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetUniqueFilenameListWithScandirReturnsFileList()
+    public function testGetUniqueFilenameListWithScandirReturnsFileList(): void
     {
         $scandir = $this->getFunctionMock($this->getNamespace(UploadsSubscriber::class), 'scandir');
         $scandir->expects($this->once())
@@ -122,17 +122,17 @@ class UploadsSubscriberTest extends TestCase
         $this->assertSame(['filename'], (new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->getUniqueFilenameList(null, 'cloudstorage_dir/directory', 'filename'));
     }
 
-    public function testOverrideUploadSizeLimitWithLimit()
+    public function testOverrideUploadSizeLimitWithLimit(): void
     {
         $this->assertSame(15, (new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url', 15))->overrideUploadSizeLimit(10));
     }
 
-    public function testOverrideUploadSizeLimitWithNoLimit()
+    public function testOverrideUploadSizeLimitWithNoLimit(): void
     {
         $this->assertSame(10, (new UploadsSubscriber('content_dir', 'content_url', 'cloudstorage_dir', 'upload_url'))->overrideUploadSizeLimit(10));
     }
 
-    public function testReplaceUploadDirectoriesReplacesBaseDir()
+    public function testReplaceUploadDirectoriesReplacesBaseDir(): void
     {
         $this->assertSame([
             'basedir' => 'cloudstorage_dir/foo',
@@ -141,7 +141,7 @@ class UploadsSubscriberTest extends TestCase
         ]));
     }
 
-    public function testReplaceUploadDirectoriesReplacesBaseUrl()
+    public function testReplaceUploadDirectoriesReplacesBaseUrl(): void
     {
         $this->assertSame([
             'baseurl' => 'upload_url/foo',
@@ -150,7 +150,7 @@ class UploadsSubscriberTest extends TestCase
         ]));
     }
 
-    public function testReplaceUploadDirectoriesReplacesPath()
+    public function testReplaceUploadDirectoriesReplacesPath(): void
     {
         $this->assertSame([
             'path' => 'cloudstorage_dir/foo',
@@ -159,7 +159,7 @@ class UploadsSubscriberTest extends TestCase
         ]));
     }
 
-    public function testReplaceUploadDirectoriesReplacesUrl()
+    public function testReplaceUploadDirectoriesReplacesUrl(): void
     {
         $this->assertSame([
             'url' => 'upload_url/foo',
@@ -168,7 +168,7 @@ class UploadsSubscriberTest extends TestCase
         ]));
     }
 
-    public function testReplaceUploadDirectoriesWithNoCloudstorageDirectory()
+    public function testReplaceUploadDirectoriesWithNoCloudstorageDirectory(): void
     {
         $this->assertSame([
             'basedir' => 'content_dir/foo',
@@ -179,7 +179,7 @@ class UploadsSubscriberTest extends TestCase
         ]));
     }
 
-    public function testReplaceUploadDirectoriesWithNoUploadUrl()
+    public function testReplaceUploadDirectoriesWithNoUploadUrl(): void
     {
         $this->assertSame([
             'baseurl' => 'content_url/foo',

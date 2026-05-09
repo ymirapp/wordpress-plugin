@@ -30,7 +30,7 @@ class ImageEditorSubscriberTest extends TestCase
     /**
      * @backupGlobals enabled
      */
-    public function testForwardCropImageRequest()
+    public function testForwardCropImageRequest(): void
     {
         $_POST['id'] = '4';
         $_POST['context'] = 'foo_context';
@@ -73,7 +73,7 @@ class ImageEditorSubscriberTest extends TestCase
     /**
      * @backupGlobals enabled
      */
-    public function testForwardImageEditorRequestCallsEditAttachmentImage()
+    public function testForwardImageEditorRequestCallsEditAttachmentImage(): void
     {
         $_POST['do'] = 'save';
         $_POST['postid'] = '4';
@@ -136,7 +136,7 @@ class ImageEditorSubscriberTest extends TestCase
     /**
      * @backupGlobals enabled
      */
-    public function testForwardImageEditorRequestCallsResizeAttachmentImage()
+    public function testForwardImageEditorRequestCallsResizeAttachmentImage(): void
     {
         $_POST['do'] = 'scale';
         $_POST['postid'] = '4';
@@ -195,7 +195,7 @@ class ImageEditorSubscriberTest extends TestCase
         (new ImageEditorSubscriber($consoleClient, $this->getAttachmentFileManagerMock()))->forwardImageEditorRequest();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = ImageEditorSubscriber::getSubscribedEvents();
 
@@ -213,7 +213,7 @@ class ImageEditorSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testReadImageMetadataLocallyWhenInUploadsDirectory()
+    public function testReadImageMetadataLocallyWhenInUploadsDirectory(): void
     {
         $fileManager = $this->getAttachmentFileManagerMock();
 
@@ -235,7 +235,7 @@ class ImageEditorSubscriberTest extends TestCase
         $this->assertSame('bar', (new ImageEditorSubscriber($this->getConsoleClientInterfaceMock(), $fileManager))->readImageMetadataLocally('foo', 'file'));
     }
 
-    public function testReadImageMetadataLocallyWhenNotInUploadsDirectory()
+    public function testReadImageMetadataLocallyWhenNotInUploadsDirectory(): void
     {
         $fileManager = $this->getAttachmentFileManagerMock();
 
@@ -247,7 +247,7 @@ class ImageEditorSubscriberTest extends TestCase
         $this->assertSame('foo', (new ImageEditorSubscriber($this->getConsoleClientInterfaceMock(), $fileManager))->readImageMetadataLocally('foo', 'file'));
     }
 
-    public function testReplaceImageEditors()
+    public function testReplaceImageEditors(): void
     {
         $this->assertSame([
             ImagickImageEditor::class,

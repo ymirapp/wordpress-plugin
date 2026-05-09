@@ -23,7 +23,7 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public function __invoke(array $arguments, array $options)
+    public function __invoke(array $arguments, array $options): void
     {
         $changes = json_decode($arguments[1]);
 
@@ -119,7 +119,7 @@ class EditAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * Delete all previous image versions.
      */
-    private function deletePreviousImageVersions(array $images)
+    private function deletePreviousImageVersions(array $images): void
     {
         (new Collection($images))->filter()->map(function ($image) {
             return is_array($image) && !empty($image['file']) && preg_match('/-e[0-9]{13}-/', $image['file']) ? $image['file'] : null;

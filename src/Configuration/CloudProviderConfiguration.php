@@ -24,7 +24,7 @@ class CloudProviderConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['cloud_provider_function_name'] = $container->service(function () {
             $functionName = getenv('AWS_LAMBDA_FUNCTION_NAME');

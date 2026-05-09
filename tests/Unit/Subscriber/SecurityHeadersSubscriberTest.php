@@ -21,7 +21,7 @@ class SecurityHeadersSubscriberTest extends TestCase
 {
     use FunctionMockTrait;
 
-    public function testAddSecurityHeaders()
+    public function testAddSecurityHeaders(): void
     {
         $headers = (new SecurityHeadersSubscriber())->addSecurityHeaders([]);
 
@@ -34,7 +34,7 @@ class SecurityHeadersSubscriberTest extends TestCase
         ]));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = SecurityHeadersSubscriber::getSubscribedEvents();
 
@@ -51,7 +51,7 @@ class SecurityHeadersSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testSendSecurityHeaders()
+    public function testSendSecurityHeaders(): void
     {
         $header = $this->getFunctionMock($this->getNamespace(SecurityHeadersSubscriber::class), 'header');
 

@@ -76,7 +76,7 @@ class PluploadSubscriber implements SubscriberInterface
     /**
      * Replace the plupload scripts with the modified ones for Ymir.
      */
-    public function replacePluploadScripts(\WP_Scripts $scripts)
+    public function replacePluploadScripts(\WP_Scripts $scripts): void
     {
         $scripts->remove('plupload');
         $scripts->remove('plupload-handlers');

@@ -34,7 +34,7 @@ class RedirectSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testAddSlashToRootsProjectWpAdminWithHttpHostDifferentThanPrimaryDomainName(string $projectType)
+    public function testAddSlashToRootsProjectWpAdminWithHttpHostDifferentThanPrimaryDomainName(string $projectType): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -56,7 +56,7 @@ class RedirectSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testAddSlashToRootsProjectWpAdminWithHttpHostSameAsPrimaryDomainName(string $projectType)
+    public function testAddSlashToRootsProjectWpAdminWithHttpHostSameAsPrimaryDomainName(string $projectType): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -75,7 +75,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'domain_name', '/wp/wp-admin', false, $projectType))->redirect();
     }
 
-    public function testAddSlashToWpAdminWithHttpHostDifferentThanPrimaryDomainName()
+    public function testAddSlashToWpAdminWithHttpHostDifferentThanPrimaryDomainName(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -94,7 +94,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'another_domain_name', '/wp-admin'))->redirect();
     }
 
-    public function testAddSlashToWpAdminWithHttpHostSameAsPrimaryDomainName()
+    public function testAddSlashToWpAdminWithHttpHostSameAsPrimaryDomainName(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -113,7 +113,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'domain_name', '/wp-admin'))->redirect();
     }
 
-    public function testDoesntRedirectToPrimaryDomainNameWhenMultisiteEnabled()
+    public function testDoesntRedirectToPrimaryDomainNameWhenMultisiteEnabled(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->never())
@@ -127,7 +127,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'domain_name', '', true))->redirect();
     }
 
-    public function testDoesntRedirectToPrimaryDomainNameWithHttpHostIsAMappedDomainName()
+    public function testDoesntRedirectToPrimaryDomainNameWithHttpHostIsAMappedDomainName(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -141,7 +141,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'domain_name', ''))->redirect();
     }
 
-    public function testDoesntRedirectWhenWpAdminHasSlashAlready()
+    public function testDoesntRedirectWhenWpAdminHasSlashAlready(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -155,7 +155,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'domain_name', '/wp-admin/'))->redirect();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = RedirectSubscriber::getSubscribedEvents();
 
@@ -170,7 +170,7 @@ class RedirectSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainName()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainName(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())
@@ -189,7 +189,7 @@ class RedirectSubscriberTest extends TestCase
         (new RedirectSubscriber($mappedDomainNames, 'another_domain_name', ''))->redirect();
     }
 
-    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainNameWithRequestUri()
+    public function testRedirectsToPrimaryDomainNameWithHttpHostDifferentThanPrimaryDomainNameWithRequestUri(): void
     {
         $mappedDomainNames = $this->getMappedDomainNamesMock();
         $mappedDomainNames->expects($this->once())

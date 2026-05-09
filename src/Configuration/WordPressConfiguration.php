@@ -26,7 +26,7 @@ class WordPressConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['base_image_sizes'] = $container->service(function () {
             $sizes = [

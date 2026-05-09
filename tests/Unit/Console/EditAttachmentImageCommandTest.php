@@ -30,12 +30,12 @@ class EditAttachmentImageCommandTest extends TestCase
     use WPImageEditorMockTrait;
     use WPPostMockTrait;
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('ymir edit-attachment-image', EditAttachmentImageCommand::getName());
     }
 
-    public function testGetSynopsis()
+    public function testGetSynopsis(): void
     {
         Assert::assertArraySubset([
             [
@@ -55,7 +55,7 @@ class EditAttachmentImageCommandTest extends TestCase
         ], EditAttachmentImageCommand::getSynopsis());
     }
 
-    public function testInvokeWithApplyFull()
+    public function testInvokeWithApplyFull(): void
     {
         $arguments = ['4', '[{"r":90}]'];
         $options = ['apply' => 'FULL'];

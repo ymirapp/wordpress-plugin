@@ -46,7 +46,7 @@ class SesClient extends AbstractClient implements EmailClientInterface
     /**
      * {@inheritdoc}
      */
-    public function sendEmail(Email $email)
+    public function sendEmail(Email $email): void
     {
         $response = $this->request('post', '/', http_build_query([
             'Action' => 'SendRawEmail',

@@ -26,7 +26,7 @@ class EmailConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['email_client'] = $container->service(function (Container $container) {
             return new SesClient($container['ymir_http_client'], $container['cloud_provider_key'], $container['cloud_provider_region'], $container['cloud_provider_secret'], $container['cloud_provider_security_token']);

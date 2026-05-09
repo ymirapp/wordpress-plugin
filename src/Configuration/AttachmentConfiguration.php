@@ -25,7 +25,7 @@ class AttachmentConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['file_manager'] = $container->service(function (Container $container) {
             return new AttachmentFileManager($container['uploads_basedir']);

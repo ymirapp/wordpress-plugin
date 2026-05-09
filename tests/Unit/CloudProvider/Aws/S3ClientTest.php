@@ -23,7 +23,7 @@ class S3ClientTest extends TestCase
     use FunctionMockTrait;
     use HttpClientMockTrait;
 
-    public function testCopyObject()
+    public function testCopyObject(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -61,7 +61,7 @@ class S3ClientTest extends TestCase
         (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->copyObject('source-key', 'target-key');
     }
 
-    public function testCreatePutObjectRequest()
+    public function testCreatePutObjectRequest(): void
     {
         $gmdate = $this->getFunctionMock($this->getNamespace(S3Client::class), 'gmdate');
         $gmdate->expects($this->exactly(5))
@@ -77,7 +77,7 @@ class S3ClientTest extends TestCase
         $this->assertSame('https://test-bucket.s3.us-east-1.amazonaws.com/object-key?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-key%2F20200515%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200515T181004Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host%3Bx-amz-acl&X-Amz-Signature=196d3b99d39a506d8edbd65eb976b3916ec08bc2b8be1859c676c7cf98df1578', (new S3Client($this->getHttpClientMock(), 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->createPutObjectRequest('object-key'));
     }
 
-    public function testDeleteObject()
+    public function testDeleteObject(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -113,7 +113,7 @@ class S3ClientTest extends TestCase
         (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->deleteObject('object-key');
     }
 
-    public function testGetObject()
+    public function testGetObject(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -150,7 +150,7 @@ class S3ClientTest extends TestCase
         $this->assertSame('object', (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObject('object-key'));
     }
 
-    public function testGetObjectDetails()
+    public function testGetObjectDetails(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -195,7 +195,7 @@ class S3ClientTest extends TestCase
         ], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjectDetails('object-key'));
     }
 
-    public function testGetObjects()
+    public function testGetObjects(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -243,7 +243,7 @@ class S3ClientTest extends TestCase
         ]], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjects('prefix_'));
     }
 
-    public function testObjectExists()
+    public function testObjectExists(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -284,7 +284,7 @@ class S3ClientTest extends TestCase
         $this->assertTrue((new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->objectExists('object-key'));
     }
 
-    public function testPutObject()
+    public function testPutObject(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())

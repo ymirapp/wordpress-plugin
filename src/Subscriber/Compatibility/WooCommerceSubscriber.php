@@ -116,7 +116,7 @@ class WooCommerceSubscriber implements SubscriberInterface
     /**
      * Clear all the related product URLs when a product is updated.
      */
-    public function clearCacheOnProductUpdate($productId)
+    public function clearCacheOnProductUpdate($productId): void
     {
         $this->clearProductUrls($productId);
     }
@@ -142,7 +142,7 @@ class WooCommerceSubscriber implements SubscriberInterface
     /**
      * Clear all the related product URLs when a product variation is updated.
      */
-    public function clearCacheOnProductVariationUpdate($variationId, $variation)
+    public function clearCacheOnProductVariationUpdate($variationId, $variation): void
     {
         $parentId = 0;
 
@@ -206,7 +206,7 @@ class WooCommerceSubscriber implements SubscriberInterface
     /**
      * Clear all the URLs related to the given product from the page cache.
      */
-    private function clearProductUrls($productId)
+    private function clearProductUrls($productId): void
     {
         if (empty($this->pageCachingOptions['invalidation_enabled'])) {
             return;

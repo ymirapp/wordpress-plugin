@@ -29,7 +29,7 @@ class TestEventManagerAwareSubscriber extends TestSubscriber implements EventMan
         ];
     }
 
-    public function setEventManager(EventManager $eventManager)
+    public function setEventManager(EventManager $eventManager): void
     {
         $this->eventManager = $eventManager;
     }

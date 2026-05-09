@@ -25,7 +25,7 @@ class LambdaClientTest extends TestCase
     use HttpClientMockTrait;
     use WPPostMockTrait;
 
-    public function testCreateAttachmentMetadata()
+    public function testCreateAttachmentMetadata(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -68,7 +68,7 @@ class LambdaClientTest extends TestCase
         (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createAttachmentMetadata($post);
     }
 
-    public function testCreateAttachmentMetadataWithSpecialCharacters()
+    public function testCreateAttachmentMetadataWithSpecialCharacters(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -111,7 +111,7 @@ class LambdaClientTest extends TestCase
         (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createAttachmentMetadata($post);
     }
 
-    public function testCreateCroppedAttachmentImage()
+    public function testCreateCroppedAttachmentImage(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -154,7 +154,7 @@ class LambdaClientTest extends TestCase
         $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createCroppedAttachmentImage($post, 42, 24, 14, 21));
     }
 
-    public function testCreateCroppedAttachmentImageWithSiteIconContext()
+    public function testCreateCroppedAttachmentImageWithSiteIconContext(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -197,7 +197,7 @@ class LambdaClientTest extends TestCase
         $this->assertSame(5, (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->createCroppedAttachmentImage($post, 42, 24, 14, 21, 'site-icon'));
     }
 
-    public function testEditAttachmentImage()
+    public function testEditAttachmentImage(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())
@@ -240,7 +240,7 @@ class LambdaClientTest extends TestCase
         (new LambdaClient($http, 'test-function', 'aws-key', 'us-east-1', 'aws-secret', 'https://foo.bar'))->editAttachmentImage($post, '[{"r":90}]');
     }
 
-    public function testResizeAttachmentImage()
+    public function testResizeAttachmentImage(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->once())

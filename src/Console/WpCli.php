@@ -21,7 +21,7 @@ class WpCli
     /**
      * Write error message.
      */
-    public function error(string $message)
+    public function error(string $message): void
     {
         \WP_CLI::error($message);
     }
@@ -29,7 +29,7 @@ class WpCli
     /**
      * Write an information message.
      */
-    public function info(string $message)
+    public function info(string $message): void
     {
         \WP_CLI::log($message);
     }
@@ -45,7 +45,7 @@ class WpCli
     /**
      * Register the given command with WP-CLI.
      */
-    public function registerCommand(CommandInterface $command)
+    public function registerCommand(CommandInterface $command): void
     {
         if (!$this->isWpCliActive()) {
             return;
@@ -60,7 +60,7 @@ class WpCli
     /**
      * Write success message.
      */
-    public function success(string $message)
+    public function success(string $message): void
     {
         \WP_CLI::success($message);
     }

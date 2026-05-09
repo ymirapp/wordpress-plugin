@@ -22,7 +22,7 @@ class Endpoint implements EndpointInterface
         return '/endpoint';
     }
 
-    public function endpointCallback()
+    public function endpointCallback(): void
     {
     }
 
@@ -46,7 +46,7 @@ class Endpoint implements EndpointInterface
         return [$this, 'permissionCallback'];
     }
 
-    public function permissionCallback()
+    public function permissionCallback(): void
     {
     }
 }

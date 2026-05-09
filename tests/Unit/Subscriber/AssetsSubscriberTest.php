@@ -48,27 +48,27 @@ class AssetsSubscriberTest extends TestCase
         ];
     }
 
-    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl()
+    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsUrlWhenDomainDifferentFromSiteUrl(): void
     {
         $this->assertSame(['https://assets.com/assets/uuid'], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
     }
 
-    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsWhenSameDomainAsSiteUrl()
+    public function testAddAssetsUrlToDnsPrefetchDoesntAddAssetsWhenSameDomainAsSiteUrl(): void
     {
         $this->assertSame([], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com'))->addAssetsUrlToDnsPrefetch([], 'dns-prefetch'));
     }
 
-    public function testAddAssetsUrlToDnsPrefetchWhenNoAssetsUrl()
+    public function testAddAssetsUrlToDnsPrefetchWhenNoAssetsUrl(): void
     {
         $this->assertSame([], (new AssetsSubscriber('content_dir', 'https://foo.com'))->addAssetsUrlToDnsPrefetch([], 'foo'));
     }
 
-    public function testAddAssetsUrlToDnsPrefetchWhenWrongTypeAndDifferentAssetsDomain()
+    public function testAddAssetsUrlToDnsPrefetchWhenWrongTypeAndDifferentAssetsDomain(): void
     {
         $this->assertSame([], (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->addAssetsUrlToDnsPrefetch([], 'foo'));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = AssetsSubscriber::getSubscribedEvents();
 
@@ -92,7 +92,7 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideReplaceUrlsInContent
      */
-    public function testReplaceUrlsInContentWithDifferentAssetsAndSiteDomain(string $filename)
+    public function testReplaceUrlsInContentWithDifferentAssetsAndSiteDomain(string $filename): void
     {
         list($content, $expected) = explode("\n--EXPECTED--\n", trim(file_get_contents(__DIR__.'/data/replace-urls-content/different-assets-and-site-domain/'.$filename)), 2);
 
@@ -102,19 +102,19 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideReplaceUrlsInContent
      */
-    public function testReplaceUrlsInContentWithSameAssetsAndSiteDomain(string $filename)
+    public function testReplaceUrlsInContentWithSameAssetsAndSiteDomain(string $filename): void
     {
         list($content, $expected) = explode("\n--EXPECTED--\n", trim(file_get_contents(__DIR__.'/data/replace-urls-content/same-assets-and-site-domain/'.$filename)), 2);
 
         $this->assertSame($expected, (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->replaceUrlsInContent($content));
     }
 
-    public function testRewriteContentUrlDoesntKeepDirectoryBelowContentDir()
+    public function testRewriteContentUrlDoesntKeepDirectoryBelowContentDir(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/content_dir/test.php', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/content_dir/test.php'));
     }
 
-    public function testRewriteContentUrlUsesContentDirConstant()
+    public function testRewriteContentUrlUsesContentDirConstant(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/app/test.php', (new AssetsSubscriber('app', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteContentUrl('https://foo.com/foo/directory/app/test.php'));
     }
@@ -122,7 +122,7 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testRewriteEnqueuedUrlAddsWpWhenMissingWithRootsProjectWithSourceSameAsSiteUrl(string $projectType)
+    public function testRewriteEnqueuedUrlAddsWpWhenMissingWithRootsProjectWithSourceSameAsSiteUrl(string $projectType): void
     {
         $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
@@ -130,7 +130,7 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypesAndStartingPaths
      */
-    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectAndStartingPath(string $projectType, string $startingPath)
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectAndStartingPath(string $projectType, string $startingPath): void
     {
         $this->assertSame(sprintf('https://assets.com/assets/uuid%sasset.css', $startingPath), (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl(sprintf('https://foo.com%sasset.css', $startingPath)));
     }
@@ -138,52 +138,52 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectWithSourceSameAsSiteUrl(string $projectType)
+    public function testRewriteEnqueuedUrlDoesntAddWpWithRootsProjectWithSourceSameAsSiteUrl(string $projectType): void
     {
         $this->assertSame('https://assets.com/assets/uuid/wp/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType, 'https://assets.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/wp/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlDoesntRemoveDoubleSlashesWhenUrlStartsWithDoubleSlash()
+    public function testRewriteEnqueuedUrlDoesntRemoveDoubleSlashesWhenUrlStartsWithDoubleSlash(): void
     {
         $this->assertSame('//uploads.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('//uploads.com//asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithSiteUrl()
+    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithSiteUrl(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://foo.com//asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithUploadUrl()
+    public function testRewriteEnqueuedUrlRemovesDoubleSlashesWithUploadUrl(): void
     {
         $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('https://foo.com//uploads//asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithEmptyAssetsUrl()
+    public function testRewriteEnqueuedUrlWithEmptyAssetsUrl(): void
     {
         $this->assertSame('https://foo.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndDifferentAssetDomain()
+    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndDifferentAssetDomain(): void
     {
         $this->assertSame('https://assets.com/assets/new_uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/new_uuid'))->rewriteEnqueuedUrl('https://assets.com/assets/old_uuid/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndSameAssetDomain()
+    public function testRewriteEnqueuedUrlWithEnqueuedUrlUsingDifferentAssetsUrlAndSameAssetDomain(): void
     {
         $this->assertSame('https://foo.com/assets/new_uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/new_uuid'))->rewriteEnqueuedUrl('https://foo.com/assets/old_uuid/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithSourceDifferentFromSiteUrl()
+    public function testRewriteEnqueuedUrlWithSourceDifferentFromSiteUrl(): void
     {
         $this->assertSame('https://bar.com/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://bar.com/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithSourceSameAsSiteUrl()
+    public function testRewriteEnqueuedUrlWithSourceSameAsSiteUrl(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteEnqueuedUrl('https://foo.com/asset.css'));
     }
 
-    public function testRewriteEnqueuedUrlWithSourceSameAsUploadUrl()
+    public function testRewriteEnqueuedUrlWithSourceSameAsUploadUrl(): void
     {
         $this->assertSame('https://foo.com/uploads/asset.css', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://foo.com/assets/uuid', '', 'https://foo.com/uploads'))->rewriteEnqueuedUrl('https://foo.com/uploads/asset.css'));
     }
@@ -191,22 +191,22 @@ class AssetsSubscriberTest extends TestCase
     /**
      * @dataProvider provideRootsProjectTypes
      */
-    public function testRewriteIncludesUrlWithRootsProjectIncludesDirectory(string $projectType)
+    public function testRewriteIncludesUrlWithRootsProjectIncludesDirectory(string $projectType): void
     {
         $this->assertSame('https://assets.com/assets/uuid/wp/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid', $projectType))->rewriteIncludesUrl('https://foo.com/wp/wp-includes/js/script.min.js'));
     }
 
-    public function testRewriteIncludesUrlWithStandardIncludesDirectory()
+    public function testRewriteIncludesUrlWithStandardIncludesDirectory(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewriteIncludesUrl('https://foo.com/wp-includes/js/script.min.js'));
     }
 
-    public function testRewriteIncludesUrlWithSubdirectoryMultisite()
+    public function testRewriteIncludesUrlWithSubdirectoryMultisite(): void
     {
         $this->assertSame('https://foo.com/test/assets/uuid/wp-includes/js/script.min.js', (new AssetsSubscriber('content_dir', 'https://foo.com/test', 'https://foo.com/test/assets/uuid'))->rewriteIncludesUrl('https://foo.com/test/wp-includes/js/script.min.js'));
     }
 
-    public function testRewritePluginsUrlOnlyKeepsDirectoryBelowPlugins()
+    public function testRewritePluginsUrlOnlyKeepsDirectoryBelowPlugins(): void
     {
         $this->assertSame('https://assets.com/assets/uuid/directory/plugins/test.php', (new AssetsSubscriber('content_dir', 'https://foo.com', 'https://assets.com/assets/uuid'))->rewritePluginsUrl('https://foo.com/foo/directory/plugins/test.php'));
     }

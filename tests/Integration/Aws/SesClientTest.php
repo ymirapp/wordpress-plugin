@@ -19,14 +19,14 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 
 class SesClientTest extends TestCase
 {
-    public function testCanSendEmailsReturnsFalse()
+    public function testCanSendEmailsReturnsFalse(): void
     {
         $client = new SesClient(new CurlClient('test'), getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-west-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
 
         $this->assertFalse($client->canSendEmails());
     }
 
-    public function testCanSendEmailsReturnsTrue()
+    public function testCanSendEmailsReturnsTrue(): void
     {
         $client = new SesClient(new CurlClient('test'), getenv('AWS_TEST_ACCESS_KEY_ID') ?: $_ENV['AWS_TEST_ACCESS_KEY_ID'], 'us-east-1', getenv('AWS_TEST_SECRET_ACCESS_KEY') ?: $_ENV['AWS_TEST_SECRET_ACCESS_KEY']);
 

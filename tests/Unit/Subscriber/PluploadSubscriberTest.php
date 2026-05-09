@@ -23,7 +23,7 @@ class PluploadSubscriberTest extends TestCase
     use FunctionMockTrait;
     use WPScriptsMockTrait;
 
-    public function testEditDefaultSettings()
+    public function testEditDefaultSettings(): void
     {
         $rest_url = $this->getFunctionMock($this->getNamespace(PluploadSubscriber::class), 'rest_url');
         $rest_url->expects($this->exactly(2))
@@ -39,7 +39,7 @@ class PluploadSubscriberTest extends TestCase
         ], (new PluploadSubscriber('/foo', 'namespace'))->editDefaultSettings([]));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = PluploadSubscriber::getSubscribedEvents();
 
@@ -56,7 +56,7 @@ class PluploadSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testReplacePluploadScripts()
+    public function testReplacePluploadScripts(): void
     {
         $scripts = $this->getWPScriptsMock();
 

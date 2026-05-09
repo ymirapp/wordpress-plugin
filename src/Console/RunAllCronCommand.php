@@ -57,7 +57,7 @@ class RunAllCronCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    public function __invoke(array $arguments, array $options)
+    public function __invoke(array $arguments, array $options): void
     {
         $this->wpCli->info('Beginning to run all scheduled cron commands');
 

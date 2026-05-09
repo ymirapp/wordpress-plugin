@@ -31,17 +31,17 @@ class RunAllCronCommandTest extends TestCase
     use WPSiteMockTrait;
     use WPSiteQueryMockTrait;
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('ymir run-all-cron', RunAllCronCommand::getName());
     }
 
-    public function testGetSynopsis()
+    public function testGetSynopsis(): void
     {
         $this->assertSame([], RunAllCronCommand::getSynopsis());
     }
 
-    public function testInvokeGetsCurrentSiteUrlWhenThereIsNoWPSiteQueryObject()
+    public function testInvokeGetsCurrentSiteUrlWhenThereIsNoWPSiteQueryObject(): void
     {
         $consoleClient = $this->getConsoleClientInterfaceMock();
         $eventManager = $this->getEventManagerMock();
@@ -69,7 +69,7 @@ class RunAllCronCommandTest extends TestCase
         (new RunAllCronCommand($consoleClient, $eventManager, $wpCli, null))([], []);
     }
 
-    public function testInvokeQueriesForSiteUrlsWhenThereIsAWPSiteQueryObject()
+    public function testInvokeQueriesForSiteUrlsWhenThereIsAWPSiteQueryObject(): void
     {
         $consoleClient = $this->getConsoleClientInterfaceMock();
         $eventManager = $this->getEventManagerMock();

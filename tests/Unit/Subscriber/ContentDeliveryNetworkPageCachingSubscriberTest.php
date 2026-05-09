@@ -34,7 +34,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
     use WPTaxonomyMockTrait;
     use WPTermMockTrait;
 
-    public function testClearCache()
+    public function testClearCache(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -52,7 +52,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearCache();
     }
 
-    public function testClearPostAddsCategoryUrls()
+    public function testClearPostAddsCategoryUrls(): void
     {
         $category = $this->getWPTermMock();
         $category->term_id = 24;
@@ -135,7 +135,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsCustomPostArchive()
+    public function testClearPostAddsCustomPostArchive(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -214,7 +214,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsCustomPostTypeArchiveAndFeed()
+    public function testClearPostAddsCustomPostTypeArchiveAndFeed(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -299,7 +299,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsPostRelatedUrls()
+    public function testClearPostAddsPostRelatedUrls(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -408,7 +408,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsPublicTaxonomyUrls()
+    public function testClearPostAddsPublicTaxonomyUrls(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -506,7 +506,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsRestApiEndpointIfWeHavePostTypeObject()
+    public function testClearPostAddsRestApiEndpointIfWeHavePostTypeObject(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -583,7 +583,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostAddsTagUrls()
+    public function testClearPostAddsTagUrls(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -666,7 +666,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostClearsEntireCacheIfClearAllOnPostUpdateOptionIsEnabled()
+    public function testClearPostClearsEntireCacheIfClearAllOnPostUpdateOptionIsEnabled(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -684,7 +684,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAnArray()
+    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAnArray(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -754,7 +754,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAString()
+    public function testClearPostClearsUrlsReturnedByFilterIfItReturnsAString(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -824,7 +824,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostDoesNothingIfFilterReturnsNull()
+    public function testClearPostDoesNothingIfFilterReturnsNull(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -889,7 +889,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostDoesNothingIfPageCachingDisabled()
+    public function testClearPostDoesNothingIfPageCachingDisabled(): void
     {
         $get_permalink = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkPageCachingSubscriber::class), 'get_permalink');
         $get_permalink->expects($this->never());
@@ -904,7 +904,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         (new ContentDeliveryNetworkPageCachingSubscriber($pageCacheClient, 'rest_url', ['invalidation_enabled' => false]))->clearPost(42);
     }
 
-    public function testClearPostFixesTrashedPostPermalinkUrl()
+    public function testClearPostFixesTrashedPostPermalinkUrl(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -977,7 +977,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostWhenGetPermalinkDoesntReturnAString()
+    public function testClearPostWhenGetPermalinkDoesntReturnAString(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1006,7 +1006,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostWhenGetPostDoesntReturnAPost()
+    public function testClearPostWhenGetPostDoesntReturnAPost(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1035,7 +1035,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostWhenPostStatusIsInherit()
+    public function testClearPostWhenPostStatusIsInherit(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1067,7 +1067,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostWhenPostTypeIsNavMenuItem()
+    public function testClearPostWhenPostTypeIsNavMenuItem(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1100,7 +1100,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testClearPostWhenPostTypeIsRevision()
+    public function testClearPostWhenPostTypeIsRevision(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1133,7 +1133,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->clearPost(42);
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = ContentDeliveryNetworkPageCachingSubscriber::getSubscribedEvents();
 
@@ -1157,7 +1157,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testSendClearRequest()
+    public function testSendClearRequest(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1176,7 +1176,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->sendClearRequest();
     }
 
-    public function testSendClearRequestDoesntSendRequestIfTransientIsSet()
+    public function testSendClearRequestDoesntSendRequestIfTransientIsSet(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1202,7 +1202,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->sendClearRequest();
     }
 
-    public function testSendClearRequestSetsTransientIfItIsntSet()
+    public function testSendClearRequestSetsTransientIfItIsntSet(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())
@@ -1233,7 +1233,7 @@ class ContentDeliveryNetworkPageCachingSubscriberTest extends TestCase
         $subscriber->sendClearRequest();
     }
 
-    public function testSendClearRequestSortsPathsBeforeHashing()
+    public function testSendClearRequestSortsPathsBeforeHashing(): void
     {
         $eventManager = $this->getEventManagerMock();
         $eventManager->expects($this->once())

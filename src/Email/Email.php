@@ -83,7 +83,7 @@ class Email
     /**
      * Add attachments to the email.
      */
-    public function attachments($attachments)
+    public function attachments($attachments): void
     {
         if (is_string($attachments)) {
             $attachments = explode("\n", str_replace("\r\n", "\n", $attachments));
@@ -105,7 +105,7 @@ class Email
     /**
      * Add "bcc" addresses to the email.
      */
-    public function bcc($addresses)
+    public function bcc($addresses): void
     {
         $this->addAddresses('bcc', $addresses);
     }
@@ -113,7 +113,7 @@ class Email
     /**
      * Set the email body of the email.
      */
-    public function body(string $body)
+    public function body(string $body): void
     {
         $this->mailer->Body = $body;
     }
@@ -121,7 +121,7 @@ class Email
     /**
      * Add "cc" addresses to the email.
      */
-    public function cc($addresses)
+    public function cc($addresses): void
     {
         $this->addAddresses('cc', $addresses);
     }
@@ -129,7 +129,7 @@ class Email
     /**
      * Set the charset used by the email.
      */
-    public function charset(string $charset)
+    public function charset(string $charset): void
     {
         $this->mailer->CharSet = $this->eventManager->filter('wp_mail_charset', $charset);
     }
@@ -137,7 +137,7 @@ class Email
     /**
      * Set the content type of the email.
      */
-    public function contentType(string $contentType)
+    public function contentType(string $contentType): void
     {
         $contentType = strtolower((string) $this->eventManager->filter('wp_mail_content_type', $contentType));
 
@@ -148,7 +148,7 @@ class Email
     /**
      * Set the from address of the email.
      */
-    public function from(string $address)
+    public function from(string $address): void
     {
         $address = $this->parseAddress($address, 'WordPress');
 
@@ -158,7 +158,7 @@ class Email
     /**
      * Add headers to the email.
      */
-    public function headers($headers)
+    public function headers($headers): void
     {
         if (empty($headers)) {
             return;
@@ -176,7 +176,7 @@ class Email
     /**
      * Add "reply-to" addresses to the email.
      */
-    public function replyTo($addresses)
+    public function replyTo($addresses): void
     {
         $this->addAddresses('reply-to', $addresses);
     }
@@ -184,7 +184,7 @@ class Email
     /**
      * Set the subject of the email.
      */
-    public function subject(string $subject)
+    public function subject(string $subject): void
     {
         $this->mailer->Subject = $subject;
     }
@@ -192,7 +192,7 @@ class Email
     /**
      * Add "to" addresses to the email.
      */
-    public function to($addresses)
+    public function to($addresses): void
     {
         $this->addAddresses('to', $addresses);
     }
@@ -223,7 +223,7 @@ class Email
     /**
      * Add an address to the email.
      */
-    private function addAddresses(string $type, $addresses)
+    private function addAddresses(string $type, $addresses): void
     {
         $method = '';
         $type = strtolower($type);
@@ -274,7 +274,7 @@ class Email
     /**
      * Process the given "content-type" header body and add it to the email.
      */
-    private function processContentTypeHeader(string $body)
+    private function processContentTypeHeader(string $body): void
     {
         $body = explode(';', $body);
         $contentType = $body[0];
@@ -291,7 +291,7 @@ class Email
     /**
      * Process the given header and add it to the email.
      */
-    private function processHeader(string $header)
+    private function processHeader(string $header): void
     {
         $header = array_map('trim', explode(':', trim($header), 2));
 

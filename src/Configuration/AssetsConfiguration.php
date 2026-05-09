@@ -25,7 +25,7 @@ class AssetsConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['assets_path'] = $container->service(function () {
             return getenv('YMIR_ASSETS_PATH') ?: '';

@@ -21,21 +21,21 @@ class AbstractEndpointTest extends TestCase
 {
     use WPRESTRequestMockTrait;
 
-    public function testGetCallback()
+    public function testGetCallback(): void
     {
         $endpoint = $this->getMockForAbstractClass(AbstractEndpoint::class);
 
         $this->assertSame([$endpoint, 'respond'], $endpoint->getCallback());
     }
 
-    public function testGetPermissionCallback()
+    public function testGetPermissionCallback(): void
     {
         $endpoint = $this->getMockForAbstractClass(AbstractEndpoint::class);
 
         $this->assertSame([$endpoint, 'validateRequest'], $endpoint->getPermissionCallback());
     }
 
-    public function testValidateRequest()
+    public function testValidateRequest(): void
     {
         $endpoint = $this->getMockForAbstractClass(AbstractEndpoint::class);
         $request = $this->getWPRESTRequestMock();

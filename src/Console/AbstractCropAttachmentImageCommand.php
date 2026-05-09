@@ -41,7 +41,7 @@ abstract class AbstractCropAttachmentImageCommand extends AbstractAttachmentComm
     /**
      * {@inheritdoc}
      */
-    public function __invoke(array $arguments, array $options)
+    public function __invoke(array $arguments, array $options): void
     {
         $attachment = $this->getAttachment($arguments[0]);
         $context = $options['context'] ?? 'site-icon';

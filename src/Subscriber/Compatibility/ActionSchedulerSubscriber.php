@@ -34,7 +34,7 @@ class ActionSchedulerSubscriber extends AbstractEventManagerAwareSubscriber
     /**
      * Configure Action Scheduler to run on the cloud provider.
      */
-    public function configureActionScheduler()
+    public function configureActionScheduler(): void
     {
         if (!class_exists(\ActionScheduler::class)) {
             return;

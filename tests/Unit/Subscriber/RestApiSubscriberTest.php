@@ -26,7 +26,7 @@ class RestApiSubscriberTest extends TestCase
         require_once 'fixtures/Endpoint.php';
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = RestApiSubscriber::getSubscribedEvents();
 
@@ -41,7 +41,7 @@ class RestApiSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testRegisterEndpoints()
+    public function testRegisterEndpoints(): void
     {
         $endpoint = new Endpoint();
 

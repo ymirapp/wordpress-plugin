@@ -61,7 +61,7 @@ class RestApiSubscriber implements SubscriberInterface
     /**
      * Register endpoints with the WordPress REST API.
      */
-    public function registerEndpoints()
+    public function registerEndpoints(): void
     {
         foreach ($this->endpoints as $endpoint) {
             $this->registerEndpoint($endpoint);
@@ -71,7 +71,7 @@ class RestApiSubscriber implements SubscriberInterface
     /**
      * Add a new WordPress REST API endpoint to the subscriber.
      */
-    private function addEndpoint(EndpointInterface $endpoint)
+    private function addEndpoint(EndpointInterface $endpoint): void
     {
         $this->endpoints[] = $endpoint;
     }
@@ -94,7 +94,7 @@ class RestApiSubscriber implements SubscriberInterface
     /**
      * Register the given endpoint with the WordPress REST API.
      */
-    private function registerEndpoint(EndpointInterface $endpoint)
+    private function registerEndpoint(EndpointInterface $endpoint): void
     {
         register_rest_route($this->namespace, $endpoint->getPath(), $this->getArguments($endpoint));
     }

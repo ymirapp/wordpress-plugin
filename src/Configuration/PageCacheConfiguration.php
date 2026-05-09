@@ -25,7 +25,7 @@ class PageCacheConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['cloudfront_client'] = $container->service(function (Container $container) {
             return new CloudFrontClient($container['ymir_http_client'], getenv('YMIR_DISTRIBUTION_ID'), $container['cloud_provider_key'], $container['cloud_provider_secret'], $container['cloud_provider_security_token']);

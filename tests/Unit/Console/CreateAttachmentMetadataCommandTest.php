@@ -28,12 +28,12 @@ class CreateAttachmentMetadataCommandTest extends TestCase
     use WpCliMockTrait;
     use WPPostMockTrait;
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('ymir create-attachment-metadata', CreateAttachmentMetadataCommand::getName());
     }
 
-    public function testGetSynopsis()
+    public function testGetSynopsis(): void
     {
         Assert::assertArraySubset([
             [
@@ -43,7 +43,7 @@ class CreateAttachmentMetadataCommandTest extends TestCase
         ], CreateAttachmentMetadataCommand::getSynopsis());
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $arguments = ['4'];
 

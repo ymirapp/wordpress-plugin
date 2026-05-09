@@ -21,7 +21,7 @@ class WordPressTest extends TestCase
 {
     use FunctionMockTrait;
 
-    public function testIsAutosaveOrRevisionReturnsFalseWhenPostIsNotAutosaveOrRevision()
+    public function testIsAutosaveOrRevisionReturnsFalseWhenPostIsNotAutosaveOrRevision(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->exactly(2))
@@ -44,7 +44,7 @@ class WordPressTest extends TestCase
         $this->assertFalse(WordPress::isAutosaveOrRevision(42));
     }
 
-    public function testIsAutosaveOrRevisionReturnsFalseWhenWordPressFunctionsAreUnavailable()
+    public function testIsAutosaveOrRevisionReturnsFalseWhenWordPressFunctionsAreUnavailable(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->once())
@@ -60,7 +60,7 @@ class WordPressTest extends TestCase
         $this->assertFalse(WordPress::isAutosaveOrRevision(42));
     }
 
-    public function testIsAutosaveOrRevisionReturnsTrueWhenPostIsAutosave()
+    public function testIsAutosaveOrRevisionReturnsTrueWhenPostIsAutosave(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->exactly(2))
@@ -81,7 +81,7 @@ class WordPressTest extends TestCase
         $this->assertTrue(WordPress::isAutosaveOrRevision(42));
     }
 
-    public function testIsAutosaveOrRevisionReturnsTrueWhenPostIsRevision()
+    public function testIsAutosaveOrRevisionReturnsTrueWhenPostIsRevision(): void
     {
         $function_exists = $this->getFunctionMock($this->getNamespace(WordPress::class), 'function_exists');
         $function_exists->expects($this->exactly(2))

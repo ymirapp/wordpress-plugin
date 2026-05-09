@@ -28,7 +28,7 @@ abstract class AbstractEventManagerAwareSubscriber implements EventManagerAwareI
     /**
      * {@inheritdoc}
      */
-    public function setEventManager(EventManager $eventManager)
+    public function setEventManager(EventManager $eventManager): void
     {
         $this->eventManager = $eventManager;
     }

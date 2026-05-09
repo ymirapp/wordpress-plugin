@@ -26,7 +26,7 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['event_manager'] = $container->service(function (Container $container) {
             return new EventManager();

@@ -65,7 +65,7 @@ class ImageEditorSubscriber extends AbstractEventManagerAwareSubscriber
      *
      * @see wp_ajax_crop_image()
      */
-    public function forwardCropImageRequest()
+    public function forwardCropImageRequest(): void
     {
         if (!isset($_POST['cropDetails'], $_POST['id']) || !is_array($_POST['cropDetails'])) {
             return;
@@ -105,7 +105,7 @@ class ImageEditorSubscriber extends AbstractEventManagerAwareSubscriber
      *
      * @see wp_ajax_image_editor()
      */
-    public function forwardImageEditorRequest()
+    public function forwardImageEditorRequest(): void
     {
         if (!isset($_POST['do'], $_POST['postid']) || !in_array($_POST['do'], ['save', 'scale'])) {
             return;

@@ -58,7 +58,7 @@ class CloudFrontClientTest extends TestCase
         ];
     }
 
-    public function testClearAllAddsWildcardPath()
+    public function testClearAllAddsWildcardPath(): void
     {
         $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
         $invalidationPathsProperty->setAccessible(true);
@@ -69,7 +69,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame(['/*'], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearAllRemovesPreviouslyAddedPaths()
+    public function testClearAllRemovesPreviouslyAddedPaths(): void
     {
         $invalidationPathsProperty = new \ReflectionProperty(CloudFrontClient::class, 'invalidationPaths');
         $invalidationPathsProperty->setAccessible(true);
@@ -83,7 +83,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame(['/*'], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlAddsSlashToPath()
+    public function testClearUrlAddsSlashToPath(): void
     {
         $path = $this->faker->slug;
 
@@ -96,7 +96,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame(['/'.$path], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlsWithArray()
+    public function testClearUrlsWithArray(): void
     {
         $urls = [$this->faker->url, $this->faker->url];
 
@@ -109,7 +109,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame([parse_url($urls[0], PHP_URL_PATH), parse_url($urls[1], PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlsWithCollection()
+    public function testClearUrlsWithCollection(): void
     {
         $urls = new Collection([$this->faker->url, $this->faker->url]);
 
@@ -122,7 +122,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame([parse_url($urls[0], PHP_URL_PATH), parse_url($urls[1], PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlsWithString()
+    public function testClearUrlsWithString(): void
     {
         $url = $this->faker->url;
 
@@ -135,7 +135,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame([parse_url($url, PHP_URL_PATH)], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlWithAPath()
+    public function testClearUrlWithAPath(): void
     {
         $path = parse_url($this->faker->url, PHP_URL_PATH);
 
@@ -148,7 +148,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame([$path], $invalidationPathsProperty->getValue($client));
     }
 
-    public function testClearUrlWithAUrl()
+    public function testClearUrlWithAUrl(): void
     {
         $url = $this->faker->url;
 
@@ -164,7 +164,7 @@ class CloudFrontClientTest extends TestCase
     /**
      * @dataProvider provideFilterUniquePaths
      */
-    public function testFilterUniquePaths(array $paths, array $expectedPaths)
+    public function testFilterUniquePaths(array $paths, array $expectedPaths): void
     {
         $filterUniquePathsMethod = new \ReflectionMethod(CloudFrontClient::class, 'filterUniquePaths');
         $filterUniquePathsMethod->setAccessible(true);
@@ -175,7 +175,7 @@ class CloudFrontClientTest extends TestCase
     /**
      * @dataProvider provideGenerateInvalidationPayload
      */
-    public function testGenerateInvalidationPayload(array $paths, string $prefix, int $time, string $expectedXml)
+    public function testGenerateInvalidationPayload(array $paths, string $prefix, int $time, string $expectedXml): void
     {
         $generateInvalidationPayloadMethod = new \ReflectionMethod(CloudFrontClient::class, 'generateInvalidationPayload');
         $generateInvalidationPayloadMethod->setAccessible(true);
@@ -191,7 +191,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertSame($expectedXml, $generateInvalidationPayloadMethod->invoke(new CloudFrontClient($this->getHttpClientMock(), 'distribution-id', 'aws-key', 'aws-secret'), $paths));
     }
 
-    public function testSendClearRequestWithGuardReturningFalse()
+    public function testSendClearRequestWithGuardReturningFalse(): void
     {
         $http = $this->getHttpClientMock();
         $http->expects($this->never())
@@ -213,7 +213,7 @@ class CloudFrontClientTest extends TestCase
         $this->assertEmpty($invalidationPathsProperty->getValue($client));
     }
 
-    public function testSendClearRequestWithMultiplePathsAndASuccessfulResponse()
+    public function testSendClearRequestWithMultiplePathsAndASuccessfulResponse(): void
     {
         $base64_encode = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'base64_encode');
         $base64_encode->expects($this->once())
@@ -266,7 +266,7 @@ class CloudFrontClientTest extends TestCase
         $client->sendClearRequest();
     }
 
-    public function testSendClearRequestWithSuccessfulResponse()
+    public function testSendClearRequestWithSuccessfulResponse(): void
     {
         $base64_encode = $this->getFunctionMock($this->getNamespace(CloudFrontClient::class), 'base64_encode');
         $base64_encode->expects($this->once())
@@ -319,7 +319,7 @@ class CloudFrontClientTest extends TestCase
         $client->sendClearRequest();
     }
 
-    public function testSendClearRequestWithUnsuccessfulResponse()
+    public function testSendClearRequestWithUnsuccessfulResponse(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Invalidation request failed');

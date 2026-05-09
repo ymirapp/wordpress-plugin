@@ -25,7 +25,7 @@ class RestApiConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['rest_namespace'] = 'ymir/v1';
         $container['rest_endpoints'] = $container->service(function (Container $container) {

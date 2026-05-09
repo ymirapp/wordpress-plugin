@@ -18,7 +18,7 @@ use Ymir\Plugin\Tests\Unit\TestCase;
 
 class SiteHealthSubscriberTest extends TestCase
 {
-    public function testAdjustSiteHealthTestsRemovesTests()
+    public function testAdjustSiteHealthTestsRemovesTests(): void
     {
         $subscriber = new SiteHealthSubscriber();
         $tests = [

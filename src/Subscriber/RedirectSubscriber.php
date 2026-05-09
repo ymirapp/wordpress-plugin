@@ -81,7 +81,7 @@ class RedirectSubscriber implements SubscriberInterface
     /**
      * Perform a redirect if needed.
      */
-    public function redirect()
+    public function redirect(): void
     {
         if (empty($this->host)) {
             return;

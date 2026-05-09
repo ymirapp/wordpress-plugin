@@ -26,15 +26,15 @@ class TestSubscriber implements SubscriberInterface
         ];
     }
 
-    public function on_bar()
+    public function on_bar(): void
     {
     }
 
-    public function on_foo()
+    public function on_foo(): void
     {
     }
 
-    public function on_foobar()
+    public function on_foobar(): void
     {
     }
 }

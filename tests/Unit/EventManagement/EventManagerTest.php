@@ -40,7 +40,7 @@ class EventManagerTest extends TestCase
         $this->manager = null;
     }
 
-    public function testAddCallback()
+    public function testAddCallback(): void
     {
         $add_filter = $this->getFunctionMock($this->getNamespace(EventManager::class), 'add_filter');
         $add_filter->expects($this->once())
@@ -49,7 +49,7 @@ class EventManagerTest extends TestCase
         $this->manager->addCallback('foo', 'on_foo', 5, 2);
     }
 
-    public function testAddEventManagerAwareSubscriber()
+    public function testAddEventManagerAwareSubscriber(): void
     {
         $subscriber = new TestEventManagerAwareSubscriber();
 
@@ -70,7 +70,7 @@ class EventManagerTest extends TestCase
         $this->assertSame($this->manager, $eventManagerProperty->getValue($subscriber));
     }
 
-    public function testAddSubscriber()
+    public function testAddSubscriber(): void
     {
         $subscriber = new TestSubscriber();
 
@@ -85,7 +85,7 @@ class EventManagerTest extends TestCase
         $this->manager->addSubscriber($subscriber);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $do_action_ref_array = $this->getFunctionMock($this->getNamespace(EventManager::class), 'do_action_ref_array');
         $do_action_ref_array->expects($this->once())
@@ -94,7 +94,7 @@ class EventManagerTest extends TestCase
         $this->manager->execute('foo', 'bar');
     }
 
-    public function testFilter()
+    public function testFilter(): void
     {
         $apply_filters_ref_array = $this->getFunctionMock($this->getNamespace(EventManager::class), 'apply_filters_ref_array');
         $apply_filters_ref_array->expects($this->once())
@@ -104,7 +104,7 @@ class EventManagerTest extends TestCase
         $this->assertEquals('foobar', $this->manager->filter('foo', 'bar'));
     }
 
-    public function testGetCurrentHook()
+    public function testGetCurrentHook(): void
     {
         $current_filter = $this->getFunctionMock($this->getNamespace(EventManager::class), 'current_filter');
         $current_filter->expects($this->once())
@@ -113,7 +113,7 @@ class EventManagerTest extends TestCase
         $this->assertEquals('foo', $this->manager->getCurrentHook());
     }
 
-    public function testHasCallback()
+    public function testHasCallback(): void
     {
         $has_filter = $this->getFunctionMock($this->getNamespace(EventManager::class), 'has_filter');
         $has_filter->expects($this->once())
@@ -123,7 +123,7 @@ class EventManagerTest extends TestCase
         $this->assertEquals(10, $this->manager->hasCallback('foo', 'on_foo'));
     }
 
-    public function testRemoveCallback()
+    public function testRemoveCallback(): void
     {
         $remove_filter = $this->getFunctionMock($this->getNamespace(EventManager::class), 'remove_filter');
         $remove_filter->expects($this->once())
@@ -133,7 +133,7 @@ class EventManagerTest extends TestCase
         $this->assertTrue($this->manager->removeCallback('foo', 'on_foo', 2));
     }
 
-    public function testRemoveSubscriber()
+    public function testRemoveSubscriber(): void
     {
         $subscriber = new TestSubscriber();
 

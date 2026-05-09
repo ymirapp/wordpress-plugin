@@ -82,7 +82,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     /**
      * Clear the entire page cache.
      */
-    public function clearCache()
+    public function clearCache(): void
     {
         $this->eventManager->execute('ymir_page_caching_clear_all');
 
@@ -92,7 +92,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     /**
      * Clear all the URLs related to the given post from the page cache.
      */
-    public function clearPost($postId)
+    public function clearPost($postId): void
     {
         if (empty($this->pageCachingOptions['invalidation_enabled'])) {
             return;
@@ -116,7 +116,7 @@ class ContentDeliveryNetworkPageCachingSubscriber extends AbstractEventManagerAw
     /**
      * Send request to content delivery network to clear all requested URLs from its cache.
      */
-    public function sendClearRequest()
+    public function sendClearRequest(): void
     {
         $this->eventManager->execute('ymir_page_caching_send_clear_request');
 

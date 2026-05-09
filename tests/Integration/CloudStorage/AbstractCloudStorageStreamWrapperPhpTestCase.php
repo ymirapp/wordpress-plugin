@@ -35,7 +35,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->getStreamWrapperClass()::register($this->client, new \ArrayObject());
     }
 
-    public function testAppendsToExistingFile()
+    public function testAppendsToExistingFile(): void
     {
         $this->client->expects($this->once())
                      ->method('getObject')
@@ -56,7 +56,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testAppendsToNonExistentFile()
+    public function testAppendsToNonExistentFile(): void
     {
         $this->client->expects($this->once())
                      ->method('getObject')
@@ -73,7 +73,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testDoesNotErrorOnFileExists()
+    public function testDoesNotErrorOnFileExists(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
@@ -84,7 +84,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertThat("{$this->getProtocol()}:///file.ext", new LogicalNot(new FileExists()));
     }
 
-    public function testDoesNotErrorOnIsLink()
+    public function testDoesNotErrorOnIsLink(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
@@ -94,7 +94,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(is_link("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testFileType()
+    public function testFileType(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
@@ -111,7 +111,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertSame('dir', filetype("{$this->getProtocol()}:///directory/"));
     }
 
-    public function testFopenWhenFileDoesntExist()
+    public function testFopenWhenFileDoesntExist(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Must have an existing object when opening with mode "r"');
@@ -124,7 +124,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         fopen("{$this->getProtocol()}:///file.ext", 'r');
     }
 
-    public function testFopenWithUnsupportedMode()
+    public function testFopenWithUnsupportedMode(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('"c" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"');
@@ -132,7 +132,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         fopen("{$this->getProtocol()}:///file.ext", 'c');
     }
 
-    public function testFopenWithXMode()
+    public function testFopenWithXMode(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -146,7 +146,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         fopen("{$this->getProtocol()}:///file.ext", 'x');
     }
 
-    public function testFopenWithXModeAndExistingFile()
+    public function testFopenWithXModeAndExistingFile(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Cannot have an existing object when opening with mode "x"');
@@ -159,7 +159,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         fopen("{$this->getProtocol()}:///file.ext", 'x');
     }
 
-    public function testGuessContentType()
+    public function testGuessContentType(): void
     {
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
@@ -171,7 +171,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         file_put_contents("{$this->getProtocol()}:///file.xml", 'test');
     }
 
-    public function testMkdirCreatesObject()
+    public function testMkdirCreatesObject(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -185,7 +185,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(mkdir("{$this->getProtocol()}:///directory"));
     }
 
-    public function testMkdirWithExistingDirectory()
+    public function testMkdirWithExistingDirectory(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///directory\" already exists");
@@ -198,7 +198,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(mkdir("{$this->getProtocol()}:///directory"));
     }
 
-    public function testPrioritizesInternalStreamSizeOverSizeFromCloudStorage()
+    public function testPrioritizesInternalStreamSizeOverSizeFromCloudStorage(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -220,7 +220,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals(11, fstat($resource)['size']);
     }
 
-    public function testReaddirCachesStatValue()
+    public function testReaddirCachesStatValue(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjects')
@@ -246,7 +246,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         closedir($opendir);
     }
 
-    public function testReadingDirectory()
+    public function testReadingDirectory(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjects')
@@ -280,7 +280,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         closedir($opendir);
     }
 
-    public function testReadingFile()
+    public function testReadingFile(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -304,7 +304,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testRegistersStreamWrapperOnlyOnce()
+    public function testRegistersStreamWrapperOnlyOnce(): void
     {
         $this->assertContains($this->getStreamWrapperClass()::getProtocol(), stream_get_wrappers());
 
@@ -313,7 +313,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertContains($this->getStreamWrapperClass()::getProtocol(), stream_get_wrappers());
     }
 
-    public function testRenameSuccessful()
+    public function testRenameSuccessful(): void
     {
         $this->client->expects($this->once())
                      ->method('copyObject')
@@ -326,7 +326,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
-    public function testRenameWhenCopyObjectThrowsException()
+    public function testRenameWhenCopyObjectThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Could not copy object "/file"');
@@ -339,7 +339,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
-    public function testRenameWhenDeleteObjectThrowsException()
+    public function testRenameWhenDeleteObjectThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Unable to delete object "/file"');
@@ -356,7 +356,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", "{$this->getProtocol()}:///newfile.txt"));
     }
 
-    public function testRenameWithDifferentProtocols()
+    public function testRenameWithDifferentProtocols(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('rename(): Cannot rename a file across wrapper types');
@@ -364,7 +364,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rename("{$this->getProtocol()}:///file.ext", 'php://temp'));
     }
 
-    public function testRmdirCanDeleteNestedDirectory()
+    public function testRmdirCanDeleteNestedDirectory(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjects')
@@ -378,7 +378,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(rmdir("{$this->getProtocol()}:///directory/subdirectory"));
     }
 
-    public function testRmdirWhenDeleteObjectThrowsException()
+    public function testRmdirWhenDeleteObjectThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Unable to delete object "/directory/"');
@@ -396,7 +396,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rmdir("{$this->getProtocol()}:///directory"));
     }
 
-    public function testRmdirWhenGetObjectsReturnsMoreThanOneObject()
+    public function testRmdirWhenGetObjectsReturnsMoreThanOneObject(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///directory\" isn't empty");
@@ -412,7 +412,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rmdir("{$this->getProtocol()}:///directory"));
     }
 
-    public function testRmdirWithNothing()
+    public function testRmdirWithNothing(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Cannot delete root directory');
@@ -420,7 +420,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(rmdir("{$this->getProtocol()}://"));
     }
 
-    public function testScandirWithRegularDirectory()
+    public function testScandirWithRegularDirectory(): void
     {
         $this->client->expects($this->once())
             ->method('getObjects')
@@ -433,7 +433,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertSame(['bar', 'foo'], scandir("{$this->getProtocol()}:///directory"));
     }
 
-    public function testScandirWithWildcard()
+    public function testScandirWithWildcard(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjects')
@@ -446,7 +446,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertSame(['foo', 'foo-1'], scandir("{$this->getProtocol()}:///directory/subdirectory/file*"));
     }
 
-    public function testStatWithProtocol()
+    public function testStatWithProtocol(): void
     {
         clearstatcache(false, "{$this->getProtocol()}://");
         $stat = stat("{$this->getProtocol()}://");
@@ -454,7 +454,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals(0040777, $stat['mode']);
     }
 
-    public function testStreamCastReturnsFalse()
+    public function testStreamCastReturnsFalse(): void
     {
         if (\PHP_VERSION_ID >= 80000) {
             // This test throws an exception on PHP 8 with the message "No stream arrays were passed". This is due
@@ -483,7 +483,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         stream_select($read, $write, $except, 0);
     }
 
-    public function testThrowsExceptionWhenContextHasNoClient()
+    public function testThrowsExceptionWhenContextHasNoClient(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('No cloud storage client found in the stream context');
@@ -493,7 +493,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         ]));
     }
 
-    public function testTouchCreatesObjectIfItDoesntExist()
+    public function testTouchCreatesObjectIfItDoesntExist(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -507,7 +507,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(touch("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testTouchDoesntCreateObjectIfItExists()
+    public function testTouchDoesntCreateObjectIfItExists(): void
     {
         $this->client->expects($this->once())
                      ->method('objectExists')
@@ -520,7 +520,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(touch("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testTruncatesFile()
+    public function testTruncatesFile(): void
     {
         $this->client->expects($this->once())
                      ->method('getObject')
@@ -540,7 +540,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testUnlink()
+    public function testUnlink(): void
     {
         $this->client->expects($this->once())
                      ->method('deleteObject')
@@ -549,7 +549,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(unlink("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testUnlinkWhenDeleteObjectThrowsException()
+    public function testUnlinkWhenDeleteObjectThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Unable to delete object "/file"');
@@ -562,7 +562,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(unlink("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testUrlStatDataClearedOnWrite()
+    public function testUrlStatDataClearedOnWrite(): void
     {
         $this->client->expects($this->exactly(2))
                      ->method('getObjectDetails')
@@ -583,7 +583,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals(125, filesize("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testUrlStatMakesNoApiCallsForDirectories()
+    public function testUrlStatMakesNoApiCallsForDirectories(): void
     {
         $this->client->expects($this->never())
                      ->method('getObjectDetails');
@@ -597,7 +597,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals(0, $stat['ctime']);
     }
 
-    public function testUrlStatReturnsObjectDetails()
+    public function testUrlStatReturnsObjectDetails(): void
     {
         $time = strtotime('now');
 
@@ -615,7 +615,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals($time, $stat['ctime']);
     }
 
-    public function testUrlStatUsesCacheData()
+    public function testUrlStatUsesCacheData(): void
     {
         $this->client->expects($this->once())
                      ->method('getObjectDetails')
@@ -626,7 +626,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertEquals(124, filesize("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testUrlStatWhenGetObjectDetailsThrowsException()
+    public function testUrlStatWhenGetObjectDetailsThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage("filesize(): stat failed for {$this->getProtocol()}:///file.ext");
@@ -639,7 +639,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertFalse(filesize("{$this->getProtocol()}:///file.ext"));
     }
 
-    public function testWritingEmptyFile()
+    public function testWritingEmptyFile(): void
     {
         $this->client->expects($this->once())
                      ->method('putObject')
@@ -651,7 +651,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testWritingFile()
+    public function testWritingFile(): void
     {
         $this->client->expects($this->exactly(2))
                      ->method('putObject')
@@ -666,7 +666,7 @@ abstract class AbstractCloudStorageStreamWrapperPhpTestCase extends TestCase
         $this->assertTrue(fclose($file));
     }
 
-    public function testWritingFileWhenPutObjectThrowsException()
+    public function testWritingFileWhenPutObjectThrowsException(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Unable to save object "/file"');

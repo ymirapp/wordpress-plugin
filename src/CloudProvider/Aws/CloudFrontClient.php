@@ -50,7 +50,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function clearAll()
+    public function clearAll(): void
     {
         $this->addPath('/*');
     }
@@ -58,7 +58,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function clearUrl(string $url)
+    public function clearUrl(string $url): void
     {
         $path = parse_url($url, PHP_URL_PATH);
 
@@ -72,7 +72,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function clearUrls($urls)
+    public function clearUrls($urls): void
     {
         if (is_array($urls) || is_string($urls)) {
             $urls = new Collection($urls);
@@ -90,7 +90,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * Invalidate the given paths.
      */
-    public function invalidatePaths(array $paths)
+    public function invalidatePaths(array $paths): void
     {
         $concretePaths = array_filter($paths, function (string $path) {
             return !str_ends_with($path, '*');
@@ -110,7 +110,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * {@inheritdoc}
      */
-    public function sendClearRequest(?callable $guard = null)
+    public function sendClearRequest(?callable $guard = null): void
     {
         if (empty($this->invalidationPaths)) {
             return;
@@ -146,7 +146,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * Add the given path to the list.
      */
-    private function addPath(string $path)
+    private function addPath(string $path): void
     {
         if (in_array($path, ['*', '/*'])) {
             $this->invalidationPaths = ['/*'];
@@ -242,7 +242,7 @@ class CloudFrontClient extends AbstractClient implements ContentDeliveryNetworkP
     /**
      * Send an invalidation request.
      */
-    private function sendInvalidation(array $paths)
+    private function sendInvalidation(array $paths): void
     {
         $attempts = 0;
         $maxAttempts = 3;

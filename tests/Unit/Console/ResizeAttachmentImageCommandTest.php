@@ -30,12 +30,12 @@ class ResizeAttachmentImageCommandTest extends TestCase
     use WPImageEditorMockTrait;
     use WPPostMockTrait;
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('ymir resize-attachment-image', ResizeAttachmentImageCommand::getName());
     }
 
-    public function testGetSynopsis()
+    public function testGetSynopsis(): void
     {
         Assert::assertArraySubset([
             [
@@ -53,7 +53,7 @@ class ResizeAttachmentImageCommandTest extends TestCase
         ], ResizeAttachmentImageCommand::getSynopsis());
     }
 
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $arguments = ['4'];
         $options = ['height' => '42', 'width' => '24'];

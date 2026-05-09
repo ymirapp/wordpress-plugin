@@ -41,7 +41,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function copyObject(string $sourceKey, string $targetKey, string $acl = 'public-read')
+    public function copyObject(string $sourceKey, string $targetKey, string $acl = 'public-read'): void
     {
         $response = $this->request('put', $targetKey, null, [
             'x-amz-acl' => $acl,
@@ -66,7 +66,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteObject(string $key)
+    public function deleteObject(string $key): void
     {
         $response = $this->request('delete', $key);
 
@@ -176,7 +176,7 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
     /**
      * {@inheritdoc}
      */
-    public function putObject(string $key, string $object, string $acl = 'public-read', string $contentType = '')
+    public function putObject(string $key, string $object, string $acl = 'public-read', string $contentType = ''): void
     {
         $headers = [
             'x-amz-acl' => $acl,

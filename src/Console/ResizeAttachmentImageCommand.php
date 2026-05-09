@@ -21,7 +21,7 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
     /**
      * {@inheritdoc}
      */
-    public function __invoke(array $arguments, array $options)
+    public function __invoke(array $arguments, array $options): void
     {
         $attachment = $this->getAttachment($arguments[0]);
         $imageMetadata = $this->getAttachmentMetadata($attachment);

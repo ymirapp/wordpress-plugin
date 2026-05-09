@@ -18,47 +18,47 @@ use Ymir\Plugin\ValueObject\MappedDomainNames;
 
 class MappedDomainNamesTest extends TestCase
 {
-    public function testGetPrimaryDomainName()
+    public function testGetPrimaryDomainName(): void
     {
         $primaryDomainName = 'primary_domain_name';
 
         $this->assertSame($primaryDomainName, (new MappedDomainNames([], $primaryDomainName))->getPrimaryDomainName());
     }
 
-    public function testGetPrimaryDomainNameUrl()
+    public function testGetPrimaryDomainNameUrl(): void
     {
         $primaryDomainName = 'primary_domain_name';
 
         $this->assertSame('https://'.$primaryDomainName, (new MappedDomainNames([], $primaryDomainName))->getPrimaryDomainNameUrl());
     }
 
-    public function testIsMappedDomainNameIgnoresYmirVanityDomainName()
+    public function testIsMappedDomainNameIgnoresYmirVanityDomainName(): void
     {
         $mappedDomainName = 'subdomain.ymirsites.com';
 
         $this->assertFalse((new MappedDomainNames([$mappedDomainName], 'primary_domain_name'))->isMappedDomainName($mappedDomainName));
     }
 
-    public function testIsMappedDomainNameWithMappedDomainName()
+    public function testIsMappedDomainNameWithMappedDomainName(): void
     {
         $mappedDomainName = 'mapped_domain_name';
 
         $this->assertTrue((new MappedDomainNames([$mappedDomainName], 'primary_domain_name'))->isMappedDomainName($mappedDomainName));
     }
 
-    public function testIsMappedDomainNameWithPrimaryDomainName()
+    public function testIsMappedDomainNameWithPrimaryDomainName(): void
     {
         $primaryDomainName = 'primary_domain_name';
 
         $this->assertTrue((new MappedDomainNames([], $primaryDomainName))->isMappedDomainName($primaryDomainName));
     }
 
-    public function testIsMappedDomainNameWithUnmappedDomainName()
+    public function testIsMappedDomainNameWithUnmappedDomainName(): void
     {
         $this->assertFalse((new MappedDomainNames([], 'primary_domain_name'))->isMappedDomainName('unmapped_domain_name'));
     }
 
-    public function testIsMappedDomainNameWithWildcardDomainName()
+    public function testIsMappedDomainNameWithWildcardDomainName(): void
     {
         $this->assertTrue((new MappedDomainNames(['*.mapped_domain_name'], 'primary_domain_name'))->isMappedDomainName('foo.mapped_domain_name'));
     }

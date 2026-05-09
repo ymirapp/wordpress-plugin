@@ -119,22 +119,22 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ];
     }
 
-    public function testDisableAddingImageWidthAndHeightAttributesWithInvalidUrl()
+    public function testDisableAddingImageWidthAndHeightAttributesWithInvalidUrl(): void
     {
         $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), false, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://domain.com/uploads/image.jpg" alt="" />'));
     }
 
-    public function testDisableAddingImageWidthAndHeightAttributesWithNoSrcAttribute()
+    public function testDisableAddingImageWidthAndHeightAttributesWithNoSrcAttribute(): void
     {
         $this->assertTrue((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img alt="" />'));
     }
 
-    public function testDisableAddingImageWidthAndHeightAttributesWithValidUrl()
+    public function testDisableAddingImageWidthAndHeightAttributesWithValidUrl(): void
     {
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->disableAddingImageWidthAndHeightAttributes(true, '<img src="https://assets.com/uploads/image.jpg" alt="" />'));
     }
 
-    public function testGenerateScaledDownImageForFullSizeImageWithNoImageMetadata()
+    public function testGenerateScaledDownImageForFullSizeImageWithNoImageMetadata(): void
     {
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
@@ -163,7 +163,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
     }
 
-    public function testGenerateScaledDownImageForThumbnailImageWillFallbackToImageSizeMetadataWhenThereIsNoIntermediateSize()
+    public function testGenerateScaledDownImageForThumbnailImageWillFallbackToImageSizeMetadataWhenThereIsNoIntermediateSize(): void
     {
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->exactly(3))
@@ -197,7 +197,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'thumbnail'));
     }
 
-    public function testGenerateScaledDownImageForThumbnailImageWithNoImageMetadata()
+    public function testGenerateScaledDownImageForThumbnailImageWithNoImageMetadata(): void
     {
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->exactly(2))
@@ -231,7 +231,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'thumbnail'));
     }
 
-    public function testGenerateScaledDownImageWhenAttachmentUrlIsntProcessable()
+    public function testGenerateScaledDownImageWhenAttachmentUrlIsntProcessable(): void
     {
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
@@ -245,7 +245,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
     }
 
-    public function testGenerateScaledDownImageWhenNoAttachmentUrlFound()
+    public function testGenerateScaledDownImageWhenNoAttachmentUrlFound(): void
     {
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
@@ -259,12 +259,12 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'full'));
     }
 
-    public function testGenerateScaledDownImageWhenSizeIsInvalidType()
+    public function testGenerateScaledDownImageWhenSizeIsInvalidType(): void
     {
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, null));
     }
 
-    public function testGenerateScaledDownImageWhenSizeIsntInImageSizeArray()
+    public function testGenerateScaledDownImageWhenSizeIsntInImageSizeArray(): void
     {
         $wp_get_additional_image_sizes = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_additional_image_sizes');
         $wp_get_additional_image_sizes->expects($this->once())
@@ -273,7 +273,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse((new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'missing'));
     }
 
-    public function testGenerateScaledDownImageWillCropImageIfImageSizeIsCropped()
+    public function testGenerateScaledDownImageWillCropImageIfImageSizeIsCropped(): void
     {
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
@@ -309,7 +309,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, 'thumbnail'));
     }
 
-    public function testGenerateScaledDownImageWithSizeArrayAndDifferentResizedDimension()
+    public function testGenerateScaledDownImageWithSizeArrayAndDifferentResizedDimension(): void
     {
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
@@ -336,7 +336,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, [400, 400]));
     }
 
-    public function testGenerateScaledDownImageWithSizeArrayAndNoFullSizeImageMetadata()
+    public function testGenerateScaledDownImageWithSizeArrayAndNoFullSizeImageMetadata(): void
     {
         $wp_get_attachment_url = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), 'wp_get_attachment_url');
         $wp_get_attachment_url->expects($this->once())
@@ -361,7 +361,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         ], (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->generateScaledDownImage(false, 42, [400, 400]));
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = ContentDeliveryNetworkImageProcessingSubscriber::getSubscribedEvents();
 
@@ -384,7 +384,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($subscribedEvents, $callbacks);
     }
 
-    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentRestRequestWhenMediaEndpointRouteAndEditContext()
+    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentRestRequestWhenMediaEndpointRouteAndEditContext(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -409,7 +409,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentRestRequestWhenMediaEndpointRouteButNotEditContext()
+    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentRestRequestWhenMediaEndpointRouteButNotEditContext(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -434,7 +434,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentWhenRestRequestWhenNotMediaEndpointRoute()
+    public function testMaybeDisableImageDownsizeFilterForInsertAttachmentWhenRestRequestWhenNotMediaEndpointRoute(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -458,7 +458,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRequestIsntWpRestRequestObject()
+    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRequestIsntWpRestRequestObject(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -473,7 +473,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenResponseIsWPError()
+    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenResponseIsWPError(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -498,7 +498,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenMediaEndpointRouteAndEditContext()
+    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenMediaEndpointRouteAndEditContext(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -523,7 +523,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertFalse($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenMediaEndpointRouteButNotEditContext()
+    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenMediaEndpointRouteButNotEditContext(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -548,7 +548,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenNotMediaEndpointRoute()
+    public function testMaybeDisableImageDownsizeFilterForRestRequestWhenRestRequestWhenNotMediaEndpointRoute(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -572,7 +572,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testReEnableImageDownsizeFilterIfFlagWasFalse()
+    public function testReEnableImageDownsizeFilterIfFlagWasFalse(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -589,7 +589,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testReEnableImageDownsizeFilterIfFlagWasTrue()
+    public function testReEnableImageDownsizeFilterIfFlagWasTrue(): void
     {
         $subscriber = new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads');
         $subscriberReflection = new \ReflectionObject($subscriber);
@@ -604,7 +604,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertTrue($imageDownsizeFilterEnabledProperty->getValue($subscriber));
     }
 
-    public function testRewriteContentImageUrlsDoesntRewriteSrcsetUrls()
+    public function testRewriteContentImageUrlsDoesntRewriteSrcsetUrls(): void
     {
         $content = '<img width="205" height="112" src="https://assets.com/uploads/image.jpg" srcset="https://assets.com/uploads/image.jpg?width=2048 2048w, https://assets.com/uploads/image.jpg?height=164&amp;width=300 300w, https://assets.com/uploads/image.jpg?height=560&amp;width=1024 1024w, https://assets.com/uploads/image.jpg?height=420&amp;width=768 768w" />';
         $expectedContent = '<img src="https://assets.com/uploads/image.jpg?height=112&width=205&cropped" srcset="https://assets.com/uploads/image.jpg?width=2048 2048w, https://assets.com/uploads/image.jpg?height=164&amp;width=300 300w, https://assets.com/uploads/image.jpg?height=560&amp;width=1024 1024w, https://assets.com/uploads/image.jpg?height=420&amp;width=768 768w" />';
@@ -620,7 +620,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedContent, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteContentImageUrls($content));
     }
 
-    public function testRewriteContentImageUrlsDoesntRewriteUrlIfUploadsUrlDoesntMatch()
+    public function testRewriteContentImageUrlsDoesntRewriteUrlIfUploadsUrlDoesntMatch(): void
     {
         $content = '<img class="alignnone size-thumbnail" src="https://domain.com/uploads/image-150x150.jpg" alt="" />';
 
@@ -630,7 +630,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
     /**
      * @dataProvider provideImageContentWithImageDimensionsForContentWidthGlobal
      */
-    public function testRewriteContentImageUrlsUsesContentWidthGlobal(string $content, string $expectedContent)
+    public function testRewriteContentImageUrlsUsesContentWidthGlobal(string $content, string $expectedContent): void
     {
         $_prime_post_caches = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), '_prime_post_caches');
         $_prime_post_caches->expects($this->once())
@@ -646,7 +646,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
     /**
      * @dataProvider provideImageContentWithImageDimensionsInFilename
      */
-    public function testRewriteContentImageUrlsUsingFilename(string $content, string $expectedContent)
+    public function testRewriteContentImageUrlsUsingFilename(string $content, string $expectedContent): void
     {
         $_prime_post_caches = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), '_prime_post_caches');
         $_prime_post_caches->expects($this->once())
@@ -662,7 +662,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
     /**
      * @dataProvider provideImageContentWithImageDimensionsInImgTagAttributes
      */
-    public function testRewriteContentImageUrlsUsingImgTagAttributes(string $content, string $expectedContent)
+    public function testRewriteContentImageUrlsUsingImgTagAttributes(string $content, string $expectedContent): void
     {
         $_prime_post_caches = $this->getFunctionMock($this->getNamespace(ContentDeliveryNetworkImageProcessingSubscriber::class), '_prime_post_caches');
         $_prime_post_caches->expects($this->once())
@@ -678,7 +678,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
     /**
      * @dataProvider provideImageContentWithImageDimensionsInWordPress
      */
-    public function testRewriteContentImageUrlsUsingWordPress(string $content, string $expectedContent, string $expectedSize, $returnedImgSrc)
+    public function testRewriteContentImageUrlsUsingWordPress(string $content, string $expectedContent, string $expectedSize, $returnedImgSrc): void
     {
         $post = $this->getWPPostMock();
         $post->post_type = 'attachment';
@@ -708,7 +708,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedContent, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteContentImageUrls($content));
     }
 
-    public function testRewriteImageSrcsetFallsBackToValueAttributeAndCastsItToIntIfUnableToParseImageDimensions()
+    public function testRewriteImageSrcsetFallsBackToValueAttributeAndCastsItToIntIfUnableToParseImageDimensions(): void
     {
         $actualSources = [
             ['value' => '42', 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image.jpg'],
@@ -725,7 +725,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetFallsBackToValueAttributeIfUnableToParseImageDimensions()
+    public function testRewriteImageSrcsetFallsBackToValueAttributeIfUnableToParseImageDimensions(): void
     {
         $actualSources = [
             ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image.jpg'],
@@ -742,7 +742,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetParsesDimensionsFromUrlAttributeAndCropsWithSameWidthAsValue()
+    public function testRewriteImageSrcsetParsesDimensionsFromUrlAttributeAndCropsWithSameWidthAsValue(): void
     {
         $actualSources = [
             ['value' => 150, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x120.jpg'],
@@ -759,7 +759,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetParsesDimensionsFromUrlAttributeAndDoesntCropWithDifferentWidthFromValue()
+    public function testRewriteImageSrcsetParsesDimensionsFromUrlAttributeAndDoesntCropWithDifferentWidthFromValue(): void
     {
         $actualSources = [
             ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x120.jpg'],
@@ -776,7 +776,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetParsesUrlAttributeIfNoAttachmentIdGiven()
+    public function testRewriteImageSrcsetParsesUrlAttributeIfNoAttachmentIdGiven(): void
     {
         $actualSources = [
             ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x150.jpg'],
@@ -791,7 +791,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, null));
     }
 
-    public function testRewriteImageSrcsetWhenGetAttachmentUrlReturnsUrlWithQueryString()
+    public function testRewriteImageSrcsetWhenGetAttachmentUrlReturnsUrlWithQueryString(): void
     {
         $actualSources = [
             ['value' => 42, 'descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x150.jpg'],
@@ -808,7 +808,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($expectedSources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($actualSources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetWithSourceMissingDescriptorAttribute()
+    public function testRewriteImageSrcsetWithSourceMissingDescriptorAttribute(): void
     {
         $sources = [
             ['value' => 42, 'url' => 'https://assets.com/uploads/image-150x150.jpg'],
@@ -817,7 +817,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($sources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($sources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetWithSourceMissingUrlAttribute()
+    public function testRewriteImageSrcsetWithSourceMissingUrlAttribute(): void
     {
         $sources = [
             ['value' => 42, 'descriptor' => 'w'],
@@ -826,7 +826,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($sources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($sources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetWithSourceMissingValueAttribute()
+    public function testRewriteImageSrcsetWithSourceMissingValueAttribute(): void
     {
         $sources = [
             ['descriptor' => 'w', 'url' => 'https://assets.com/uploads/image-150x150.jpg'],
@@ -835,7 +835,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($sources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($sources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetWithUnprocessableUrlAttribute()
+    public function testRewriteImageSrcsetWithUnprocessableUrlAttribute(): void
     {
         $sources = [
             ['value' => 42, 'descriptor' => 'w', 'url' => 'https://domain.com/uploads/image-150x150.jpg'],
@@ -844,7 +844,7 @@ class ContentDeliveryNetworkImageProcessingSubscriberTest extends TestCase
         $this->assertSame($sources, (new ContentDeliveryNetworkImageProcessingSubscriber($this->getImageSizes(), true, 'https://assets.com/uploads'))->rewriteImageSrcset($sources, null, null, null, 42));
     }
 
-    public function testRewriteImageSrcsetWithWrongDescriptorAttribute()
+    public function testRewriteImageSrcsetWithWrongDescriptorAttribute(): void
     {
         $sources = [
             ['value' => 42, 'descriptor' => 'x', 'url' => 'https://assets.com/uploads/image-150x150.jpg'],

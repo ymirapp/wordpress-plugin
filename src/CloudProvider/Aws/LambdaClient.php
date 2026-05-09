@@ -50,7 +50,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function createAttachmentMetadata($attachment, bool $async = false)
+    public function createAttachmentMetadata($attachment, bool $async = false): void
     {
         $this->runWpCliCommand(sprintf('%s %s', Console\CreateAttachmentMetadataCommand::getName(), $this->getAttachmentId($attachment)), $async);
     }
@@ -90,7 +90,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function editAttachmentImage($attachment, string $changes, string $apply = 'all')
+    public function editAttachmentImage($attachment, string $changes, string $apply = 'all'): void
     {
         $this->runWpCliCommand(sprintf('%s %s \'%s\' %s', Console\EditAttachmentImageCommand::getName(), $this->getAttachmentId($attachment), $changes, $this->buildOptions([
             'apply' => $apply,
@@ -100,7 +100,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
     /**
      * {@inheritdoc}
      */
-    public function resizeAttachmentImage($attachment, int $width, int $height)
+    public function resizeAttachmentImage($attachment, int $width, int $height): void
     {
         $this->runWpCliCommand(sprintf('%s %s %s', Console\ResizeAttachmentImageCommand::getName(), $this->getAttachmentId($attachment), $this->buildOptions([
             'width' => $width,

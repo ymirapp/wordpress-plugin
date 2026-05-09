@@ -24,7 +24,7 @@ class AdminSubscriberTest extends TestCase
     use EventManagerMockTrait;
     use FunctionMockTrait;
 
-    public function testDisplayAdminNoticesAddsIsDismissibleClassWhenDismissibleIsTrue()
+    public function testDisplayAdminNoticesAddsIsDismissibleClassWhenDismissibleIsTrue(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection([
@@ -51,7 +51,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesConvertsStringToArray()
+    public function testDisplayAdminNoticesConvertsStringToArray(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection('foo');
@@ -76,7 +76,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesDefaultsToInfoTypeWithInvalidType()
+    public function testDisplayAdminNoticesDefaultsToInfoTypeWithInvalidType(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection([
@@ -103,7 +103,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesDoesNothingIfCollectionIsEmpty()
+    public function testDisplayAdminNoticesDoesNothingIfCollectionIsEmpty(): void
     {
         $eventManager = $this->getEventManagerMock();
         $printf = $this->getFunctionMock(AdminSubscriber::class, 'printf');
@@ -121,7 +121,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesDoesNothingIfCollectionItemIsntAnArrayOrString()
+    public function testDisplayAdminNoticesDoesNothingIfCollectionItemIsntAnArrayOrString(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection(1);
@@ -140,7 +140,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesDoesNothingIfFilterDoesntReturnCollection()
+    public function testDisplayAdminNoticesDoesNothingIfFilterDoesntReturnCollection(): void
     {
         $eventManager = $this->getEventManagerMock();
         $printf = $this->getFunctionMock(AdminSubscriber::class, 'printf');
@@ -158,7 +158,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesDoesntAddIsDismissibleClassWhenDismissibleIsFalse()
+    public function testDisplayAdminNoticesDoesntAddIsDismissibleClassWhenDismissibleIsFalse(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection([
@@ -185,7 +185,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testDisplayAdminNoticesUsesValidType()
+    public function testDisplayAdminNoticesUsesValidType(): void
     {
         $eventManager = $this->getEventManagerMock();
         $notices = new Collection([
@@ -212,7 +212,7 @@ class AdminSubscriberTest extends TestCase
         $subscriber->displayAdminNotices();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $callbacks = AdminSubscriber::getSubscribedEvents();
 

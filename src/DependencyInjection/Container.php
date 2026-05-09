@@ -43,7 +43,7 @@ class Container implements \ArrayAccess
     /**
      * Configure the container using the given container configuration object(s).
      */
-    public function configure($configurations)
+    public function configure($configurations): void
     {
         if (!is_array($configurations)) {
             $configurations = [$configurations];
@@ -128,7 +128,7 @@ class Container implements \ArrayAccess
     /**
      * Modify the container using the given container configuration object.
      */
-    private function modify($configuration)
+    private function modify($configuration): void
     {
         if (is_string($configuration)) {
             $configuration = new $configuration();

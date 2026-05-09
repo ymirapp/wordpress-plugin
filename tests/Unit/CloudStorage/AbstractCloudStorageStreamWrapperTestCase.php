@@ -23,7 +23,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
     use CloudStorageClientInterfaceMockTrait;
     use FunctionMockTrait;
 
-    public function testDirClosedir()
+    public function testDirClosedir(): void
     {
         $wrapper = $this->getStreamWrapperObject();
         $wrapperReflection = new \ReflectionObject($wrapper);
@@ -50,7 +50,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertNull($openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
-    public function testDirOpendirWithRegularDirectory()
+    public function testDirOpendirWithRegularDirectory(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $objects = [
@@ -86,7 +86,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame('directory/', $openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
-    public function testDirOpendirWithWildcard()
+    public function testDirOpendirWithWildcard(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $objects = [
@@ -122,7 +122,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame('directory/subdirectory/', $openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
-    public function testDirReaddirWhenOpenedDirectoryObjectIsInvalid()
+    public function testDirReaddirWhenOpenedDirectoryObjectIsInvalid(): void
     {
         $objects = $this->getMockBuilder(\ArrayIterator::class)->getMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -140,14 +140,14 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($wrapper->dir_readdir());
     }
 
-    public function testDirReaddirWhenOpenedDirectoryObjectIsNull()
+    public function testDirReaddirWhenOpenedDirectoryObjectIsNull(): void
     {
         $wrapper = $this->getStreamWrapperObject();
 
         $this->assertFalse($wrapper->dir_readdir());
     }
 
-    public function testDirReaddirWhenOpenedDirectoryObjectReturnsObjectWithNoKey()
+    public function testDirReaddirWhenOpenedDirectoryObjectReturnsObjectWithNoKey(): void
     {
         $objects = $this->getMockBuilder(\ArrayIterator::class)->getMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -172,7 +172,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($wrapper->dir_readdir());
     }
 
-    public function testDirReaddirWithLastModified()
+    public function testDirReaddirWithLastModified(): void
     {
         $objects = $this->getMockBuilder(\ArrayIterator::class)->getMock();
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -228,7 +228,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///directory/file.ext" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testDirReaddirWithNoLastModifiedOrSize()
+    public function testDirReaddirWithNoLastModifiedOrSize(): void
     {
         $objects = $this->getMockBuilder(\ArrayIterator::class)->getMock();
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -284,7 +284,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///directory/file.ext" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testDirReaddirWithSize()
+    public function testDirReaddirWithSize(): void
     {
         $objects = $this->getMockBuilder(\ArrayIterator::class)->getMock();
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -340,14 +340,14 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///directory/file.ext" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testDirRewinddirWithInvalidopenedDirectoryPrefix()
+    public function testDirRewinddirWithInvalidopenedDirectoryPrefix(): void
     {
         $wrapper = $this->getStreamWrapperObject();
 
         $this->assertFalse($wrapper->dir_rewinddir());
     }
 
-    public function testDirRewinddirWithValidopenedDirectoryPrefix()
+    public function testDirRewinddirWithValidopenedDirectoryPrefix(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $objects = [
@@ -386,7 +386,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame('directory/', $openedDirectoryPrefixReflection->getValue($wrapper));
     }
 
-    public function testMkdirWhenDirectoryDoesntExist()
+    public function testMkdirWhenDirectoryDoesntExist(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -408,7 +408,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->mkdir("{$this->getProtocol()}:///foo", 0777);
     }
 
-    public function testMkdirWhenDirectoryExists()
+    public function testMkdirWhenDirectoryExists(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///foo\" already exists");
@@ -428,7 +428,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testRegisterWithExistingWrapper()
+    public function testRegisterWithExistingWrapper(): void
     {
         $cache = new \ArrayObject();
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -459,7 +459,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testRegisterWithoutExistingWrapper()
+    public function testRegisterWithoutExistingWrapper(): void
     {
         $cache = new \ArrayObject();
         $client = $this->getCloudStorageClientInterfaceMock();
@@ -486,7 +486,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperClass()::register($client, $cache);
     }
 
-    public function testRenameSuccessful()
+    public function testRenameSuccessful(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -510,7 +510,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->rename("{$this->getProtocol()}:///foo.txt", "{$this->getProtocol()}:///bar.txt");
     }
 
-    public function testRmdirWithEmptydirectory()
+    public function testRmdirWithEmptydirectory(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -532,7 +532,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->rmdir("{$this->getProtocol()}:///foo", 0777);
     }
 
-    public function testRmdirWithNonEmptydirectory()
+    public function testRmdirWithNonEmptydirectory(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage("Directory \"{$this->getProtocol()}:///foo\" isn't empty");
@@ -556,12 +556,12 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->rmdir("{$this->getProtocol()}:///foo", 0777);
     }
 
-    public function testStreamCast()
+    public function testStreamCast(): void
     {
         $this->assertFalse($this->getStreamWrapperObject()->stream_cast());
     }
 
-    public function testStreamClose()
+    public function testStreamClose(): void
     {
         $wrapper = $this->getStreamWrapperObject();
 
@@ -580,7 +580,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertNull($cacheReflection->getValue($wrapper));
     }
 
-    public function testStreamEof()
+    public function testStreamEof(): void
     {
         $feof = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'feof');
         $feof->expects($this->once())
@@ -589,7 +589,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($this->getStreamWrapperObject()->stream_eof());
     }
 
-    public function testStreamFlushWhenNotReading()
+    public function testStreamFlushWhenNotReading(): void
     {
         $wrapper = $this->getStreamWrapperObject();
 
@@ -621,7 +621,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertTrue($wrapper->stream_flush());
     }
 
-    public function testStreamFlushWhenReading()
+    public function testStreamFlushWhenReading(): void
     {
         $wrapper = $this->getStreamWrapperObject();
 
@@ -635,17 +635,17 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($wrapper->stream_flush());
     }
 
-    public function testStreamLock()
+    public function testStreamLock(): void
     {
         $this->assertFalse($this->getStreamWrapperObject()->stream_lock());
     }
 
-    public function testStreamMetadataWithNonTouchOption()
+    public function testStreamMetadataWithNonTouchOption(): void
     {
         $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_GROUP));
     }
 
-    public function testStreamMetadataWithTouchOptionWhenObjectDoesntExist()
+    public function testStreamMetadataWithTouchOptionWhenObjectDoesntExist(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -663,7 +663,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_TOUCH));
     }
 
-    public function testStreamMetadataWithTouchOptionWhenObjectExists()
+    public function testStreamMetadataWithTouchOptionWhenObjectExists(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -680,7 +680,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertTrue($this->getStreamWrapperObject()->stream_metadata("{$this->getProtocol()}:///foo.txt", STREAM_META_TOUCH));
     }
 
-    public function testStreamOpenWithInvalidMode()
+    public function testStreamOpenWithInvalidMode(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('"e" mode isn\'t supported. Must be "r", "r+", "w", "a", "a+", "x"');
@@ -688,7 +688,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'e');
     }
 
-    public function testStreamOpenWithModeA()
+    public function testStreamOpenWithModeA(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -713,7 +713,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'a');
     }
 
-    public function testStreamOpenWithModeAPlus()
+    public function testStreamOpenWithModeAPlus(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -738,7 +738,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'a+');
     }
 
-    public function testStreamOpenWithModeRAndFileDoesntExist()
+    public function testStreamOpenWithModeRAndFileDoesntExist(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Must have an existing object when opening with mode "r"');
@@ -758,7 +758,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
     }
 
-    public function testStreamOpenWithModeRAndFileExists()
+    public function testStreamOpenWithModeRAndFileExists(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -785,7 +785,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r');
     }
 
-    public function testStreamOpenWithModeRPlusAndFileDoesntExist()
+    public function testStreamOpenWithModeRPlusAndFileDoesntExist(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Must have an existing object when opening with mode "r+"');
@@ -805,7 +805,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
     }
 
-    public function testStreamOpenWithModeRPlusAndFileExists()
+    public function testStreamOpenWithModeRPlusAndFileExists(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -832,7 +832,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'r+');
     }
 
-    public function testStreamOpenWithModeW()
+    public function testStreamOpenWithModeW(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -849,7 +849,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'w');
     }
 
-    public function testStreamOpenWithModeXAndFileDoesntExist()
+    public function testStreamOpenWithModeXAndFileDoesntExist(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -871,7 +871,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
     }
 
-    public function testStreamOpenWithModeXAndFileExists()
+    public function testStreamOpenWithModeXAndFileExists(): void
     {
         $this->expectWarning();
         $this->expectExceptionMessage('Cannot have an existing object when opening with mode "x"');
@@ -888,7 +888,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->getStreamWrapperObject()->stream_open("{$this->getProtocol()}:///foo.txt", 'x');
     }
 
-    public function testStreamRead()
+    public function testStreamRead(): void
     {
         $fread = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fread');
         $fread->expects($this->once())
@@ -898,7 +898,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame('foo', $this->getStreamWrapperObject()->stream_read(3));
     }
 
-    public function testStreamSeek()
+    public function testStreamSeek(): void
     {
         $fseek = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fseek');
         $fseek->expects($this->once())
@@ -908,7 +908,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertTrue($this->getStreamWrapperObject()->stream_seek(3, SEEK_END));
     }
 
-    public function testStreamStatWhenObjectDoesntExist()
+    public function testStreamStatWhenObjectDoesntExist(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -929,7 +929,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertFalse($wrapper->stream_stat());
     }
 
-    public function testStreamStatWithDirectoryWontMakeApiCall()
+    public function testStreamStatWithDirectoryWontMakeApiCall(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -962,7 +962,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         ], $wrapper->stream_stat());
     }
 
-    public function testStreamStatWithFileSize()
+    public function testStreamStatWithFileSize(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -997,7 +997,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         ], $wrapper->stream_stat());
     }
 
-    public function testStreamStatWithLastModified()
+    public function testStreamStatWithLastModified(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1032,7 +1032,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         ], $wrapper->stream_stat());
     }
 
-    public function testStreamStatWithRegularFile()
+    public function testStreamStatWithRegularFile(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1067,7 +1067,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         ], $wrapper->stream_stat());
     }
 
-    public function testStreamTell()
+    public function testStreamTell(): void
     {
         $ftell = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'ftell');
         $ftell->expects($this->once())
@@ -1077,7 +1077,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(42, $this->getStreamWrapperObject()->stream_tell());
     }
 
-    public function testStreamWrite()
+    public function testStreamWrite(): void
     {
         $fwrite = $this->getFunctionMock($this->getNamespace($this->getStreamWrapperClass()), 'fwrite');
         $fwrite->expects($this->once())
@@ -1087,7 +1087,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(3, $this->getStreamWrapperObject()->stream_write('foo'));
     }
 
-    public function testUnlink()
+    public function testUnlink(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
 
@@ -1104,7 +1104,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertTrue($this->getStreamWrapperObject()->unlink("{$this->getProtocol()}:///foo.txt"));
     }
 
-    public function testUrlStatWhenCached()
+    public function testUrlStatWhenCached(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1120,7 +1120,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(['foo_stat'], $wrapper->url_stat("{$this->getProtocol()}:///foo.txt", 1));
     }
 
-    public function testUrlStatWhenObjectDoesntExist()
+    public function testUrlStatWhenObjectDoesntExist(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1141,7 +1141,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///foo.txt" => false], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testUrlStatWithDirectoryWontMakeApiCall()
+    public function testUrlStatWithDirectoryWontMakeApiCall(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1176,7 +1176,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///directory/" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testUrlStatWithFileSize()
+    public function testUrlStatWithFileSize(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1213,7 +1213,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///foo.txt" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testUrlStatWithLastModified()
+    public function testUrlStatWithLastModified(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();
@@ -1250,7 +1250,7 @@ abstract class AbstractCloudStorageStreamWrapperTestCase extends TestCase
         $this->assertSame(["{$this->getProtocol()}:///foo.txt" => $expectedStat], $cacheReflection->getValue($wrapper)->getArrayCopy());
     }
 
-    public function testUrlStatWithRegularFile()
+    public function testUrlStatWithRegularFile(): void
     {
         $client = $this->getCloudStorageClientInterfaceMock();
         $wrapper = $this->getStreamWrapperObject();

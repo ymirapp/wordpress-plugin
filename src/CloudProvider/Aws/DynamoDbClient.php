@@ -41,7 +41,7 @@ class DynamoDbClient extends AbstractClient
     /**
      * Deletes a single item in a table by primary key.
      */
-    public function deleteItem(array $arguments)
+    public function deleteItem(array $arguments): void
     {
         $response = $this->perform('DeleteItem', $arguments);
 
@@ -73,7 +73,7 @@ class DynamoDbClient extends AbstractClient
     /**
      * Creates a new item, or replaces an old item with a new item.
      */
-    public function putItem(array $arguments)
+    public function putItem(array $arguments): void
     {
         $response = $this->perform('PutItem', $arguments);
 

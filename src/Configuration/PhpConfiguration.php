@@ -24,7 +24,7 @@ class PhpConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['http_host'] = $_SERVER['HTTP_HOST'] ?? '';
         $container['request_uri'] = $_SERVER['REQUEST_URI'] ?? '';

@@ -29,7 +29,7 @@ class CreateAttachmentEndpointTest extends TestCase
     use WPErrorMockTrait;
     use WPRESTRequestMockTrait;
 
-    public function testGetArguments()
+    public function testGetArguments(): void
     {
         $arguments = (new CreateAttachmentEndpoint($this->getCloudStorageClientInterfaceMock(), $this->getConsoleClientInterfaceMock(), 'uploads_dir', 'uploads_url'))->getArguments();
 
@@ -37,17 +37,17 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertIsCallable($arguments['path']['sanitize_callback']);
     }
 
-    public function testGetMethods()
+    public function testGetMethods(): void
     {
         $this->assertSame(['POST'], (new CreateAttachmentEndpoint($this->getCloudStorageClientInterfaceMock(), $this->getConsoleClientInterfaceMock(), 'uploads_dir', 'uploads_url'))->getMethods());
     }
 
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $this->assertSame('/attachments', CreateAttachmentEndpoint::getPath());
     }
 
-    public function testRespondPerformsAsyncCommandIfForced()
+    public function testRespondPerformsAsyncCommandIfForced(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -95,7 +95,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads', true))->respond($request));
     }
 
-    public function testRespondReturnsError()
+    public function testRespondReturnsError(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -128,7 +128,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame($error, (new CreateAttachmentEndpoint($cloudStorageClient, $this->getConsoleClientInterfaceMock(), 'uploads_dir', 'uploads_url'))->respond($request));
     }
 
-    public function testRespondReturnsResponseForMultisite()
+    public function testRespondReturnsResponseForMultisite(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -169,7 +169,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads/sites/2', 'https://d1mbwobeuvop7i.cloudfront.net/uploads/sites/2'))->respond($request));
     }
 
-    public function testRespondWithLargeImage()
+    public function testRespondWithLargeImage(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())
@@ -219,7 +219,7 @@ class CreateAttachmentEndpointTest extends TestCase
         $this->assertSame([], (new CreateAttachmentEndpoint($cloudStorageClient, $consoleClient, 'ymir-public:///uploads', 'https://d1mbwobeuvop7i.cloudfront.net/uploads'))->respond($request));
     }
 
-    public function testRespondWithSmallImage()
+    public function testRespondWithSmallImage(): void
     {
         $cloudStorageClient = $this->getCloudStorageClientInterfaceMock();
         $cloudStorageClient->expects($this->once())

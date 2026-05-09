@@ -34,7 +34,7 @@ class AdminSubscriber extends AbstractEventManagerAwareSubscriber
     /**
      * Display all admin notices.
      */
-    public function displayAdminNotices()
+    public function displayAdminNotices(): void
     {
         $notices = $this->eventManager->filter('ymir_admin_notices', new Collection());
 

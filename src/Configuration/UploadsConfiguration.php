@@ -25,7 +25,7 @@ class UploadsConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function modify(Container $container)
+    public function modify(Container $container): void
     {
         $container['upload_url'] = $container->service(function (Container $container) {
             $uploadUrl = (string) getenv('YMIR_UPLOAD_URL');
