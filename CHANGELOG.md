@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.28.0...v1.28.1) (2026-05-09)
+
+
+### Bug Fixes
+
+* Fix subdirectory multisite asset urls ([74bb6ee](https://github.com/ymirapp/wordpress-plugin/commit/74bb6ee5dfaa6614ea4fb5a6eed90dbc48218a0e))
+
 ## [1.28.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.27.0...v1.28.0) (2026-03-10)
 
 
