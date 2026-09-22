@@ -46,7 +46,11 @@ jobs:
       - name: Install dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
       - name: Install WordPress
-        run: .github/workflows/install-wp.sh
+        run: |
+          case "${{ matrix.php-versions }}" in
+            7.2|7.3) .github/workflows/install-wp.sh 6.9.9 ;;
+            *) .github/workflows/install-wp.sh ;;
+          esac
       - name: Run unit tests
         run: composer tests:unit
       - name: Run integration tests
