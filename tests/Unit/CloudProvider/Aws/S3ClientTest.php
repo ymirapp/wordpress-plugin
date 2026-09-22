@@ -243,6 +243,45 @@ class S3ClientTest extends TestCase
         ]], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjects('prefix_'));
     }
 
+    public function testGetObjectsPaginates(): void
+    {
+        $http = $this->getHttpClientMock();
+        $http->expects($this->exactly(2))
+             ->method('request')
+             ->withConsecutive(
+                 [$this->identicalTo('https://test-bucket.s3.us-east-1.amazonaws.com/?list-type=2&prefix=prefix_')],
+                 [$this->identicalTo('https://test-bucket.s3.us-east-1.amazonaws.com/?continuation-token=next%2Btoken%2F%3D%3D&list-type=2&prefix=prefix_')]
+             )
+             ->willReturnOnConsecutiveCalls(
+                 [
+                     'body' => '<?xml version="1.0" encoding="UTF-8"?>
+                                <ListObjectsV2Output>
+                                   <Contents>
+                                      <Key>first</Key>
+                                   </Contents>
+                                   <IsTruncated>true</IsTruncated>
+                                   <NextContinuationToken>next+token/==</NextContinuationToken>
+                                </ListObjectsV2Output>',
+                     'response' => ['code' => 200],
+                 ],
+                 [
+                     'body' => '<?xml version="1.0" encoding="UTF-8"?>
+                                <ListObjectsV2Output>
+                                   <Contents>
+                                      <Key>second</Key>
+                                   </Contents>
+                                   <IsTruncated>false</IsTruncated>
+                                </ListObjectsV2Output>',
+                     'response' => ['code' => 200],
+                 ]
+             );
+
+        $this->assertSame([
+            ['Key' => 'first'],
+            ['Key' => 'second'],
+        ], (new S3Client($http, 'test-bucket', 'aws-key', 'us-east-1', 'aws-secret'))->getObjects('prefix_'));
+    }
+
     public function testObjectExists(): void
     {
         $http = $this->getHttpClientMock();

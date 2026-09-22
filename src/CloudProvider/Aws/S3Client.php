@@ -139,22 +139,32 @@ class S3Client extends AbstractClient implements CloudStorageClientInterface
             $parameters['max-keys'] = $limit;
         }
 
-        ksort($parameters);
-
-        $response = $this->request('get', '/?'.http_build_query($parameters));
-
-        if (200 !== $this->parseResponseStatusCode($response)) {
-            throw new \RuntimeException($this->createExceptionMessage(sprintf('Unable to list objects with prefix "%s"', $prefix), $response));
-        } elseif (empty($response['body'])) {
-            throw new \RuntimeException('No content returned from S3 API');
-        }
-
         $objects = [];
-        $xml = simplexml_load_string($response['body']);
+        $continuationToken = '';
 
-        foreach ($xml->Contents as $object) {
-            $objects[] = (array) $object;
-        }
+        do {
+            if (!empty($continuationToken)) {
+                $parameters['continuation-token'] = $continuationToken;
+            }
+
+            ksort($parameters);
+
+            $response = $this->request('get', '/?'.http_build_query($parameters));
+
+            if (200 !== $this->parseResponseStatusCode($response)) {
+                throw new \RuntimeException($this->createExceptionMessage(sprintf('Unable to list objects with prefix "%s"', $prefix), $response));
+            } elseif (empty($response['body'])) {
+                throw new \RuntimeException('No content returned from S3 API');
+            }
+
+            $xml = simplexml_load_string($response['body']);
+
+            foreach ($xml->Contents as $object) {
+                $objects[] = (array) $object;
+            }
+
+            $continuationToken = empty($limit) && isset($xml->NextContinuationToken) ? (string) $xml->NextContinuationToken : '';
+        } while (!empty($continuationToken));
 
         return $objects;
     }
