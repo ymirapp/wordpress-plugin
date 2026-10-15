@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.29.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.28.2...v1.29.0) (2026-10-15)
+
+
+### Features
+
+* Add private deployment health endpoint ([ef647ac](https://github.com/ymirapp/wordpress-plugin/commit/ef647acac83ee409d8de72d69b61b9615a7194c3))
+* Add WordPress-aware subscriber injection ([9e59a4e](https://github.com/ymirapp/wordpress-plugin/commit/9e59a4e23faeab7e8f05ac2857e6468388d1e5cc))
+
 ## [1.28.2](https://github.com/ymirapp/wordpress-plugin/compare/v1.28.1...v1.28.2) (2026-09-22)
 
 
