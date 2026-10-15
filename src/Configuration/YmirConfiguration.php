@@ -39,6 +39,17 @@ class YmirConfiguration implements ContainerConfigurationInterface
             return false;
         });
         $container['ymir_environment'] = getenv('YMIR_ENVIRONMENT') ?: '';
+        $container['ymir_health_enabled'] = $container->service(function () {
+            $enabled = true;
+
+            if (defined('YMIR_HEALTH_ENABLED')) {
+                $enabled = YMIR_HEALTH_ENABLED;
+            } elseif (false !== getenv('YMIR_HEALTH_ENABLED')) {
+                $enabled = getenv('YMIR_HEALTH_ENABLED');
+            }
+
+            return is_scalar($enabled) && filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+        });
         $container['ymir_http_client'] = $container->service(function (Container $container) {
             return function_exists('_wp_http_get_object') ? new WordPressClient(_wp_http_get_object(), $container['ymir_plugin_version']) : new CurlClient($container['ymir_plugin_version']);
         });

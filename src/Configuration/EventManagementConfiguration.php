@@ -67,6 +67,10 @@ class EventManagementConfiguration implements ContainerConfigurationInterface
                 new Subscriber\Compatibility\WpMigrateDbSubscriber(),
             ];
 
+            if ($container['ymir_health_enabled']) {
+                $subscribers[] = new Subscriber\HealthCheckSubscriber();
+            }
+
             if ($container['ymir_cdn_image_processing_enabled']) {
                 $subscribers[] = new Subscriber\ContentDeliveryNetworkImageProcessingSubscriber($container['base_image_sizes'], $container['is_multisite'], $container['uploads_baseurl'], $container['content_width']);
             }
