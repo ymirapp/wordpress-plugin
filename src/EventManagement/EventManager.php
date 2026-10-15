@@ -40,6 +40,10 @@ class EventManager
             $subscriber->setEventManager($this);
         }
 
+        if ($subscriber instanceof WordPressAwareInterface) {
+            $this->addCallback('wp', [$subscriber, 'setWordPress']);
+        }
+
         foreach ($subscriber->getSubscribedEvents() as $hookName => $parameters) {
             $this->addSubscriberCallback($subscriber, $hookName, $parameters);
         }
@@ -119,6 +123,10 @@ class EventManager
      */
     public function removeSubscriber(SubscriberInterface $subscriber): void
     {
+        if ($subscriber instanceof WordPressAwareInterface) {
+            $this->removeCallback('wp', [$subscriber, 'setWordPress']);
+        }
+
         foreach ($subscriber->getSubscribedEvents() as $hookName => $parameters) {
             $this->removeSubscriberCallback($subscriber, $hookName, $parameters);
         }

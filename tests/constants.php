@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 // WordPress constants
 
-define('ABSPATH', '/tmp/wordpress/');
+define('ABSPATH', rtrim(getenv('WP_CORE_DIR') ?: '/tmp/wordpress', '/').'/');
 define('WP_DEBUG', false);
 define('WPINC', 'wp-includes');
 

@@ -22,22 +22,53 @@ class EventManagerTest extends TestCase
     use FunctionMockTrait;
 
     /**
+     * Whether WordPress's request environment existed before the test.
+     *
+     * @var bool
+     */
+    private $hadWordPress;
+
+    /**
      * @var EventManager
      */
     private $manager;
+
+    /**
+     * The WordPress request environment before the test.
+     */
+    private $wp;
 
     protected function setUp(): void
     {
         require_once 'fixtures/functions.php';
         require_once 'fixtures/TestSubscriber.php';
         require_once 'fixtures/TestEventManagerAwareSubscriber.php';
+        require_once 'fixtures/TestWordPressAwareSubscriber.php';
+
+        $this->hadWordPress = array_key_exists('wp', $GLOBALS);
+        $this->wp = $GLOBALS['wp'] ?? null;
+        unset($GLOBALS['wp']);
 
         $this->manager = new EventManager();
     }
 
     protected function tearDown(): void
     {
+        if ($this->hadWordPress) {
+            $GLOBALS['wp'] = $this->wp;
+        } else {
+            unset($GLOBALS['wp']);
+        }
+
         $this->manager = null;
+    }
+
+    public function provideWordPressAvailability(): array
+    {
+        return [
+            'before WordPress exists' => [false],
+            'WordPress already exists' => [true],
+        ];
     }
 
     public function testAddCallback(): void
@@ -83,6 +114,45 @@ class EventManagerTest extends TestCase
                    );
 
         $this->manager->addSubscriber($subscriber);
+    }
+
+    /**
+     * @dataProvider provideWordPressAvailability
+     */
+    public function testAddWordPressAwareSubscriber(bool $wordPressExists): void
+    {
+        if ($wordPressExists) {
+            $GLOBALS['wp'] = new \WP();
+        }
+
+        $subscriber = new TestWordPressAwareSubscriber();
+        $injection = null;
+
+        $this->getFunctionMock($this->getNamespace(EventManager::class), 'add_filter')
+             ->expects($this->exactly(4))
+             ->withConsecutive(
+                 [$this->equalTo('wp'), $this->identicalTo([$subscriber, 'setWordPress']), $this->equalTo(10), $this->equalTo(1)],
+                 [$this->equalTo('foo'), $this->identicalTo([$subscriber, 'on_foo']), $this->equalTo(10), $this->equalTo(1)],
+                 [$this->equalTo('bar'), $this->identicalTo([$subscriber, 'on_bar']), $this->equalTo(5), $this->equalTo(1)],
+                 [$this->equalTo('foobar'), $this->identicalTo([$subscriber, 'on_foobar']), $this->equalTo(5), $this->equalTo(2)]
+             )
+             ->willReturnCallback(function (string $hookName, callable $callback) use (&$injection) {
+                 if ('wp' === $hookName) {
+                     $injection = $callback;
+                 }
+
+                 return true;
+             });
+
+        $this->manager->addSubscriber($subscriber);
+
+        $this->assertNull($subscriber->wp);
+        $this->assertIsCallable($injection);
+
+        $GLOBALS['wp'] = $GLOBALS['wp'] ?? new \WP();
+        $injection($GLOBALS['wp']);
+
+        $this->assertSame($GLOBALS['wp'], $subscriber->wp);
     }
 
     public function testExecute(): void
@@ -145,6 +215,23 @@ class EventManagerTest extends TestCase
                           [$this->equalTo('foobar'), $this->identicalTo([$subscriber, 'on_foobar']), $this->equalTo(5)]
                       )
                       ->willReturn(true);
+
+        $this->manager->removeSubscriber($subscriber);
+    }
+
+    public function testRemoveWordPressAwareSubscriber(): void
+    {
+        $subscriber = new TestWordPressAwareSubscriber();
+
+        $this->getFunctionMock($this->getNamespace(EventManager::class), 'remove_filter')
+             ->expects($this->exactly(4))
+             ->withConsecutive(
+                 [$this->equalTo('wp'), $this->identicalTo([$subscriber, 'setWordPress']), $this->equalTo(10)],
+                 [$this->equalTo('foo'), $this->identicalTo([$subscriber, 'on_foo']), $this->equalTo(10)],
+                 [$this->equalTo('bar'), $this->identicalTo([$subscriber, 'on_bar']), $this->equalTo(5)],
+                 [$this->equalTo('foobar'), $this->identicalTo([$subscriber, 'on_foobar']), $this->equalTo(5)]
+             )
+             ->willReturn(true);
 
         $this->manager->removeSubscriber($subscriber);
     }
