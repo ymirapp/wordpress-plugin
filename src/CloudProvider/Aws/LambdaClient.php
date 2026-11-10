@@ -92,7 +92,13 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
      */
     public function editAttachmentImage($attachment, string $changes, string $apply = 'all'): void
     {
-        $this->runWpCliCommand(sprintf('%s %s \'%s\' %s', Console\EditAttachmentImageCommand::getName(), $this->getAttachmentId($attachment), $changes, $this->buildOptions([
+        json_decode($changes);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException('The given image "changes" must be valid JSON');
+        }
+
+        $this->runWpCliCommand(sprintf('%s %s %s %s', Console\EditAttachmentImageCommand::getName(), $this->getAttachmentId($attachment), $this->escapeShellArgument($changes), $this->buildOptions([
             'apply' => $apply,
         ])));
     }
@@ -122,7 +128,7 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
         }
 
         $response = $this->invoke([
-            'php' => sprintf('bin/wp %s --url=\'%s\'', $command, $siteUrl),
+            'php' => sprintf('bin/wp %s --url=%s', $command, $this->escapeShellArgument($siteUrl)),
         ], $async);
 
         if ($async) {
@@ -169,10 +175,23 @@ class LambdaClient extends AbstractClient implements ConsoleClientInterface
         $optionsString = '';
 
         foreach ($options as $option => $value) {
-            $optionsString .= sprintf(' --%s=\'%s\'', $option, $value);
+            $optionsString .= sprintf(' --%s=%s', $option, $this->escapeShellArgument((string) $value));
         }
 
         return trim($optionsString);
+    }
+
+    /**
+     * Quote the given value as a single POSIX shell argument.
+     */
+    private function escapeShellArgument(string $value): string
+    {
+        if (str_contains($value, "\0")) {
+            throw new \InvalidArgumentException('Shell arguments cannot contain null bytes');
+        }
+
+        // Not escapeshellarg(): it drops multibyte bytes under non-UTF-8 locales on Linux, which macOS tests don't catch.
+        return "'".str_replace("'", "'\\''", $value)."'";
     }
 
     /**
