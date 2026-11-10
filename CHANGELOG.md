@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.29.0...v1.29.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* Prevent shell injection in console WP-CLI arguments ([7cff425](https://github.com/ymirapp/wordpress-plugin/commit/7cff4252b8279ce40e6fa2119b57a74e8076cb15))
+
 ## [1.29.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.28.2...v1.29.0) (2026-10-15)
 
 
