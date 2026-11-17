@@ -7,6 +7,9 @@ on:
     branches-ignore:
       - 'release-please**'
 
+permissions:
+  contents: read
+
 jobs:
   code-quality:
     name: Run code quality checks on PHP 7.4
@@ -14,6 +17,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -36,6 +41,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
