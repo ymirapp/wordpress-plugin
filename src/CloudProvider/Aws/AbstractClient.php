@@ -158,7 +158,11 @@ abstract class AbstractClient
      */
     protected function parseAwsError(string $body): ?array
     {
+        $useInternalErrors = libxml_use_internal_errors(true);
         $xml = simplexml_load_string($body);
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($useInternalErrors);
 
         return $xml instanceof \SimpleXMLElement ? [
             'code' => (string) ($xml->Error->Code ?? $xml->Code ?? ''),

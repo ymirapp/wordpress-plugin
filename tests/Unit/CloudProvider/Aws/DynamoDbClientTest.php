@@ -188,6 +188,33 @@ class DynamoDbClientTest extends TestCase
         ], $response);
     }
 
+    public function testGetItemWithJsonErrorResponse(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to get cache item (HTTP 400)');
+
+        $http = $this->getHttpClientMock();
+        $http->expects($this->once())
+             ->method('request')
+             ->willReturn([
+                 'body' => '{"__type":"com.amazonaws.dynamodb.v20120810#ResourceNotFoundException","message":"Requested resource not found"}',
+                 'response' => ['code' => 400],
+             ]);
+
+        $gmdate = $this->getFunctionMock($this->getNamespace(DynamoDbClient::class), 'gmdate');
+        $gmdate->expects($this->exactly(5))
+                ->willReturnOnConsecutiveCalls('20200515T181004Z', '20200515', '20200515T181004Z', '20200515', '20200515');
+
+        (new DynamoDbClient($http, 'aws-key', 'us-east-1', 'aws-secret'))->getItem([
+            'table' => [
+                'ConsistentRead' => false,
+                'Keys' => [
+                    ['key' => ['S' => 'forum']],
+                ],
+            ],
+        ]);
+    }
+
     public function testPutItem(): void
     {
         $http = $this->getHttpClientMock();
