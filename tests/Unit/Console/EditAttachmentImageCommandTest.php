@@ -133,11 +133,11 @@ class EditAttachmentImageCommandTest extends TestCase
         $wp_save_image_file = $this->getFunctionMock($this->getNamespace(EditAttachmentImageCommand::class), 'wp_save_image_file');
         $wp_save_image_file->expects($this->once())
                            ->with($this->matchesRegularExpression('/attached\/file\/path-e[0-9]*\.jpg/'), $this->identicalTo($imageEditor), $this->identicalTo('image/jpeg'), $this->identicalTo(4))
-                           ->willReturn(true);
+                           ->willReturn(['path' => 'attached/file/path-e1234567890123.jpg', 'width' => 24, 'height' => 42, 'filesize' => 1234]);
 
         $wp_update_attachment_metadata = $this->getFunctionMock($this->getNamespace(EditAttachmentImageCommand::class), 'wp_update_attachment_metadata');
         $wp_update_attachment_metadata->expects($this->once())
-                                      ->with($this->identicalTo(4), $this->identicalTo(['sizes' => [], 'file' => 'relative/attached/file/path.jpg', 'width' => 24, 'height' => 42]));
+                                      ->with($this->identicalTo(4), $this->identicalTo(['sizes' => [], 'file' => 'relative/attached/file/path.jpg', 'width' => 24, 'height' => 42, 'filesize' => 1234]));
 
         (new EditAttachmentImageCommand($fileManager, $this->getWpCliMock()))($arguments, $options);
     }

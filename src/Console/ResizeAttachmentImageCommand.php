@@ -48,7 +48,9 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
             $filePath = $this->generateSuffixedFilePath($filePath, $suffix);
         }
 
-        if (!wp_save_image_file($filePath, $image, $attachment->post_mime_type, $attachment->ID)) {
+        $savedImage = wp_save_image_file($filePath, $image, $attachment->post_mime_type, $attachment->ID);
+
+        if (!$savedImage) {
             $this->wpCli->error(sprintf('Unable to save image "%s"', $filePath));
         }
 
@@ -61,6 +63,10 @@ class ResizeAttachmentImageCommand extends AbstractAttachmentCommand
         $imageMetadata['file'] = $this->updateAttachedFilePath($attachment, $filePath);
         $imageMetadata['width'] = $imageSize['width'];
         $imageMetadata['height'] = $imageSize['height'];
+
+        if (is_array($savedImage) && isset($savedImage['filesize'])) {
+            $imageMetadata['filesize'] = $savedImage['filesize'];
+        }
 
         wp_update_attachment_metadata($attachment->ID, $imageMetadata);
 

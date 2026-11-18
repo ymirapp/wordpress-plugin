@@ -111,12 +111,12 @@ class ResizeAttachmentImageCommandTest extends TestCase
 
         $update_post_meta = $this->getFunctionMock($this->getNamespace(ResizeAttachmentImageCommand::class), 'update_post_meta');
         $update_post_meta->expects($this->once())
-                         ->with($this->identicalTo(4), $this->identicalTo('_wp_attachment_backup_sizes'), $this->identicalTo([]));
+                         ->with($this->identicalTo(4), $this->identicalTo('_wp_attachment_backup_sizes'), $this->identicalTo(['full-orig' => ['file' => 'path.jpg', 'height' => 200, 'width' => 100, 'filesize' => 5000]]));
 
         $wp_get_attachment_metadata = $this->getFunctionMock($this->getNamespace(ResizeAttachmentImageCommand::class), 'wp_get_attachment_metadata');
         $wp_get_attachment_metadata->expects($this->once())
                                    ->with($this->identicalTo(4))
-                                   ->willReturn(['sizes' => []]);
+                                   ->willReturn(['file' => 'relative/attached/file/path.jpg', 'width' => 100, 'height' => 200, 'filesize' => 5000, 'sizes' => []]);
 
         $wp_get_image_editor = $this->getFunctionMock($this->getNamespace(ResizeAttachmentImageCommand::class), 'wp_get_image_editor');
         $wp_get_image_editor->expects($this->once())
@@ -126,11 +126,11 @@ class ResizeAttachmentImageCommandTest extends TestCase
         $wp_save_image_file = $this->getFunctionMock($this->getNamespace(ResizeAttachmentImageCommand::class), 'wp_save_image_file');
         $wp_save_image_file->expects($this->once())
                            ->with($this->matchesRegularExpression('/attached\/file\/path-e[0-9]*\.jpg/'), $this->identicalTo($imageEditor), $this->identicalTo('image/jpeg'), $this->identicalTo(4))
-                           ->willReturn(true);
+                           ->willReturn(['path' => 'attached/file/path-e1234567890123.jpg', 'width' => 24, 'height' => 42, 'filesize' => 1234]);
 
         $wp_update_attachment_metadata = $this->getFunctionMock($this->getNamespace(ResizeAttachmentImageCommand::class), 'wp_update_attachment_metadata');
         $wp_update_attachment_metadata->expects($this->once())
-                                      ->with($this->identicalTo(4), $this->identicalTo(['sizes' => [], 'file' => 'relative/attached/file/path.jpg', 'width' => 24, 'height' => 42]));
+                                      ->with($this->identicalTo(4), $this->identicalTo(['file' => 'relative/attached/file/path.jpg', 'width' => 24, 'height' => 42, 'filesize' => 1234, 'sizes' => []]));
 
         (new ResizeAttachmentImageCommand($fileManager, $this->getWpCliMock()))($arguments, $options);
     }

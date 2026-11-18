@@ -235,6 +235,10 @@ abstract class AbstractAttachmentCommand extends AbstractCommand
             'width' => (int) $imageMetadata['width'],
         ];
 
+        if (isset($imageMetadata['filesize'])) {
+            $backupSizes[$backupImageName]['filesize'] = (int) $imageMetadata['filesize'];
+        }
+
         return $backupSizes;
     }
 
