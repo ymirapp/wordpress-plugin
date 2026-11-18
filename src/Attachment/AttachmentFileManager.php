@@ -56,6 +56,8 @@ class AttachmentFileManager
             $function = $file->isDir() ? 'rmdir' : 'unlink';
             $function($file->getRealPath());
         }
+
+        rmdir($this->tempDirectory);
     }
 
     /**
