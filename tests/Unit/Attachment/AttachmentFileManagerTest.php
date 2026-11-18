@@ -49,15 +49,50 @@ class AttachmentFileManagerTest extends TestCase
         parent::tearDown();
     }
 
+    public function provideInvalidFilesToCopy(): array
+    {
+        return [
+            'file outside the uploads directory' => ['/outside/image.jpg', 'The "/outside/image.jpg" file isn\'t in the "%s/uploads" directory'],
+            'missing file' => ['%s/uploads/2026/11/missing.jpg', 'The "%s/uploads/2026/11/missing.jpg" file doesn\'t exist'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideInvalidFilesToCopy
+     */
+    public function testCopyToTempDirectoryThrowsExceptionWithInvalidFile(string $file, string $message): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf($message, $this->baseDirectory));
+
+        $this->createFileManager()->copyToTempDirectory(sprintf($file, $this->baseDirectory));
+    }
+
+    public function testCopyToUploadsDirectoryCopiesTempFileToSameRelativePath(): void
+    {
+        file_put_contents($this->baseDirectory.'/uploads/2026/11/image.jpg', 'original');
+
+        $fileManager = $this->createFileManager();
+        $tempFile = $fileManager->copyToTempDirectory($this->baseDirectory.'/uploads/2026/11/image.jpg');
+
+        $this->assertTrue($fileManager->isInTempDirectory($tempFile));
+        $this->assertStringEndsWith('/2026/11/image.jpg', $tempFile);
+        $this->assertStringEqualsFile($tempFile, 'original');
+
+        $resizedTempFile = $fileManager->getTempFilePath($this->baseDirectory.'/uploads/2026/11/image-150x150.jpg');
+        file_put_contents($resizedTempFile, 'resized');
+
+        $resizedFile = $fileManager->copyToUploadsDirectory($resizedTempFile);
+
+        $this->assertSame($this->baseDirectory.'/uploads/2026/11/image-150x150.jpg', $resizedFile);
+        $this->assertStringEqualsFile($resizedFile, 'resized');
+    }
+
     public function testDestructorRemovesTempDirectory(): void
     {
-        $get_temp_dir = $this->getFunctionMock($this->getNamespace(AttachmentFileManager::class), 'get_temp_dir');
-        $get_temp_dir->expects($this->once())
-                     ->willReturn($this->baseDirectory.'/tmp/');
-
         file_put_contents($this->baseDirectory.'/uploads/2026/11/image.jpg', 'image');
 
-        $fileManager = new AttachmentFileManager($this->baseDirectory.'/uploads');
+        $fileManager = $this->createFileManager();
         $tempFile = $fileManager->copyToTempDirectory($this->baseDirectory.'/uploads/2026/11/image.jpg');
 
         $this->assertFileExists($tempFile);
@@ -65,5 +100,29 @@ class AttachmentFileManagerTest extends TestCase
         unset($fileManager);
 
         $this->assertSame([], array_values(array_diff(scandir($this->baseDirectory.'/tmp'), ['.', '..'])));
+    }
+
+    public function testFilePathsMapBetweenTempAndUploadsDirectories(): void
+    {
+        $fileManager = $this->createFileManager();
+        $uploadsFile = $this->baseDirectory.'/uploads/2026/11/image.jpg';
+        $tempFile = $fileManager->getTempFilePath($uploadsFile);
+
+        $this->assertStringStartsWith($this->baseDirectory.'/tmp/ymir_', $tempFile);
+        $this->assertStringEndsWith('/2026/11/image.jpg', $tempFile);
+        $this->assertSame('2026/11/image.jpg', $fileManager->getRelativePath($uploadsFile));
+        $this->assertSame('2026/11/image.jpg', $fileManager->getRelativePath($tempFile));
+        $this->assertSame($uploadsFile, $fileManager->getUploadsFilePath($tempFile));
+        $this->assertSame($tempFile, $fileManager->getTempFilePath($tempFile));
+        $this->assertSame($uploadsFile, $fileManager->getUploadsFilePath('2026/11/image.jpg'));
+    }
+
+    private function createFileManager(): AttachmentFileManager
+    {
+        $get_temp_dir = $this->getFunctionMock($this->getNamespace(AttachmentFileManager::class), 'get_temp_dir');
+        $get_temp_dir->expects($this->once())
+                     ->willReturn($this->baseDirectory.'/tmp/');
+
+        return new AttachmentFileManager($this->baseDirectory.'/uploads');
     }
 }
