@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.30.0](https://github.com/ymirapp/wordpress-plugin/compare/v1.29.1...v1.30.0) (2026-11-18)
+
+
+### Features
+
+* Show when the plugin is out of date in the plugin list ([10e1699](https://github.com/ymirapp/wordpress-plugin/commit/10e1699854477c3666a0958c16f1192b56cd5c0f)), closes [#12](https://github.com/ymirapp/wordpress-plugin/issues/12)
+
+
+### Bug Fixes
+
+* Let other plugins' plupload uploaders post to their own endpoint ([79b0469](https://github.com/ymirapp/wordpress-plugin/commit/79b0469ba7cbe31f6c30a4c0f54151fba1f341a4)), closes [#9](https://github.com/ymirapp/wordpress-plugin/issues/9)
+* Let the media uploader toggle switch uploaders on wordpress 6.9 and later ([001ea89](https://github.com/ymirapp/wordpress-plugin/commit/001ea890ed87130d5fcf31d7086a76bc816962dc))
+* Remove the temp directory at the end of each request ([ae48c99](https://github.com/ymirapp/wordpress-plugin/commit/ae48c9958090382632292fbb722da2abd0bc477f)), closes [#6](https://github.com/ymirapp/wordpress-plugin/issues/6)
+* Replace existing uploads when saving an edited image ([5f0556d](https://github.com/ymirapp/wordpress-plugin/commit/5f0556d69ffc4692fa9311cd98b2555d76c164d2))
+* Stop aws error parsing from emitting warnings for non-xml responses ([f514d59](https://github.com/ymirapp/wordpress-plugin/commit/f514d5901051f981c7d989196b584ba26b04dd55))
+* Update attachment file size after editing an image ([6fcf52b](https://github.com/ymirapp/wordpress-plugin/commit/6fcf52b904134a8194b3aecebabdd43d16c3b65a))
+
 ## [1.29.1](https://github.com/ymirapp/wordpress-plugin/compare/v1.29.0...v1.29.1) (2026-11-10)
 
 
