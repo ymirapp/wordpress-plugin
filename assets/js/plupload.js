@@ -1501,31 +1501,77 @@ plupload.Uploader = function(options) {
 				xhr = null;
 			};
 
-			wp.apiRequest({
-				async: false,
-				url: up.settings.file_endpoint_url,
-				data: {
-					filename: file.name
-				},
-				type: 'GET',
-				dataType: 'json',
-				success: function (response) {
-					Object.assign(file, response);
+			// Only WordPress's media uploaders have the Ymir file endpoint. Uploaders from other plugins post to their own URL.
+			if (up.settings.file_endpoint_url) {
+				wp.apiRequest({
+					async: false,
+					url: up.settings.file_endpoint_url,
+					data: {
+						filename: file.name
+					},
+					type: 'GET',
+					dataType: 'json',
+					success: function (response) {
+						Object.assign(file, response);
+					}
+				});
+
+				// TODO: Error check
+
+				xhr.open('PUT', file.upload_url, true);
+
+				xhr.setRequestHeader('Content-Type', file.type);
+				xhr.setRequestHeader('X-Amz-Acl', 'public-read');
+
+				xhr.send(chunkBlob, {
+					runtime_order: up.settings.runtimes,
+					required_caps: up.settings.required_features,
+					preferred_caps: preferred_caps
+				});
+			} else {
+				// Build multipart request
+				if (up.settings.multipart && features.multipart) {
+					xhr.open("post", url, true);
+
+					// Set custom headers
+					plupload.each(up.settings.headers, function(value, name) {
+						xhr.setRequestHeader(name, value);
+					});
+
+					formData = new o.FormData();
+
+					// Add multipart params
+					plupload.each(plupload.extend(args, up.settings.multipart_params), function(value, name) {
+						formData.append(name, value);
+					});
+
+					// Add file and send it
+					formData.append(up.settings.file_data_name, chunkBlob);
+					xhr.send(formData, {
+						runtime_order: up.settings.runtimes,
+						required_caps: up.settings.required_features,
+						preferred_caps: preferred_caps
+					});
+				} else {
+					// if no multipart, send as binary stream
+					url = plupload.buildUrl(up.settings.url, plupload.extend(args, up.settings.multipart_params));
+
+					xhr.open("post", url, true);
+
+					xhr.setRequestHeader('Content-Type', 'application/octet-stream'); // Binary stream header
+
+					// Set custom headers
+					plupload.each(up.settings.headers, function(value, name) {
+						xhr.setRequestHeader(name, value);
+					});
+
+					xhr.send(chunkBlob, {
+						runtime_order: up.settings.runtimes,
+						required_caps: up.settings.required_features,
+						preferred_caps: preferred_caps
+					});
 				}
-			});
-
-			// TODO: Error check
-
-			xhr.open('PUT', file.upload_url, true);
-
-			xhr.setRequestHeader('Content-Type', file.type);
-			xhr.setRequestHeader('X-Amz-Acl', 'public-read');
-
-			xhr.send(chunkBlob, {
-				runtime_order: up.settings.runtimes,
-				required_caps: up.settings.required_features,
-				preferred_caps: preferred_caps
-			});
+			}
 		}
 
 		blob = file.getSource();
