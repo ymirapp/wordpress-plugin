@@ -73,7 +73,7 @@ class AttachmentFileManager
      */
     public function copyToUploadsDirectory(string $file): string
     {
-        return $this->copy($file, $this->tempDirectory, $this->uploadsDirectory);
+        return $this->copy($file, $this->tempDirectory, $this->uploadsDirectory, true);
     }
 
     /**
@@ -125,7 +125,7 @@ class AttachmentFileManager
     /**
      * Copy the given file from the source directory to the destination directory.
      */
-    private function copy(string $file, string $sourceDirectory, string $destinationDirectory): string
+    private function copy(string $file, string $sourceDirectory, string $destinationDirectory, bool $overwrite = false): string
     {
         if (!str_starts_with($file, $sourceDirectory)) {
             throw new \InvalidArgumentException(sprintf('The "%s" file isn\'t in the "%s" directory', $file, $sourceDirectory));
@@ -141,7 +141,7 @@ class AttachmentFileManager
             mkdir(dirname($copy), 0777, true);
         }
 
-        if (!file_exists($copy) && !copy($file, $copy)) {
+        if (($overwrite || !file_exists($copy)) && !copy($file, $copy)) {
             throw new \RuntimeException(sprintf('Unable to copy file from "%s" to "%s"', $file, $copy));
         }
 

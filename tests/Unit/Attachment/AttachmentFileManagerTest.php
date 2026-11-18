@@ -57,6 +57,19 @@ class AttachmentFileManagerTest extends TestCase
         ];
     }
 
+    public function testCopyToTempDirectoryReusesExistingTempFile(): void
+    {
+        file_put_contents($this->baseDirectory.'/uploads/2026/11/image.jpg', 'original');
+
+        $fileManager = $this->createFileManager();
+        $tempFile = $fileManager->copyToTempDirectory($this->baseDirectory.'/uploads/2026/11/image.jpg');
+
+        file_put_contents($tempFile, 'edited');
+
+        $this->assertSame($tempFile, $fileManager->copyToTempDirectory($this->baseDirectory.'/uploads/2026/11/image.jpg'));
+        $this->assertStringEqualsFile($tempFile, 'edited');
+    }
+
     /**
      * @dataProvider provideInvalidFilesToCopy
      */
@@ -68,9 +81,10 @@ class AttachmentFileManagerTest extends TestCase
         $this->createFileManager()->copyToTempDirectory(sprintf($file, $this->baseDirectory));
     }
 
-    public function testCopyToUploadsDirectoryCopiesTempFileToSameRelativePath(): void
+    public function testCopyToUploadsDirectoryCopiesTempFileToSameRelativePathReplacingExistingFile(): void
     {
         file_put_contents($this->baseDirectory.'/uploads/2026/11/image.jpg', 'original');
+        file_put_contents($this->baseDirectory.'/uploads/2026/11/image-150x150.jpg', 'old thumbnail');
 
         $fileManager = $this->createFileManager();
         $tempFile = $fileManager->copyToTempDirectory($this->baseDirectory.'/uploads/2026/11/image.jpg');
